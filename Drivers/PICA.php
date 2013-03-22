@@ -61,9 +61,7 @@ class PICA extends DAIA
     {
         parent::__construct();
 
-        $configArray = parse_ini_file(
-            dirname(__FILE__) . '/../conf/PICA.ini', true
-        );
+        $configArray = parse_ini_file('conf/PICA.ini', true);
 
         $this->catalogHost = $configArray['Catalog']['Host'];
         $this->renewalsScript = $configArray['Catalog']['renewalsScript'];

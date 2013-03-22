@@ -72,6 +72,7 @@
     <div class="span-14 last">
         {assign var="electronicResource" value="0"}
         {assign  var="showAvail" value="true"}
+        {assign var="showCallNumber" value="1"}
         {foreach from=$summFormats item=format}  {*$format=="eBook" ||*}
             {if $format=="Serial" || $format=="Journal" || $format=="Electronic" || $format=="Aufsätze" || $format=="eBook" || $format=="Elektronische Aufsätze"}
                 {*assign var="showAvail" value="false"*}
@@ -84,10 +85,15 @@
                 {assign var="showAvail" value="false"}
                 {assign var="showAllLinks" value="1"}
             {/if}
+            {if $format=="Elektronische Ressource"}
+                {assign var="showCallNumber" value="0"}
+            {/if}
         {/foreach}
     {if $showAvail=="true" && $summInterlibraryLoan=="0"}
       {if $summAjaxStatus}
-        <span id="callnumber{$summId|escape}label">{translate text='Call Number'}:</span> <span class="ajax_availability hide" id="callnumber{$summId|escape}">{translate text='Loading'}...</span><br/>
+        {if $showCallNumber == "1"}
+            <span id="callnumber{$summId|escape}label">{translate text='Call Number'}:</span> <span class="ajax_availability hide" id="callnumber{$summId|escape}">{translate text='Loading'}...</span><br/>
+        {/if}
         <span id="location{$summId|escape}label">{translate text='Located'}:</span> <span class="ajax_availability hide" id="location{$summId|escape}">{translate text='Loading'}...</span>
       {elseif !empty($summCallNo)}
         <span id="callnumber{$summId|escape}label">{translate text='Call Number'}: {$summCallNo|escape}</span>
@@ -105,7 +111,7 @@
           {include file="Search/openurl.tpl" openUrl=$summOpenUrl}
       {/if}
 
-      {if !empty($summURLs) && $electronicResource == "1" && $showAllLinks == "1" && !$nlurls}
+      {if !empty($summURLs) && $electronicResource == "1" && $showAllLinks == "1" && !$nlurls && $showCallNumber == "1"}
         {foreach from=$summURLs key=recordurl item=urldesc}
           <br/><a href="{$recordurl|escape}" class="fulltext" target="new">
           {*{if $recordurl == $urldesc}{translate text='Get full text'}{else}*}

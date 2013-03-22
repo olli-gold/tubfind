@@ -9,10 +9,10 @@
   {if $authMethod == 'Shibboleth'}
     <a class="login" href="{$sessionInitiator}">{translate text="Institutional Login"}</a>
   {else}
-    <a class="login" href="{$path}/MyResearch/Home">{translate text="Login"}</a>
+    <a class="login" href="{$path}/MyResearch/Home">{translate text="Favorites"}</a>
   {/if}
 {else}
-  <a class="account" href="{$path}/MyResearch/Home">{translate text="Your Account"}</a> |
+  <a class="account" href="{$path}/MyResearch/Home">{translate text="Favorites"}</a> |
   <a class="logout" href="{$path}/MyResearch/Logout">{translate text="Log Out"}</a>
 {/if}
 

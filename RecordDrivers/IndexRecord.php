@@ -730,7 +730,7 @@ h = Seitenangabe Von Bis
         #if (is_array($field)) {
         #    array_walk($field, '_callback_normalize');
         #}
-        if (function_exists('normalizer_normalize') && normalizer_normalize($field)) {
+        if (function_exists('normalizer_normalize') && is_array($field) === false) {
             $return = normalizer_normalize($field);
         }
         else {
@@ -1664,6 +1664,9 @@ h = Seitenangabe Von Bis
         if (isset($this->fields['title'])) {
             return $this->fields['title'];
         }
+        #if (isset($this->fields['series2'])) {
+        #    return $this->fields['series2'];
+        #}
         return '';
     }
 

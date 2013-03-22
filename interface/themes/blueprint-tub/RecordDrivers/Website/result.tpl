@@ -63,13 +63,13 @@
 
   <div class="span-4 last">
     <a id="saveRecord{$summId|escape}" href="{$url}/Record/{$summId|escape:"url"}/Save" class="fav tool saveRecord" title="{translate text='Add to favorites'}">{translate text='Add to favorites'}</a>
-
+    
     {* Display the lists that this record is saved to *}
     <div class="savedLists info hide" id="savedLists{$summId|escape}">
       <strong>{translate text="Saved in"}:</strong>
     </div>
   </div>
-
+  
   <div class="clear"></div>
 </div>
 

@@ -19,7 +19,7 @@ $.validator.addMethod("phoneUS", function(phone_number, element) {
 
 $(document).ready(function(){
     // initialize autocomplete
-    // initAutocomplete();    
+    initAutocomplete();    
 
     // put focus on the "mainFocus" element
     $('.mainFocus').each(function(){ $(this).focus(); } );
@@ -207,7 +207,7 @@ var listPager = {
     getListEvent: function (elem, iterator, factor, sum) {
         elem.append('<li class="pager"><img class="pageimage" src="../images/arrow-down.png" alt="mehr" /></li>');
         alert("Test");
-        elem.append('<li class="allResults"><img class="pageimage" src="../images/arrow-down.png" alt="alle" /></li>');
+        elem.append('<li class="allResults"><img class="pageimage" src="../images/arrow-all-down.png" alt="alle" /></li>');
         elem.find('.pager').click( function () {
             listPager.getNextListEntries(elem, iterator + 1, factor, sum);
         });
@@ -333,7 +333,7 @@ function uniqueValues(array) {
     }
     return r;
 }
-/*
+
 function initAutocomplete() {
     
     $('input.autocomplete').each(function() {
@@ -361,7 +361,7 @@ function initAutocomplete() {
         });
     });
 }
-*/
+
 function htmlEncode(value){
     if (value) {
         return jQuery('<div />').text(value).html();

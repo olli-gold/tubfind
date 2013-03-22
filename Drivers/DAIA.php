@@ -44,17 +44,28 @@ require_once 'Interface.php';
 class DAIA implements DriverInterface
 {
     private $_baseURL;
+    private $_urlPostfix;
+    public $language;
 
     /**
      * Constructor
      *
      * @access public
      */
-    public function __construct()
+    public function __construct($configFile = 'conf/DAIA.ini')
     {
-        $configArray = parse_ini_file('conf/DAIA.ini', true);
+        global $interface;
+
+        $configArray = parse_ini_file($configFile, true);
 
         $this->_baseURL = $configArray['Global']['baseUrl'];
+        $this->_urlPostfix = $configArray['Global']['urlPostfix'];
+        if ($interface->getLanguage()) {
+            $this->language = $interface->getLanguage();
+        }
+        else {
+            $this->language = $configArray['Global']['language'];
+        }
     }
 
     /**
@@ -147,7 +158,7 @@ class DAIA implements DriverInterface
     private function _queryDAIA($id)
     {
         $daia = new DomDocument();
-        $daia->load($this->_baseURL . '?output=xml&ppn='.$id);
+        $daia->load($this->_baseURL . $this->_urlPostfix . $id . '&lang=' . $this->language);
 
         return $daia;
     }
@@ -201,7 +212,9 @@ class DAIA implements DriverInterface
                         'label' => '',
                         'notes' => array()
                     );
-                    $result['itemid'] = $itemlist->item($c)->attributes->getNamedItem('id')->nodeValue;
+                    if ($itemlist->item($c)->attributes->getNamedItem('id') !== null) {
+                        $result['itemid'] = $itemlist->item($c)->attributes->getNamedItem('id')->nodeValue;
+                    }
                     if ($itemlist->item($c)->attributes->getNamedItem('href') !== null) {
                         $result['recallhref'] = $itemlist->item($c)->attributes->getNamedItem('href')->nodeValue;
                     }
@@ -222,7 +235,9 @@ class DAIA implements DriverInterface
                                 $result['location'] = $storageElements->item(0)->attributes->getNamedItem('href')->nodeValue;
                             }
                             #$result['location.id'] = $storageElements->item(0)->attributes->getNamedItem('id')->nodeValue;
-                            $result['locationhref'] = $storageElements->item(0)->attributes->getNamedItem('href')->nodeValue;
+                            if ($storageElements->item(0)->attributes->getNamedItem('href')) {
+                                $result['locationhref'] = $storageElements->item(0)->attributes->getNamedItem('href')->nodeValue;
+                            }
                             #$result['barcode'] = $result['location.id'];
                     }
                     $barcodeElements = $itemlist->item($c)->getElementsByTagName('identifier');
@@ -241,18 +256,25 @@ class DAIA implements DriverInterface
                     $messageElements = $itemlist->item($c)->getElementsByTagName('message');
                     if($messageElements->length > 0) {
                         for ($m = 0; $messageElements->item($m) !== null; $m++) {
-                            if ($messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue === '404') {
-                                $result['status'] = 'missing';
-                            }
-                            else if ($messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue === '405') {
-                                $result['status'] = 'lost';
-                            }
-                            else {
-                                if (is_array($result['notes'][$messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue]) === false) 
-                                    $result['notes'][$messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue] = array();
-                                $result['notes'][$messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue]
-                                    [$messageElements->item($m)->attributes->getNamedItem('lang')->nodeValue] =
-                                    $messageElements->item($m)->nodeValue;
+                            if ($messageElements->item($m)->attributes->getNamedItem('errno')) {
+                                if ($messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue === '400') {
+                                    $result['status'] = 'On reserve';
+                                    #$result['reserve'] = 'Yes';
+                                }
+                                if ($messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue === '404') {
+                                    $result['status'] = 'missing';
+                                }
+                                else if ($messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue === '405') {
+                                    $result['status'] = 'lost';
+                                }
+                                else {
+                                    if (is_array($result['notes'][$messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue]) === false) {
+                                        $result['notes'][$messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue] = array();
+                                    }
+                                    $result['notes'][$messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue]
+                                        [$messageElements->item($m)->attributes->getNamedItem('lang')->nodeValue] =
+                                        $messageElements->item($m)->nodeValue;
+                                }
                             }
                         }
                     }
@@ -393,25 +415,31 @@ class DAIA implements DriverInterface
         $daia = $this->_queryDAIA($id);
         // get Availability information from DAIA
         $itemlist = $daia->getElementsByTagName('item');
-        $label = "Unknown";
-        $storage = "Unknown";
-        $presenceOnly = '1';
         $holding = array();
         for ($c = 0; $itemlist->item($c) !== null; $c++) {
+            $label = "Unknown";
+            $storage = "Unknown";
+            $presenceOnly = '1';
+            $reservedCounter = 0;
+            $status = null;
+            $earliest_queue = null;
+            $earliest_duedate = null;
+            // assume item is leanable unless we find another information
+            $leanable = 1;
             $earliest_href = '';
             $storageElements = $itemlist->item($c)->getElementsByTagName('storage');
             $availableElements = $itemlist->item($c)->getElementsByTagName('available');
             $unavailableElements = $itemlist->item($c)->getElementsByTagName('unavailable');
             if ($storageElements->item(0)->nodeValue) {
-                if ($storageElements->item(0)->nodeValue === 'Internet') {
-                    $storage = '<a href="'.$storageElements->item(0)->attributes->getNamedItem('href')->nodeValue.'">'.$storageElements->item(0)->attributes->getNamedItem('href')->nodeValue.'</a>';
+                if (substr($storageElements->item(0)->attributes->getNamedItem('id')->nodeValue, 0, 4) === 'http') {
+                    $storage = '<a href="'.$storageElements->item(0)->attributes->getNamedItem('href')->nodeValue.'">'.$storageElements->item(0)->nodeValue.'</a>';
                 }
                 else {
                     $storage = $storageElements->item(0)->nodeValue;
                 }
             }
             $labelElements = $itemlist->item($c)->getElementsByTagName('label');
-            if ($labelElements->item(0)->nodeValue) $label = $labelElements->item(0)->nodeValue;
+            if ($labelElements->item(0) !== null) $label = $labelElements->item(0)->nodeValue;
             if ($availableElements->item(0) !== null) {
                 $availability = 1;
                 $status = 'Available';
@@ -429,10 +457,8 @@ class DAIA implements DriverInterface
             }
             // if there are NO available items, do the else block
             else {
-                // assume item is leanable unless we find another information
-                $leanable = 1;
+                $earliest = array();
                 if ($unavailableElements->item(0) !== null) {
-                    $earliest = array();
                     $queue = array();
                     $hrefs = array();
                     for ($n = 0; $unavailableElements->item($n) !== null; $n++) {
@@ -462,7 +488,10 @@ class DAIA implements DriverInterface
                         }
                     }
                 }
-                if (count($earliest) > 0) {
+                else {
+                    $status = 'notforloan';
+                }
+                if (count($earliest) > 0 && count($hrefs) > 0) {
                     arsort($earliest);
                     $earliest_counter = 0;
                     foreach($earliest as $earliest_key => $earliest_value) {
@@ -478,7 +507,11 @@ class DAIA implements DriverInterface
                     $leanable = 0;
                 }
                 $messageElements = $itemlist->item($c)->getElementsByTagName('message');
-                if($messageElements->length > 0) {
+                if($messageElements->length > 0 && $messageElements->item(0)->attributes->getNamedItem('errno') !== null) {
+                    if ($messageElements->item(0)->attributes->getNamedItem('errno')->nodeValue === '400') {
+                        $status = 'reserve';
+                        $reservedCounter++;
+                    }
                     if ($messageElements->item(0)->attributes->getNamedItem('errno')->nodeValue === '404') {
                         $status = 'missing';
                     }
@@ -490,9 +523,10 @@ class DAIA implements DriverInterface
                 $availability = 0;
             }
             $reserve = 'N';
-            if ($earliest_queue > 0) $reserve = 'Y';
+            if ($earliest_queue > 0 || $reservedCounter === count($itemlist)) $reserve = 'Y';
             $dateArray = explode('.', $earliest_duedate);
-            $earliest_timestamp = mktime(0, 0, 0, $dateArray[1], $dateArray[0], $dateArray[2]);
+            $earliest_timestamp = null;
+            if (count($dateArray) === 3) $earliest_timestamp = mktime(0, 0, 0, $dateArray[1], $dateArray[0], $dateArray[2]);
             $holding[] = array('availability' => $availability,
                    'id' => $id,
                    'status' => "$status",

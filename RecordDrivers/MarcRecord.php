@@ -83,6 +83,16 @@ class MarcRecord extends IndexRecord
         global $interface;
         $template = parent::getCoreMetadata();
         $interface->assign('coreSubseries', $this->getSubseries());
+
+        $secondaryCorps = $this->getSecondaryCorporates();
+        if (!empty($corpAuthor)) {
+            $duplicates[] = $corpAuthor;
+        }
+        if (!empty($duplicates)) {
+            $secondaryCorps = array_diff($secondaryCorps, $duplicates);
+        }
+        $interface->assign('coreCorpContributors', $secondaryCorps);
+
         return $template;
     }
 
@@ -452,6 +462,20 @@ class MarcRecord extends IndexRecord
     protected function getCorporateAuthor()
     {
         return $this->_getFirstFieldValue('110', array('a', 'b'));
+    }
+
+    protected function getSecondaryAuthors() {
+        $returnarray = array();
+        $names = $this->_getFieldArray('700', array('a'));
+        $functions = $this->_getFieldArray('700', array('e'));
+        for ($i = 0; $i < count($names); $i++) {
+            array_push($returnarray, array('name' => $names[$i], 'function' => $functions[$i]));
+        }
+        return $returnarray;
+    }
+
+    protected function getSecondaryCorporates() {
+        return $this->_getFieldArray('710', array('a'));
     }
 
     /**

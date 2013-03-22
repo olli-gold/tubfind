@@ -39,22 +39,21 @@ class GBVCentralRecord extends MarcRecord
     {
         global $interface;
         parent::getSearchResult($view);
+
         $interface->assign('nlurls', false);
         if (in_array('NL', $this->getCollections())) {
             $interface->assign('nlurls', $this->getURLs());
         }
 
         //$interface->assign('summRemarks', $this->getRemark());
+
         $interface->assign('summInterlibraryLoan', $this->checkInterlibraryLoan());
-        $interface->assign('summArticleHRef', $this->getArticleHReference());
-        // Assign data for displaying values by finc project 2012-01-20
-        /*
-        $interface->assign('multipartLink', $this->getMultipartLink());
-        $interface->assign('multipartChildren', $this->getMultipartChildren());
-        */
-        $interface->assign('summSeries', $this->getSeriesShort());
-        $interface->assign('summFullTitle', $this->getFullTitle());
-        $interface->assign('summAddTitle', $this->getTitleAddition());
+        $interface->assign('summArticleHRef', $this->_normalize($this->getArticleHReference()));
+
+        $interface->assign('summSeries', $this->_normalize($this->getSeriesShort()));
+        $interface->assign('summFullTitle', $this->_normalize($this->getFullTitle()));
+        $interface->assign('summAddTitle', $this->_normalize($this->getTitleAddition()));
+
         return 'RecordDrivers/GBVCentral/result.tpl';
     }
 
@@ -80,7 +79,7 @@ class GBVCentralRecord extends MarcRecord
         $interface->assign('linkNames', $linkNames);
         $interface->assign('thesis', $this->getThesisInformation());
         //$interface->assign('coreAddtitle', $this->getTitleAddition());
-        $interface->assign('coreFullTitle', $this->getFullTitle());
+        $interface->assign('coreFullTitle', $this->_normalize($this->getFullTitle()));
         /*
         $interface->assign('articleChildren', $this->getArticleChildren());
         $interface->assign('coreSubseries', $this->getSubseries());
@@ -339,7 +338,7 @@ class GBVCentralRecord extends MarcRecord
             'ctx_ver' => 'Z39.88-2004',
             'ctx_enc' => 'info:ofi/enc:UTF-8',
             'rfr_id' => "info:sid/{$coinsID}:tubfind",
-            'rft.title' => $this->getTitle(),
+            'rft.title' => $this->getShortTitle(),
             'rft.date' => $pubDate
         );
 
@@ -2482,15 +2481,33 @@ class GBVCentralRecord extends MarcRecord
     }
 
     private function _normalize($field) {
-        #if (is_array($field)) {
-        #    array_walk($field, '_callback_normalize');
-        #}
-        if (function_exists('normalizer_normalize') && normalizer_normalize($field)) {
-            $return = normalizer_normalize($field);
+        $t_start = microtime(true);
+        if (function_exists('normalizer_normalize')) {
+            if (is_array($field)) {
+                $return = array();
+                foreach ($field as $f) {
+                    if (normalizer_normalize($f)) {
+                        $return[] = normalizer_normalize($f);
+                    }
+                    else {
+                        $return[] = $f;
+                    }
+                }
+            }
+            else {
+                if (normalizer_normalize($field)) {
+                    $return = normalizer_normalize($field);
+                }
+                else {
+                    $return = $field;
+                }
+            }
         }
         else {
             $return = $field;
         }
+        $t_stop = microtime(true);
+        //echo "Normalisierung dauerte ".(($t_stop-$t_start)*1000)." ms\n";
         return $return;
     }
 

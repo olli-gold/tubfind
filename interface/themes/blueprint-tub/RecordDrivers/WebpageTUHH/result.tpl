@@ -22,11 +22,11 @@
       <br/><a href="{$recordurl}" target="_blank">{$recordurl|truncate:54:'...':true:true}</a>
       {* <br/><a href="{$url}/Record/{$summId|escape:"url"}" class="title">Internansicht</a> *}
     </div>
-    {*
+    
     <div>
-        {$summContent.0|truncate:300:"..."|highlight:$lookfor}
+        ...{$summContent|truncate:200:"..."|highlight:$lookfor}
     </div>
-    *}
+    
     <div class="resultItemLine2">
       {if !empty($summAuthor)}
       {translate text='by'}

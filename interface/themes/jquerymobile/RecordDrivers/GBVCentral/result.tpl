@@ -15,8 +15,20 @@
         {$summShortTitle|truncate:90:"..."|escape}
     {/if}
   </h3>
+  {if !empty($summAuthor) or !empty($summDate)}
+  <p>
+  {/if}
   {if !empty($summAuthor)}
-    <p>{translate text='by'} {$summAuthor}</p>
+    {translate text='by'} {$summAuthor} 
+  {/if}
+  {if $summDate}{$summDate.0|escape}{/if}
+  {if !empty($summAuthor) or !empty($summDate)}
+  </p>
+  {/if}
+  {if $summArticleRef}
+    <p>
+        {$summArticleRef}
+    </p>
   {/if}
   {if $summAjaxStatus}
     <p id="callnumber{$summId|escape}label"><strong>{translate text='Call Number'}:</strong> <span class="ajax_availability hide callnumber{$summId|escape}">{translate text='Loading'}...</span></p>

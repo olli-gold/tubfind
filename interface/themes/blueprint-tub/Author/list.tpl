@@ -34,7 +34,7 @@
       </tr>
       {foreach from=$recordSet item=record name="recordLoop"}
       <tr{if ($smarty.foreach.recordLoop.iteration % 2) == 0} class="alt"{/if}>
-        <td><a href="{$url}/Author/Home?author={$record.0|escape:"url"}">{$record.0|escape:"html"}</a></td>
+        <td><a href="{$url}/Search/Results?lookfor={$record.0|escape:"url"}&type=Author&localonly=1">{$record.0|escape:"html"}</a></td>
         <td>{$record.1}</td>
       </tr>
       {/foreach}

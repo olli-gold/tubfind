@@ -75,7 +75,7 @@
     {/if}
   {/if}
   {/if}
-{*
+    {*
     {if $coreSubtitle}
         <span style="font-weight:normal;font-size:smaller;">
         {if is_array($coreSubtitle)}
@@ -85,7 +85,16 @@
         {/if}
         </span>
     {/if}
-*}
+    {if $coreAddtitle}
+        <span style="font-weight:normal;font-size:smaller;">
+        {if is_array($coreAddtitle)}
+            {$coreAddtitle.0|escape}
+        {else}
+            {$coreAddtitle|escape}
+        {/if}
+        </span>
+    {/if}
+    *}
   {*{if $coreTitleSection}{$coreTitleSection|escape}{/if}*}
   {* {if $coreTitleStatement}{$coreTitleStatement|escape}{/if} *}
   </h1>
@@ -138,18 +147,31 @@
     </tr>
     {/if}
 
+    {*
     {if !empty($coreCorporateAuthor)}
     <tr valign="top">
       <th>{translate text='Corporate Author'}: </th>
       <td><a href="{$url}/Search/Results?lookfor={$coreCorporateAuthor|escape:"url"}&type=Author&localonly=1">{$coreCorporateAuthor|escape}</a></td>
     </tr>
     {/if}
+    *}
 
     {if !empty($coreContributors)}
     <tr valign="top">
-      <th>{translate text='Other Authors'}: </th>
+      <th>{translate text='Other Persons'}: </th>
       <td>
         {foreach from=$coreContributors item=field name=loop}
+          <a href="{$url}/Search/Results?lookfor={$field.name|escape:"url"}&type=Author&localonly=1">{$field.name|escape}</a> {if $field.function}({translate text=$field.function|escape}){/if}{if !$smarty.foreach.loop.last}<br/>{/if}
+        {/foreach}
+      </td>
+    </tr>
+    {/if}
+
+    {if !empty($coreCorpContributors)}
+    <tr valign="top">
+      <th>{translate text='Other Corporates'}: </th>
+      <td>
+        {foreach from=$coreCorpContributors item=field name=loop}
           <a href="{$url}/Search/Results?lookfor={$field|escape:"url"}&type=Author&localonly=1">{$field|escape}</a>{if !$smarty.foreach.loop.last}; {/if}
         {/foreach}
       </td>

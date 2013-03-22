@@ -82,8 +82,8 @@ class WebpageTUHHRecord extends IndexRecord
      */
     protected function getContent()
     {
-        return isset($this->fields['contents']) ?
-            $this->fields['contents'] : '';
+        return isset($this->fields['_highlighting']['contents'][0]) ?
+            $this->fields['_highlighting']['contents'][0] : '';
     }
                                                              
 }

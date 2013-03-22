@@ -119,7 +119,7 @@
       <strong>{translate text="Saved in"}:</strong>
     </div>
   </div>
-
+  
   <div class="clear"></div>
 </div>
 
