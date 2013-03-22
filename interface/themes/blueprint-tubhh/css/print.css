@@ -1,0 +1,19 @@
+/* print.css */
+@media print { 
+    .header{display:none !important;}
+    #access{display:none !important;}
+    .searchbox{display;none  !important;}
+    .searchform{display:none !important;}
+    .breadcrumbs{display:none !important;}
+    .toolbar{display:none !important;}
+    .resultscroller{display:none !important;}
+    .tagList{display:none !important;}
+    .showqr{display:none !important;}
+    #tabnav{display:none !important;}
+    .footer{display:none !important;}
+    .span-2{display:none !important;}
+    .span-4.last{display:none !important;}    
+    .span-5.last{display:none !important;}
+    .searchtools{display:none !important;}
+    a:link:after, a:visited:after {display:none !important;}
+}

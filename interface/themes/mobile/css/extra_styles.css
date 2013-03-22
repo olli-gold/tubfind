@@ -1,0 +1,50 @@
+<?php Header ("Content-type: text/css"); ?>
+/* Pagination */
+
+.pagination {
+  font-size:90%;
+  padding:10px 0 10px 0;
+  margin:10px 0;
+  text-align:center;
+  border-top: 1px solid #eee;
+}
+.pagination a {
+  padding: 1px;
+  border: 1px solid #fff;
+}
+.pagination a:hover {
+  border: 1px solid #cccccc;
+}
+.pagination span {
+  padding: 1px;
+  font-weight:bold;
+}
+li.form input[type=text],li.form input[type=password],li.form input[type=search] {
+  height: 22px;
+  line-height: 22px;
+}
+
+#leftnavbody a {
+  display: block;
+  color: #fff;
+  text-shadow: rgba(0,0,0,0.6) 0 -1px 0;
+  line-height: 30px;
+  height: 30px;
+  text-decoration: none;
+}
+#leftnavbody img {
+  margin-top: 4px;
+}
+
+#leftnavbody a {
+  -webkit-border-image: url("../images/navleft.png") 0 5 0 13;
+  z-index: 3;
+  margin-left: 5px;
+  border-width: 0 5px 0 13px;
+  padding-right: 4px;
+  -webkit-border-top-left-radius: 16px;
+  -webkit-border-bottom-left-radius: 16px;
+  -webkit-border-top-right-radius: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  float: left;
+}

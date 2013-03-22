@@ -1,0 +1,1 @@
+<span class="checkedout">{translate text="lost"}</span>

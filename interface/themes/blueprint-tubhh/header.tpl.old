@@ -1,0 +1,58 @@
+<div style="width;100%;">
+    <div style="width:200px;float:left;width:230px;height:105px;">
+	<a href="http://www.tu-harburg.de" alt="TUHH-Home" title="TUHH-Home">
+	<img src="{$path}/interface/themes/blueprint-tubhh/images/logo/logo-tuhh-230x105.jpg" /></a>
+    </div><!-- tulogo -->
+
+    <div style="width:650px;height:105px;float:right;background-color:#f8f4f3;">
+	<a href="{translate text="wp_linkhome"}"><h1 style="font-size:200%;font-weight:bold;line-height:1em;padding-left:20px;">{translate text="wp_universitaetsbibliothek"}</h1></a>
+	<a href="{$url}">
+	<img style="width:150px;height:50px;padding-left:20px;float:left;" src="{$path}/interface/themes/blueprint-tubhh/images/logo/tubfind_logo-grau.jpg" alt="TUBfind-Home" title="TUBfind-Home"/>
+	</a>
+        <div style="float:right;"><!-- login language -->
+	<a class="login" href="http://katalog.b.tu-harburg.de/loan/DB=1/USERINFO_LOGIN" target="_blank">{translate text="Library Account"}</a> 
+	{if !$user}
+	  {if $authMethod == 'Shibboleth'}
+	    | <a class="login" href="{$sessionInitiator}">{translate text="Institutional Login"}</a>
+	  {else}
+	    | <a class="login" href="{$path}/MyResearch/Home">{translate text="TUBfind Login"}</a>
+	  {/if}
+	{else}
+	  | <a class="account" href="{$path}/MyResearch/Home">{translate text="Your Account"}</a> |
+	  <a class="logout" href="{$path}/MyResearch/Logout">{translate text="Log Out"}</a>
+	{/if}
+
+
+        <form method="post" name="langForm" action="" id="langForm">
+	{foreach from=$allLangs key=langCode item=langName}
+    	    <button name="mylang" value="{$langCode}" style="background: none; border: none;">
+    	    {$langCode|upper} | <!--img src="{$path}/interface/themes/blueprint-tubhh/images/langcode_{$langCode}.gif" /--></button>
+        {/foreach}
+	</form>
+	</div> <!-- login language -->
+
+    </div><!-- tubbranding -->
+
+</div><!-- tuheader -->
+<div class="clear"></div>
+
+
+
+
+  {* wird ausgeblendet ueber nicht erfuellte if-Klausel ;-) *}
+  {if $thisWillNeverBeShown}
+  {*if is_array($allLangs) && count($allLangs) > 1*}
+  <form method="post" name="langForm" action="" id="langForm">
+    <!--<label for="langForm_mylang">{translate text="Language"}:</label>-->
+    <select id="langForm_mylang" name="mylang" class="jumpMenu">
+      {foreach from=$allLangs key=langCode item=langName}
+        <option value="{$langCode}"{if $userLang == $langCode} selected="selected"{/if}>{translate text=$langName}</option>
+      {/foreach}
+    </select>
+    <noscript><input type="submit" value="{translate text="Set"}" /></noscript>
+  </form>
+  {/if}
+
+
+<br/>
+
