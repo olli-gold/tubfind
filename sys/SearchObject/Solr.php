@@ -61,7 +61,7 @@ class SearchObject_Solr extends SearchObject_Base
     // Index
     protected $index = null;
     // Field List
-    protected $fields = 'score';
+    protected $fields = '*,score';
     // HTTP Method
     //protected $method = HTTP_REQUEST_METHOD_GET;
     protected $method = HTTP_REQUEST_METHOD_POST;
@@ -1164,6 +1164,14 @@ class SearchObject_Solr extends SearchObject_Base
             }
             if ($this->facetSort != null) {
                 $facetSet['sort'] = $this->facetSort;
+            } else {
+                // backport from VuFind 2, see http://vufind.org/jira/browse/VUFIND-769
+                //
+                // No explicit setting? Set one based on the documented Solr behavior
+                // (index order for limit = -1, count order for limit > 0)
+                // Later Solr versions may have different defaults than earlier ones,
+                // so making this explicit ensures consistent behavior.
+                $facetSet['sort'] = ($this->facetLimit > 0) ? 'count' : 'index';
             }
         }
         // Hack by Frank Morgner to sort single facets
