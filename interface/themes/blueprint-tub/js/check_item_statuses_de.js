@@ -17,7 +17,7 @@ function checkItemStatuses() {
             success: function(response) {
                 if(response.status == 'OK') {
                     $.each(response.data, function(i, result) {
-                        if (result.callnumber == 'Unknown' || result.callnumber == '') {
+                        if (result.callnumber == '<span class=\"callnumberResult\">Unknown<\/span>' || result.callnumber == '') {
                             $('#callnumber' + result.id).hide();
                             $('#callnumber' + result.id + 'label').hide();
                         }
@@ -31,7 +31,7 @@ function checkItemStatuses() {
                         else {
                             $('#location' + result.id).empty().append(result.reserve == 'true' ? result.reserve_message : result.location);
                         }
-                        if ((result.callnumber == 'Unknown' && result.location == 'Unknown') || result.callnumber == 'Einzelsign.' || result.availability == -1) {
+                        if ((result.callnumber == '<span class=\"callnumberResult\">Unknown<\/span>' && result.location == 'Unknown') || result.callnumber == 'Einzelsign.' || result.availability == -1) {
                             $('#status' + result.id).hide();
                         }
                         else {
@@ -43,7 +43,7 @@ function checkItemStatuses() {
                             if (result.reservationUrl) {
                                 $('#status' + result.id).append(' '+result.reservationUrl);
                             }
-                            $('#status' + result.id).append('| <a href="https://katalog.b.tu-harburg.de/LBS_WEB/titleReservation.htm?BES=1&LAN=DU&USR=1000&PPN='+result.id+'">Titel vormerken</a>');
+                            $('#status' + result.id).append(' | <a href="https://katalog.b.tu-harburg.de/LBS_WEB/titleReservation.htm?BES=1&LAN=DU&USR=1000&PPN='+result.id+'">Titel vormerken</a>');
                         }
                         if (result.presenceOnly == '1') {
                             $('#status' + result.id).append(' Nur Präsenznutzung');

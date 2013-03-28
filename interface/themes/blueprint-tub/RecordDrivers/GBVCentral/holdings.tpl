@@ -191,7 +191,12 @@
                             {if $interlibraryLoan=="1"}
                                 <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
                             {else}
-                                {translate text="Not for loan"}
+                                {if $isMultipartChildren == 0}
+                                    {translate text="Not for loan"}
+                                {/if}
+                                {if $nothingShown == "0" && $isMultipartChildren == 1}
+                                    <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
+                                {/if}
                             {/if}
                         {/if}
                     {/if}
@@ -219,10 +224,6 @@
     {/foreach}
 </table>
 {/foreach}
-
-{if $nothingShown == "0" && $isMultipartChildren == 1}
-    <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
-{/if}
 
 {if $history}
     <h3>{translate text="Most Recent Received Issues"}</h3>

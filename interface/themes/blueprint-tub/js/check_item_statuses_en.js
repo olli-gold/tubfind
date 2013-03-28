@@ -17,7 +17,7 @@ function checkItemStatuses() {
             success: function(response) {
                 if(response.status == 'OK') {
                     $.each(response.data, function(i, result) {
-                        if (result.callnumber == 'Unknown' || result.callnumber == '') {
+                        if (result.callnumber == '<span class=\"callnumberResult\">Unknown<\/span>' || result.callnumber == '') {
                             $('#callnumber' + result.id).hide();
                             $('#callnumber' + result.id + 'label').hide();
                         }
@@ -31,7 +31,7 @@ function checkItemStatuses() {
                         else {
                             $('#location' + result.id).empty().append(result.reserve == 'true' ? result.reserve_message : result.location);
                         }
-                        if ((result.callnumber == 'Unknown' && result.location == 'Unknown') || result.callnumber == 'Einzelsign.' || result.availability == -1) {
+                        if ((result.callnumber == '<span class=\"callnumberResult\">Unknown<\/span>' && result.location == 'Unknown') || result.callnumber == 'Einzelsign.' || result.availability == -1) {
                             $('#status' + result.id).hide();
                         }
                         else {
