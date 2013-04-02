@@ -43,7 +43,9 @@ function checkItemStatuses() {
                             if (result.reservationUrl) {
                                 $('#status' + result.id).append(' '+result.reservationUrl);
                             }
-                            $('#status' + result.id).append(' | <a href="https://katalog.b.tu-harburg.de/LBS_WEB/titleReservation.htm?BES=1&LAN=DU&USR=1000&PPN='+result.id+'">Titel vormerken</a>');
+                            if (result.duedate && result.availability == 'false' && result.reserve != 'true') {
+                                $('#status' + result.id).append(' | <a href="https://katalog.b.tu-harburg.de/LBS_WEB/titleReservation.htm?BES=1&LAN=DU&USR=1000&PPN='+result.id+'">Titel vormerken</a>');
+                            }
                         }
                         if (result.presenceOnly == '1') {
                             $('#status' + result.id).append(' Nur Präsenznutzung');
