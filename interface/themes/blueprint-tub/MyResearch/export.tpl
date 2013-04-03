@@ -11,7 +11,11 @@
       <label for="format">{translate text="Format"}:</label>
       <select id="format" name="format">
         {foreach from=$exportOptions item=exportOption}
-          <option value="{$exportOption|escape}">{translate text=$exportOption}</option>
+          {assign var="exportOptionString" value="$exportOption"}
+          {if $exportOption=="EndNote"}
+              {assign var="exportOptionString" value="EndNote/Citavi"}
+          {/if}
+          <option value="{$exportOption|escape}">{translate text=$exportOptionString}</option>
         {/foreach}
       </select>
       <br />
