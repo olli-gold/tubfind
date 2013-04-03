@@ -31,8 +31,11 @@ function checkItemStatuses() {
                         else {
                             $('#location' + result.id).empty().append(result.reserve == 'true' ? result.reserve_message : result.location);
                         }
-                        if ((result.callnumber == '<span class=\"callnumberResult\">Unknown<\/span>' && result.location == 'Unknown') || result.callnumber == 'Einzelsign.' || result.availability == -1) {
-                            $('#status' + result.id).hide();
+                        if ((result.callnumber == '<span class=\"callnumberResult\">Unknown<\/span>' && result.location == 'Unknown') || 
+                            (result.callnumber == 'Unknown' && result.location == 'Unknown') ||
+                            result.callnumber == 'Einzelsign.' || result.availability == -1 ||
+                            result.callnumber.substring(31,39) == 'bestellt') {
+                                $('#status' + result.id).hide();
                         }
                         else {
                             $('#status' + result.id).empty().append(result.availability_message);
