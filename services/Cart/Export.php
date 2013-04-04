@@ -185,6 +185,16 @@ class Export extends Bulk
             ) {
                 $export = true;
                 switch(strtolower($format)) {
+                case 'rdf':
+                    $this->_exportHeaders(
+                        'application/xhtml+xml', 'VuFindExport.rdf.xml'
+                    );
+                    break;
+                case 'marcxml':
+                    $this->_exportHeaders(
+                        'application/xhtml+xml', 'VuFindExport.marc.xml'
+                    );
+                    break;
                 case 'bibtex':
                     $this->_exportHeaders(
                         'application/x-bibtex', 'VuFindExport.bibtex'
