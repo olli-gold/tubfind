@@ -3008,6 +3008,99 @@ class GBVCentralRecord extends MarcRecord
     }
 
     /**
+     * Get the item's places of publication.
+     *
+     * @return array
+     * @access protected
+     */
+    protected function getPublicationDetailsFromField260()
+    {
+        $field260 = $this->marcRecord->getFields('260');
+        $pubArr = array();
+        $index = 0;
+        if ($field260) {
+            foreach($field260 as $v) {
+                $a_names = $v->getSubfields('a');
+                $b_names = $v->getSubfields('b');
+                $c_names = $v->getSubfields('c');
+                $pubArr[$index]['place'] = $a_names[0]->getData();
+                $pubArr[$index]['name'] = $b_names[0]->getData();
+                $pubArr[$index]['date'] = $c_names[0]->getData();
+                $index++;
+            }
+        }
+        return $pubArr;
+    }
+
+    /**
+     * Get an array of publication detail lines combining information from
+     * getPublicationDates(), getPublishers() and getPlacesOfPublication().
+     *
+     * @return array
+     * @access protected
+     */
+    protected function getPublicationDetailsFromMarc()
+    {
+        $details = $this->getPublicationDetailsFromField260();
+
+        $i = 0;
+        $retval = array();
+        while (isset($details[$i]['place']) || isset($details[$i]['name']) || isset($details[$i]['date'])) {
+            // Put all the pieces together, and do a little processing to clean up
+            // unwanted whitespace.
+            $retval[] = trim(
+                str_replace(
+                    '  ', ' ',
+                    ((isset($details[$i]['place']) ? $details[$i]['place'] . ' ' : '') .
+                    (isset($details[$i]['name']) ? $details[$i]['name'] . ' ' : '') .
+                    (isset($details[$i]['date']) ? $details[$i]['date'] : ''))
+                )
+            );
+            $i++;
+        }
+
+        return $retval;
+    }
+
+    /**
+     * Get an array of publication detail lines combining information from
+     * getPublicationDates(), getPublishers() and getPlacesOfPublication().
+     *
+     * @return array
+     * @access protected
+     */
+    protected function getPublicationDetails()
+    {
+        $places = $this->getPlacesOfPublication();
+        $names = $this->getPublishers();
+        $dates = $this->getPublicationDates();
+
+        // if the number of publishers is higher than one, get the publication details from MARC
+        if (count($names) > 1) {
+            $details = $this->getPublicationDetailsFromMarc();
+            if ($details) return $details;
+        }
+
+        $i = 0;
+        $retval = array();
+        while (isset($places[$i]) || isset($names[$i]) || isset($dates[$i])) {
+            // Put all the pieces together, and do a little processing to clean up
+            // unwanted whitespace.
+            $retval[] = trim(
+                str_replace(
+                    '  ', ' ',
+                    ((isset($places[$i]) ? $places[$i] . ' ' : '') .
+                    (isset($names[$i]) ? $names[$i] . ' ' : '') .
+                    (isset($dates[$i]) ? $dates[$i] : ''))
+                )
+            );
+            $i++;
+        }
+
+        return $retval;
+    }
+
+    /**
      * Get the short (pre-subtitle) title of the record.
      *
      * @return string
