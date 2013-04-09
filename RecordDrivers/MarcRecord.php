@@ -471,6 +471,7 @@ class MarcRecord extends IndexRecord
         for ($i = 0; $i < count($names); $i++) {
             array_push($returnarray, array('name' => $names[$i], 'function' => $functions[$i]));
         }
+
         return $returnarray;
     }
 
