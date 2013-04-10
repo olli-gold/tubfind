@@ -2251,6 +2251,20 @@ abstract class SearchObject_Base
     }
 
     /**
+     * Get database recommendations from Bremer Database Recommender
+     *
+     * @return array Recommendations data arrays
+     * @access public
+     */
+    public function getDBRecommendations() {
+        $dbRecommender = new DBRecommender();
+        $dbRecommender->retrieveDbData($this->searchTerms[0]['lookfor']);
+        $dbRecommender->selectDatabases();
+        $databases = $dbRecommender->getDatabases();
+        return $databases;
+    }
+
+    /**
      * Turn the list of spelling suggestions into an array of urls
      *   for on-screen use to implement the suggestions.
      *
