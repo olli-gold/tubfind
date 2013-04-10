@@ -33,6 +33,8 @@ require_once 'services/MyResearch/lib/Search.php';
 require_once 'sys/Pager.php';
 require_once 'sys/ResultScroller.php';
 
+require_once 'sys/Recommend/DBRecommender.php';
+
 /**
  * Results action for Search module
  *
@@ -135,6 +137,12 @@ class Results extends Action
         );
         $interface->assign(
             'sideRecommendations', $searchObject->getRecommendationsTemplates('side')
+        );
+
+        $dbr = $searchObject->getDBRecommendations();
+//print_r($dbr);
+        $interface->assign(
+            'dbRecommendations', $dbr
         );
 
         if ($searchObject->getResultTotal() < 1) {
@@ -244,6 +252,7 @@ class Results extends Action
             }
         }
     }
+
 }
 
 ?>
