@@ -14,6 +14,9 @@
         <form method="post" name="german" action="" id="germanForm"><input type="hidden" name="mylang" value="de" /></form>
         <form method="post" name="english" action="" id="englishForm"><input type="hidden" name="mylang" value="en" /></form>
 	<a href="#" onClick="document.german.submit();">DE</a> | <a href="#" onClick="document.english.submit();">EN</a>
+        {if isset($gbvmessage)}
+            <br/><span style="color:red;font-weight:bold;">{$gbvmessage}</span>
+        {/if}
 	</div>
 	
         <div style="float:right;padding-right:30px;"><!-- login -->
