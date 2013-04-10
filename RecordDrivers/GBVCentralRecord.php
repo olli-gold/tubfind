@@ -618,7 +618,7 @@ class GBVCentralRecord extends MarcRecord
 
             // Perform the search and return either results or an error:
             $this->setHiddenFilters();
-            $result = $index->search($query, null, $this->hiddenFilters, 0, null, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false);
+            $result = $index->search($query, null, $this->hiddenFilters, 0, null, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
             if (PEAR::isError($result)) {
                 return $result;
@@ -661,7 +661,7 @@ class GBVCentralRecord extends MarcRecord
 
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
-        $result = $index->search($query, null, $this->hiddenFilters, 0, null, null, '', null, null, 'title, id',  HTTP_REQUEST_METHOD_POST , false, false);
+        $result = $index->search($query, null, $this->hiddenFilters, 0, null, null, '', null, null, 'title, id',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
         if (PEAR::isError($result)) {
             return $result;
@@ -762,7 +762,7 @@ class GBVCentralRecord extends MarcRecord
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
 
-        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST , false, false);
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
         return ($result['response'] > 0) ? $result['response'] : false;
     }
@@ -789,7 +789,7 @@ class GBVCentralRecord extends MarcRecord
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
 
-        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST , false, false);
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
         // Check if the PPNs are from the same origin (either both should have an NLZ-prefix or both should not have it)
         $resultArray = array();
@@ -836,7 +836,7 @@ class GBVCentralRecord extends MarcRecord
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
 
-        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST, false, false);
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST, false, false, false);
 
         return ($result['response'] > 0) ? $result['response'] : false;
     }
@@ -865,7 +865,7 @@ class GBVCentralRecord extends MarcRecord
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
 
-        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false);
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
         $showRegister = false;
         foreach ($result['response']['docs'] as $resp) {
@@ -897,7 +897,7 @@ class GBVCentralRecord extends MarcRecord
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
 
-        $result = $index->search($query, null, $this->hiddenFilters, 0, 1, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false);
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
         return ($result['response']['numFound'] > 0) ? true : false;
     }
