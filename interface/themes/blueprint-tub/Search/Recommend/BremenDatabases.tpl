@@ -1,4 +1,6 @@
 {if !empty($dbRecommendations)}
+<div class="sidegroup">
+  <h4>{translate text="Databases"}</h4>
 <div class="authorbox">
   <p>{translate text='database_recommendations'}</p>
   <ul>
@@ -13,5 +15,6 @@
     </li>
   {/foreach}
   </ul>
+</div>
 </div>
 {/if}

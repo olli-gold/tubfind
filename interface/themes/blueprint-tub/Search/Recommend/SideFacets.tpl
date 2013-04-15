@@ -89,7 +89,5 @@
     {/foreach}
   {/if}
 </div>
-<div class="sidegroup">
-  <h4>{translate text="Databases"}</h4>
-  {include file="Search/Recommend/BremenDatabases.tpl"}
-</div>
+
+{include file="Search/Recommend/BremenDatabases.tpl"}
