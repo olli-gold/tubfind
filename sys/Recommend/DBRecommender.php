@@ -49,13 +49,19 @@ class DBRecommender {
 
         public function selectDatabases() {
                 $databases = array();
+                $done = array();
                 foreach ( $this->dbData as $id => $data ) {
-                        $query = "SELECT dbr_database.bezeichnung , dbr_database.url FROM dbr_database , dbr_database_id , dbr_id WHERE dbr_database.dbr_database = dbr_database_id.dbr_database 
+                        $query = "SELECT dbr_id.name, dbr_database.bezeichnung , dbr_database.url FROM dbr_database , dbr_database_id , dbr_id WHERE dbr_database.dbr_database = dbr_database_id.dbr_database 
                                   AND dbr_database_id.dbr_id = dbr_id.dbr_id AND dbr_id.id = '".$id."'
                                   ORDER BY dbr_database.bezeichnung ASC";
+                        $counter = 0;
                         if ( $result = mysql_query( $query , $this->mysqlConnector ) ) {
                                 while ( $row = mysql_fetch_assoc( $result ) ) {
-                                        $databases[] = array( 'name' => $row['bezeichnung'] , 'id' => $id , 'url' => $row['url'] , 'rank' => $data['rank'] );
+                                        if (!in_array($row['bezeichnung'], $done) && $counter < 3) {
+                                            $done[] = $row['bezeichnung'];
+                                            $databases[] = array( 'name' => $row['bezeichnung'] , 'id' => $id , 'url' => $row['url'] , 'rank' => $data['rank'], 'group' => $row['name'] );
+                                            $counter++;
+                                        }
                                 }
                                 mysql_free_result( $result );
                         }
