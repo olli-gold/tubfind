@@ -99,7 +99,7 @@ class Results extends Action
         // Assign active tab
         $interface->assign('tab', $_REQUEST['tab']);
 
-        if (isset($configArray['ShardPreferences']['showTabs']) && $configArray['ShardPreferences']['showTabs'] != '0') {
+        if (isset($configArray['Tabs']['showTabs']) && $configArray['Tabs']['showTabs'] != '0') {
             $interface->assign('showtabs', true);
         }
 
