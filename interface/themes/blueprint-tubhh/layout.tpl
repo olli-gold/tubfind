@@ -83,9 +83,10 @@
       {/if}
 
 	  <div class="main">
-        {if true || $useSolr || $useWorldcat || $useSummon}
+        {if $showtabs || $useSolr || $useWorldcat || $useSummon}
         <div id="toptab">
           <ul>
+            {if $showtabs}
             <li{if $tab == "gbv" || $tab == ""} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=GBV Central&tab=gbv&localonly=1">{translate text="GBV Discovery"}</a></li>
             <li{if $tab == "localonly"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=localbiblio&tab=localonly">{translate text="Lokaler Index"}</a></li>
             <li{if $tab == "wwwtub"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=wwwtub&tab=wwwtub">{translate text="TUBHH Webseiten"}</a></li>
@@ -93,6 +94,7 @@
             <li{if $tab == "all"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=GBV Central&shard[]=TUBdok&shard[]=wwwtub&tab=all&localonly=1">{translate text="Alles mit GBV Discovery"}</a></li>
             <li{if $tab == "nogbvall"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=localbiblio&shard[]=TUBdok&shard[]=wwwtub&tab=nogbvall">{translate text="Alles ohne GBV Discovery"}</a></li>
             <li{if $tab == "tuhh"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=tuhhtest&tab=tuhh">{translate text="Test: TUHH Webseiten"}</a></li>
+            {/if}
             {if $useSolr}
             <li{if $module != "WorldCat" && $module != "Summon"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}">{translate text="University Library"}</a></li>
             {/if}

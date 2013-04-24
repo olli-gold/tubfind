@@ -98,6 +98,7 @@ class Results extends Action
 
         // Assign active tab
         $interface->assign('tab', $_REQUEST['tab']);
+        $interface->assign('showtabs', true);
 
         // TODO : Stats, move inside the search object
         // Setup Statistics Index Connection
