@@ -96,6 +96,9 @@ class Results extends Action
             }
         }
 
+        // Assign active tab
+        $interface->assign('tab', $_REQUEST['tab']);
+
         // TODO : Stats, move inside the search object
         // Setup Statistics Index Connection
         if ($configArray['Statistics']['enabled']) {
