@@ -102,6 +102,11 @@ class Results extends Action
         if (isset($configArray['Tabs']['showTabs']) && $configArray['Tabs']['showTabs'] != '0') {
             $interface->assign('showtabs', true);
         }
+        if (isset($configArray['Tabs']['autoreload']) && $configArray['Tabs']['autoreload'] != '0') {
+            if (file_exists('/srv/www/gbvproblem') && ($_REQUEST['tab'] == 'gbv' || $_REQUEST['tab'] == 'all' || $_REQUEST['tab'] == '' || array_key_exists('tab', $_REQUEST) === false)) {
+                $interface->assign('tab', 'nogbvall');
+            }
+        }
 
         // TODO : Stats, move inside the search object
         // Setup Statistics Index Connection
