@@ -84,6 +84,7 @@
 
 	  <div class="main">
         {if $showtabs || $useSolr || $useWorldcat || $useSummon}
+        {if $gbvmessage}<span style="color:red">{$gbvmessage}</span>{/if}
         <div id="toptab">
           <ul>
             {if $showtabs}
