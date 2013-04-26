@@ -103,7 +103,9 @@ class Results extends Action
             $interface->assign('showtabs', true);
         }
         if (isset($configArray['Tabs']['autoreload']) && $configArray['Tabs']['autoreload'] != '0') {
-            if (file_exists('/srv/www/gbvproblem') && ($_REQUEST['tab'] == 'gbv' || $_REQUEST['tab'] == 'all' || $_REQUEST['tab'] == '' || array_key_exists('tab', $_REQUEST) === false)) {
+            $rec = file_get_contents("http://www.tub.tu-harburg.de/ext/gbvindex/gbvslow");
+            // file_exists('/srv/www/gbvproblem')
+            if (substr($rec, 0, 4) == 'slow' && ($_REQUEST['tab'] == 'gbv' || $_REQUEST['tab'] == 'all' || $_REQUEST['tab'] == '' || array_key_exists('tab', $_REQUEST) === false)) {
                 $interface->assign('tab', 'nogbvall');
                 $interface->assign('gbvmessage', 'GBV Discovery ist derzeit zu langsam. Sie werden daher auf den lokalen Katalog umgeleitet. Aufs&auml;tze und Artikel k&ouml;nnen daher momentan nicht gefunden werden!');
             }
