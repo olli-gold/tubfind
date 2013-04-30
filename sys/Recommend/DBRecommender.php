@@ -47,6 +47,33 @@ class DBRecommender {
                 $this->dbData = $dbData;
         }
 
+        public function getFromDbis() {
+                $databases = array();
+                $done = array();
+                foreach ( $this->dbData as $id => $data ) {
+                    $counter = 0;
+                    $query = "
+                          SELECT * from dbr_database
+                          JOIN dbr_database_dbis ON dbr_database.dbr_database=dbr_db_id
+                          JOIN dbr_dbis ON dbr_database_dbis.dbis_id = dbr_dbis.dbis_id
+                          JOIN dbr_id ON dbr_id.dbr_id=dbr_dbis.dbr_id
+                          WHERE dbr_id.id='".$id."'
+                          ORDER BY dbr_dbis.dbis_id, ranking, dbr_database.bezeichnung ASC
+                    ";
+                    $dbisresult = mysql_query( $query , $this->mysqlConnector );
+                    while ( $row = mysql_fetch_assoc( $dbisresult ) ) {
+                        if (!in_array($row['dbr_database'], $done) && $counter < 3) {
+                            $done[] = $row['dbr_database'];
+                            $databases[] = array( 'name' => $row['bezeichnung'] , 'id' => $id , 'url' => $row['url'] , 'rank' => $data['rank'], 'group' => $row['name'] );
+                            $counter++;
+                        }
+                    }
+                }
+                mysql_free_result( $dbisresult );
+                $this->databases = array_map( 'unserialize' , array_unique( array_map( 'serialize' , $databases ) ) );
+
+        }
+
         public function selectDatabases() {
                 $databases = array();
                 $done = array();

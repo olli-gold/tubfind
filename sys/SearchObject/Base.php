@@ -2259,7 +2259,8 @@ abstract class SearchObject_Base
     public function getDBRecommendations() {
         $dbRecommender = new DBRecommender();
         $dbRecommender->retrieveDbData($this->searchTerms[0]['lookfor']);
-        $dbRecommender->selectDatabases();
+        //$dbRecommender->selectDatabases();
+        $dbRecommender->getFromDbis();
         $databases = $dbRecommender->getDatabases();
         return $databases;
     }
