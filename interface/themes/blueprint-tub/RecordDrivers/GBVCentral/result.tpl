@@ -17,9 +17,9 @@
       <b class="listtitle">
       {if !empty($summFullTitle)}
           {if is_array($summFullTitle)}
-              {$summFullTitle.0|truncate:90:"..."|escape}
+              {$summFullTitle.0|truncate:100:"..."|escape}
           {else}
-              {$summFullTitle|truncate:90:"..."|escape}
+              {$summFullTitle|truncate:100:"..."|escape}
           {/if}
       {else}
       {if !empty($summHighlightedTitle)}
