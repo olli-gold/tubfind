@@ -44,7 +44,13 @@
             {translate text=$location}
         </a>
     {else}
+        {if $location == "s. zugehörige Publikationen"}
+            <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">
+        {/if}
         {translate text=$location}
+        {if $location == "s. zugehörige Publikationen"}
+            </a>
+        {/if}
     {/if}
     </h3>
     <table cellpadding="2" cellspacing="0" border="0" class="citation" summary="{translate text='Holdings details from'} {translate text=$location}">
