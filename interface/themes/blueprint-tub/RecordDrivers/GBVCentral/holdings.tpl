@@ -88,7 +88,7 @@
             </td>
         </tr>
       {/if}
-      {if $holding.0.callnumber}
+      {if $holding.0.callnumber && $holding.0.callnumber != "-"}
         <tr>
           <th>{translate text="Call Number"}</th>
           <td class="callnumberResult">{$holding.0.callnumber|escape}</td>
@@ -122,7 +122,7 @@
         {if $row.barcode == "1" && count($volumes) == 0}
             <tr>
                 <th>{translate text="Copy"} {$row.number}</th>
-        {else}
+        {elseif $row.availability != -1}
             <tr>
                 <th>
                     {assign var="remarkShown" value="false"}
@@ -203,6 +203,17 @@
                                 {if $nothingShown == "0" && $isMultipartChildren == 1}
                                     <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
                                 {/if}
+                            {/if}
+                        {/if}
+                    {elseif $row.availability == -1}
+                        {if $interlibraryLoan=="1"}
+                            <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
+                        {else}
+                            {if $isMultipartChildren == 0}
+                                {translate text="Not for loan"}
+                            {/if}
+                            {if $nothingShown == "0" && $isMultipartChildren == 1}
+                                <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
                             {/if}
                         {/if}
                     {/if}
