@@ -9,7 +9,9 @@
     {foreach from=$databases item='current'}
     <li><a href="{$current.url|escape}">{$current.name|escape}</a>
     {if $current.rank}
-        {if substr_count($current.rank, '*') == 3}
+        {if substr_count($current.rank, '*') == 4}
+            <img src="{$url}/interface/themes/blueprint-tub/images/sternchen.png" alt="Ranking" /><img src="{$url}/interface/themes/blueprint-tub/images/sternchen.png" alt="Ranking" /><img src="{$url}/interface/themes/blueprint-tub/images/sternchen.png" alt="Ranking" /><img src="{$url}/interface/themes/blueprint-tub/images/sternchen.png" alt="Ranking" />
+        {elseif substr_count($current.rank, '*') == 3}
             <img src="{$url}/interface/themes/blueprint-tub/images/sternchen.png" alt="Ranking" /><img src="{$url}/interface/themes/blueprint-tub/images/sternchen.png" alt="Ranking" /><img src="{$url}/interface/themes/blueprint-tub/images/sternchen.png" alt="Ranking" />
         {elseif substr_count($current.rank, '*') == 2}
             <img src="{$url}/interface/themes/blueprint-tub/images/sternchen.png" alt="Ranking" /><img src="{$url}/interface/themes/blueprint-tub/images/sternchen.png" alt="Ranking" />

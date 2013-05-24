@@ -18,6 +18,7 @@ class DBRecommender {
         private $dbData = null;
         private $databases = null;
         private $databaseGroups = null;
+        private $searchTerm = null;
 
         public function __construct() {
                 if ( $connector = mysql_connect( $this->mysqlConnectData['host'] , $this->mysqlConnectData['user'] , $this->mysqlConnectData['password'] ) ) {
@@ -29,6 +30,7 @@ class DBRecommender {
         }
 
         public function retrieveDbData( $searchTerm ) {
+                $this->searchTerm = $searchTerm;
                 $recommenderURL = $this->recommenderURL.$searchTerm;
                 $dbrHandle = curl_init();
                 curl_setopt( $dbrHandle , CURLOPT_URL , $recommenderURL );
@@ -52,6 +54,12 @@ class DBRecommender {
                 $databases = array();
                 $databaseGroups = array();
                 $done = array();
+                $localResult = $this->selectLocalSubjects();
+                if ($localResult !== null) {
+                    $databases = $localResult['databases'];
+                    $databaseGroups = $localResult['databaseGroups'];
+                    $done = $localResult['done'];
+                }
                 foreach ( $this->dbData as $id => $data ) {
                     $counter = 0;
                     $query = "
@@ -102,6 +110,39 @@ class DBRecommender {
                         }
                 }
                 $this->databases = array_map( 'unserialize' , array_unique( array_map( 'serialize' , $databases ) ) );
+        }
+
+        /**
+        * selectLocalSubjects gets ONE (or zero) subject from the local database, matching the search term EXACTLY
+        */
+        public function selectLocalSubjects($searchTerm = null) {
+            if ($searchTerm === null) $searchTerm = $this->searchTerm;
+            // if $searchTerm is neither set as a parameter nor as an object attribute, we should return now; there are no results to expect
+            if ($searchTerm === null) return null;
+            $databaseGroups = array();
+            $databases = array();
+            $done = array();
+            $query = "
+                  SELECT * from dbr_database
+                  JOIN dbr_database_dbis ON dbr_database.dbr_database=dbr_db_id
+                  JOIN local_subjects ON local_subjects.dbis_id = dbr_database_dbis.dbis_id
+                  JOIN dbis_subjects ON dbis_subjects.id=dbr_database_dbis.dbis_id
+                  WHERE local_subjects.subject='".$searchTerm."'
+            ";
+            $dbisresult = mysql_query( $query , $this->mysqlConnector );
+            while ( $row = mysql_fetch_assoc( $dbisresult ) ) {
+                if (!in_array($row['dbr_database'], $done)) {
+                    if (array_key_exists($row['subject'], $databaseGroups) === false) {
+                        $databaseGroups[$row['subject']] = array();
+                    }
+                    $done[] = $row['dbr_database'];
+                    $databases[] = array( 'name' => $row['bezeichnung'] , 'id' => $id , 'url' => $row['url'] , 'rank' => '****', 'group' => $row['subject'] );
+                    $databaseGroups[$row['subject']][] = array( 'name' => $row['bezeichnung'] , 'id' => $id , 'url' => $row['url'] , 'rank' => '****' );
+                }
+            }
+            mysql_free_result( $dbisresult );
+            $returnArray = array('done' => $done, 'databases' => $databases, 'databaseGroups' => $databaseGroups);
+            return $returnArray;
         }
 
         public function getDatabases() {
