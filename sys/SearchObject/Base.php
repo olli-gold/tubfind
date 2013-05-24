@@ -2261,7 +2261,8 @@ abstract class SearchObject_Base
         $dbRecommender->retrieveDbData($this->searchTerms[0]['lookfor']);
         //$dbRecommender->selectDatabases();
         $dbRecommender->getFromDbis();
-        $databases = $dbRecommender->getDatabases();
+        //$databases = $dbRecommender->getDatabases();
+        $databases = $dbRecommender->getDatabaseGroups();
         return $databases;
     }
 

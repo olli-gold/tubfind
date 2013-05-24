@@ -17,6 +17,7 @@ class DBRecommender {
         private $timeOut = 10;
         private $dbData = null;
         private $databases = null;
+        private $databaseGroups = null;
 
         public function __construct() {
                 if ( $connector = mysql_connect( $this->mysqlConnectData['host'] , $this->mysqlConnectData['user'] , $this->mysqlConnectData['password'] ) ) {
@@ -49,6 +50,7 @@ class DBRecommender {
 
         public function getFromDbis() {
                 $databases = array();
+                $databaseGroups = array();
                 $done = array();
                 foreach ( $this->dbData as $id => $data ) {
                     $counter = 0;
@@ -64,14 +66,19 @@ class DBRecommender {
                     $dbisresult = mysql_query( $query , $this->mysqlConnector );
                     while ( $row = mysql_fetch_assoc( $dbisresult ) ) {
                         if (!in_array($row['dbr_database'], $done)) {
+                            if (array_key_exists($row['subject'], $databaseGroups) === false) {
+                                $databaseGroups[$row['subject']] = array();
+                            }
                             $done[] = $row['dbr_database'];
                             $databases[] = array( 'name' => $row['bezeichnung'] , 'id' => $id , 'url' => $row['url'] , 'rank' => $data['rank'], 'group' => $row['subject'] );
+                            $databaseGroups[$row['subject']][] = array( 'name' => $row['bezeichnung'] , 'id' => $id , 'url' => $row['url'] , 'rank' => $data['rank'] );
                             $counter++;
                         }
                     }
                 }
                 mysql_free_result( $dbisresult );
                 $this->databases = array_map( 'unserialize' , array_unique( array_map( 'serialize' , $databases ) ) );
+                $this->databaseGroups = $databaseGroups;
 
         }
 
@@ -99,6 +106,9 @@ class DBRecommender {
 
         public function getDatabases() {
                 return $this->databases;
+        }
+        public function getDatabaseGroups() {
+                return $this->databaseGroups;
         }
 
 }

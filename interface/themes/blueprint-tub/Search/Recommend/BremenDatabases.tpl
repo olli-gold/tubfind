@@ -3,10 +3,11 @@
   <h4>{translate text="Databases"}</h4>
 <div class="authorbox">
   <p>{translate text='database_recommendations'}</p>
-  <ul>
-  {foreach from=$dbRecommendations item='current'}
+  {foreach from=$dbRecommendations item='databases' key='group'}
+    <p style="font-weight:bold">{$group}</p>
+    <ul style="padding-bottom:12px;">
+    {foreach from=$databases item='current'}
     <li><a href="{$current.url|escape}">{$current.name|escape}</a>
-    ({$current.group|escape})
     {if $current.rank}
         {if substr_count($current.rank, '*') == 3}
             <img src="{$url}/interface/themes/blueprint-tub/images/sternchen.png" alt="Ranking" /><img src="{$url}/interface/themes/blueprint-tub/images/sternchen.png" alt="Ranking" /><img src="{$url}/interface/themes/blueprint-tub/images/sternchen.png" alt="Ranking" />
@@ -21,8 +22,9 @@
     <br/>{$current.description|escape}
     {/if}
     </li>
+    {/foreach}
+    </ul>
   {/foreach}
-  </ul>
 </div>
 </div>
 {/if}
