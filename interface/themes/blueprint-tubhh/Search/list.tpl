@@ -48,7 +48,7 @@
 
   {if $pageLinks.all}<div class="pagination">{$pageLinks.all}</div>{/if}
   
-  {include file="Search/Recommend/BremenDatabases.tpl"}
+  {*include file="Search/Recommend/BremenDatabases.tpl"*}
 
   <div class="searchtools">
     <strong>{translate text='Search Tools'}:</strong>

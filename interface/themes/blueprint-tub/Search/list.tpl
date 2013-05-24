@@ -5,7 +5,7 @@
       {include file=$recommendations}
     {/foreach}
   {/if}
-  {include file="Search/Recommend/BremenDatabases.tpl"}
+  {*include file="Search/Recommend/BremenDatabases.tpl"*}
   
   {* Listing Options *}
   <div class="resulthead">
