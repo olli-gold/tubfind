@@ -342,11 +342,21 @@ class GBVCentralRecord extends MarcRecord
             'rft.date' => $pubDate
         );
 
+        $urls = $this->getUrls();
+        if ($urls) {
+            foreach ($urls as $url => $desc) {
+                // check if we have a doi
+                if (strstr($url, 'http://dx.doi.org/') !== false) {
+                    $params['rft_id'] = 'info:doi/'.substr($url, 18);
+                }
+            }
+        }
+
         // Add additional parameters based on the format of the record:
         $formats = $this->getFormats();
 
         // If we have multiple formats, Book and Journal are most important...
-        if (in_array('Aufsätze', $formats) || in_array('Elektronische Aufsätze', $formats)) {
+        if (in_array('Aufsätze', $formats) || in_array('Elektronische Aufsätze', $formats) || in_array('electronic Article', $formats)) {
             $format = 'Article';
         }
         else if (in_array('Book', $formats) || in_array('eBook', $formats)) {
@@ -406,8 +416,8 @@ class GBVCentralRecord extends MarcRecord
             case 'Article':
                 $params['rft.issn'] = $this->getCleanISSN();
                 $params['rft.genre'] = 'article';
+                unset($params['rft.date']);
                 $params['rft.atitle'] = $params['rft.title'];
-                //unset($params['rft.date']);
                 $articleFields = $this->getArticleFieldedReference();
                 if ($articleFields['volume']) $params['rft.volume'] = $articleFields['volume'];
                 if ($articleFields['issue']) $params['rft.issue'] = $articleFields['issue'];
