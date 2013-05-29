@@ -31,12 +31,10 @@
 {assign var="thisIsAnURL" value="false"}
 
 {foreach from=$gbvholdings item=holding key=location}
-    {if $location}
-        {assign var="nothingShown" value="1"}
-    {/if}
     <h3>
     {if $holding.0.locationhref}
         {if $holding.0.locationhref == "\n"}
+            {assign var="nothingShown" value="1"}
             <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">
         {else}
             <a href="{$holding.0.locationhref}">
@@ -45,6 +43,7 @@
         </a>
     {else}
         {if $location == "s. zugehörige Publikationen"}
+            {assign var="nothingShown" value="1"}
             <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">
         {/if}
         {translate text=$location}
@@ -201,6 +200,7 @@
                                     {translate text="Not for loan"}
                                 {/if}
                                 {if $nothingShown == "0" && $isMultipartChildren == 1}
+                                    {assign var="nothingShown" value="1"}
                                     <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
                                 {/if}
                             {/if}
@@ -213,6 +213,7 @@
                                 {translate text="Not for loan"}
                             {/if}
                             {if $nothingShown == "0" && $isMultipartChildren == 1}
+                                {assign var="nothingShown" value="1"}
                                 <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
                             {/if}
                         {/if}
@@ -235,6 +236,10 @@
                 <br/>{$row.notes.remark.$language}
             {/if}
         {/if}
+        {/if}
+        {if $nothingShown == "0" && $isMultipartChildren == 1}
+            {assign var="nothingShown" value="1"}
+            <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
         {/if}
                 </td>
             </tr>
