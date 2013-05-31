@@ -424,6 +424,8 @@ class GBVCentralRecord extends MarcRecord
                 if ($articleFields['spage']) $params['rft.spage'] = $articleFields['spage'];
                 if ($articleFields['epage']) $params['rft.epage'] = $articleFields['epage'];
                 if ($articleFields['date']) $params['rft.date'] = $articleFields['date'];
+                $journalTitle = $this->getArticleHReference();
+                if ($journalTitle['jref']) $params['rft.jtitle'] = $journalTitle['jref'];
                 unset($params['rft.title']);
                 /*
                 if (isset($configArray['OpenURL']['resolver']) &&
