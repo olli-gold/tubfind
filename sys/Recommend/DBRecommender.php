@@ -31,7 +31,7 @@ class DBRecommender {
 
         public function retrieveDbData( $searchTerm ) {
                 $this->searchTerm = $searchTerm;
-                $recommenderURL = $this->recommenderURL.$searchTerm;
+                $recommenderURL = $this->recommenderURL.urlencode($searchTerm);
                 $dbrHandle = curl_init();
                 curl_setopt( $dbrHandle , CURLOPT_URL , $recommenderURL );
                 curl_setopt( $dbrHandle , CURLOPT_RETURNTRANSFER , true );
@@ -39,6 +39,8 @@ class DBRecommender {
                 curl_setopt( $dbrHandle , CURLOPT_TIMEOUT_MS , 1000 * $this->timeout );
                 $reply = curl_exec( $dbrHandle );
                 curl_close( $dbrHandle );
+
+                //$reply = file_get_contents($recommenderURL);
 
                 $xml_parser = xml_parser_create();
                 xml_parse_into_struct ( $xml_parser , $reply , &$parseValues , &$parseIndex );
