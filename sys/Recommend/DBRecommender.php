@@ -43,7 +43,7 @@ class DBRecommender {
                 //$reply = file_get_contents($recommenderURL);
 
                 $xml_parser = xml_parser_create();
-                xml_parse_into_struct ( $xml_parser , $reply , &$parseValues , &$parseIndex );
+                xml_parse_into_struct ( $xml_parser , $reply , $parseValues , $parseIndex );
 
                 $dbData = array();
                 foreach ( $parseIndex['CLUSTER'] as $index ) {
