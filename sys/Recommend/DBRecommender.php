@@ -14,7 +14,7 @@ class DBRecommender {
         private $recommenderURL = 'http://suche.suub.uni-bremen.de/cgi-bin/CiXbase/brewis/CiXbase_search?index=L&CLUSTER=3&RELEVANCE=45&PRECISION=220&n_rtyp=ceED&n_dtyp=1L&dtyp=ab&LAN=DE&act=search&term=';
         private $mysqlConnector = null;
         private $mysqlConnectData = array( 'host' => 'localhost' , 'user' => 'vufind' , 'password' => 'vufinder2010' , 'db' => 'db_recommender' );
-        private $timeOut = 10;
+        private $timeout = 10;
         private $dbData = null;
         private $databases = null;
         private $databaseGroups = null;
