@@ -6,6 +6,7 @@
  * PHP version 5
  *
  * SUB Hamburg / Hajo Seng
+ * modifiziert und erweitert von TUB Hamburg-Harburg / Oliver Goldschmidt <o.goldschmidt@tu-harburg.de>
  *
 **/
 
