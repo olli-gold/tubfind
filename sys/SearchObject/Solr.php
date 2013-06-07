@@ -87,6 +87,8 @@ class SearchObject_Solr extends SearchObject_Base
     protected $spellSimple   = false;
     protected $spellSkipNumeric = true;
 
+    protected $stopwordlist = array();
+
     /**
      * Constructor. Initialise some details about the server
      *
@@ -100,6 +102,11 @@ class SearchObject_Solr extends SearchObject_Base
         global $configArray;
         global $user;
 
+        $stopwordlist_csv = 'a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your';
+        $stopwordlist_de_csv = 'ab aber ähnlich alle allein allem aller alles allg allgemein als also am an and andere anderes auch auf aus außer been bei beim besonders bevor bietet bis bzw da dabei dadurch dafür daher dann daran darauf daraus das daß davon davor dazu dem den denen denn dennoch der derem deren des deshalb die dies diese diesem diesen dieser dieses doch dort durch eben ein eine einem einen einer eines einfach er es etc etwa etwas for für ganz ganze ganzem ganzen ganzer ganzes gar gleich gute hat hinter ihm ihr ihre ihrem ihren ihrer ihres im in ist ja je jede jedem jeden jeder jedes jene jenem jenen jener jenes jetzt kann kein keine keinem keinen keiner keines kommen kommt können leicht machen man mehr mehrere meist mit muß nach neu neue neuem neuen neuer neues nicht noch nur ob oder of ohne per schwierig sehr sein seinem seinen seiner seines seit selbst sich sie sind so sodaß solch solche solchem solchen solcher solches sollte sollten soviel sowohl statt über um und uns unser unsere unseren unseres unter viel viele vom von vor wann war was wenig wenige weniger wenn wer wie wieder wieviel wird wirklich wo wurde wurden zu zum zur zwischen';
+        $stopwordlist_en_array = explode(',', $stopwordlist_csv);
+        $stopwordlist_de_array = explode(' ', $stopwordlist_de_csv);
+        $this->stopwordlist = array_merge($stopwordlist_en_array, $stopwordlist_de_array);
         // Initialise the index
         $this->indexEngine = ConnectionManager::connectToIndex();
 
@@ -180,9 +187,9 @@ class SearchObject_Solr extends SearchObject_Base
         if (isset($searchSettings['Autocomplete']['enabled'])) {
             $this->autocompleteStatus = $searchSettings['Autocomplete']['enabled'];
         }
-        // Add by Frank Morgner loading libary group
-        if (isset($searchSettings['LibraryGroup']['libraries'])) {
-            $this->libraryGroup = $searchSettings['LibraryGroup']['libraries'];
+        // Add by Oliver Goldschmidt to read usage of AuthorityData
+        if (isset($searchSettings['AuthorityData']['authorityUsage'])) {
+            $this->authorityUsage = $searchSettings['AuthorityData']['authorityUsage'];
         }
 
         // Load sort preferences (or defaults if none in .ini file):
@@ -1212,26 +1219,29 @@ class SearchObject_Solr extends SearchObject_Base
             $this->fields = '*,score';
         }
 
-       // --- finc Normdaten HACK BUZZER: FIXME TODO HACK UBL ---
-       $skip=0;
-       foreach ($this->searchTerms as &$v) {
-           if (isset($v['index']) && $v['index']=="rvk_facet") { 
-               $skip=1;
+       // --- TUHH Normdaten ---
+       //if ($this->authorityUsage == 'expand') {
+       if ($configArray['AuthorityData']['enabled'] == true) {
+           $skip=0;
+           foreach ($this->searchTerms as &$v) {
+               if (isset($v['index']) && $v['index']=="rvk_facet") {
+                   $skip=1;
+                }
             }
-        }
-       if(true && isset($configArray['fincNorm']) && $withAuthorityData === true && mb_ereg_match("\w",$this->query)>0 && $skip==0) {
-            if(isset($configArray['fincNorm']['service_url'])) {
+            if (isset($configArray['AuthorityData']['service_url']) && $skip == 0) {
+                if (in_array($this->query,$this->stopwordlist) === false) {
                 $ch=curl_init();
-                curl_setopt($ch,CURLOPT_URL,$configArray['fincNorm']['service_url']);
+                curl_setopt($ch,CURLOPT_URL,$configArray['AuthorityData']['service_url']);
                 curl_setopt($ch,CURLOPT_POSTFIELDS,"qs=".urlencode(str_replace("\"","",trim($this->query))));
                 curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-                $enhanced=trim(curl_exec($ch));
+                if( ! $enhanced = curl_exec($ch)) {
+                    trigger_error(curl_error($ch));
+                }
                 curl_close($ch);
-               
+
                 if(strlen($enhanced)>0) {
-                    
                     $enhanced=str_replace(","," ",$enhanced);
-                
+
                     $t1=mb_split("[\s\,\;\!\.\"]+",$this->query,-1);
                     $t2="";
                     foreach($t1 as $t) {
@@ -1243,8 +1253,29 @@ class SearchObject_Solr extends SearchObject_Base
                             $t2.=mb_strtolower($t,'UTF-8');
                         }
                     }
-                    
+
                     $this->query="( ".$t2." ) ".trim($enhanced);
+                    }
+                    // Falls mehrere Suchbegriffe eingegeben wurden, gehe jetzt alle nochmal durch
+                    $sts = explode(' ', $this->query);
+                    if (count($sts) > 1) {
+                    foreach ($sts as $st) {
+                        if (in_array($st,$this->stopwordlist) === false) {
+                        $ch=curl_init();
+                        curl_setopt($ch,CURLOPT_URL,$configArray['AuthorityData']['service_url']);
+                        curl_setopt($ch,CURLOPT_POSTFIELDS,"qs=".urlencode(str_replace("\"","",trim($st))));
+                        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+                        if( ! $enhanced = curl_exec($ch)) {
+                            trigger_error(curl_error($ch));
+                        }
+                        curl_close($ch);
+
+                        if (trim($enhanced) != '') {
+                            $this->query .= trim($enhanced);
+                        }
+                        }
+                    }
+                    }
                 }
             }
         }
