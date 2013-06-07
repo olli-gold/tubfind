@@ -97,7 +97,9 @@ class Results extends Action
         }
 
         // Assign active tab
-        $interface->assign('tab', $_REQUEST['tab']);
+        if (array_key_exists('tab', $_REQUEST)) {
+            $interface->assign('tab', $_REQUEST['tab']);
+        }
 
         if (isset($configArray['Tabs']['showTabs']) && $configArray['Tabs']['showTabs'] != '0') {
             $interface->assign('showtabs', true);

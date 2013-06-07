@@ -47,8 +47,10 @@ class DBRecommender {
                 xml_parse_into_struct ( $xml_parser , $reply , $parseValues , $parseIndex );
 
                 $dbData = array();
-                foreach ( $parseIndex['CLUSTER'] as $index ) {
+                if (array_key_exists('CLUSTER', $parseIndex)) {
+                    foreach ( $parseIndex['CLUSTER'] as $index ) {
                         $dbData[$parseValues[$index]['value']] = array( 'freq' => $parseValues[$index]['attributes']['FREQ'] , 'rank' => $parseValues[$index]['attributes']['RANK'] );
+                    }
                 }
                 $this->dbData = $dbData;
         }
@@ -86,8 +88,8 @@ class DBRecommender {
                             $counter++;
                         }
                     }
+                    mysql_free_result( $dbisresult );
                 }
-                mysql_free_result( $dbisresult );
                 $this->databases = array_map( 'unserialize' , array_unique( array_map( 'serialize' , $databases ) ) );
                 $this->databaseGroups = $databaseGroups;
 
