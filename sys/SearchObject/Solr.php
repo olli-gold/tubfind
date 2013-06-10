@@ -1222,7 +1222,9 @@ class SearchObject_Solr extends SearchObject_Base
        // --- TUHH Normdaten ---
        //if ($this->authorityUsage == 'expand') {
        if ($configArray['AuthorityData']['enabled'] == true) {
+           $terms = array();
            $skip=0;
+           if (trim($this->query) !== '*:*') {
            foreach ($this->searchTerms as &$v) {
                if (isset($v['index']) && $v['index']=="rvk_facet") {
                    $skip=1;
@@ -1259,27 +1261,31 @@ class SearchObject_Solr extends SearchObject_Base
                     // Falls mehrere Suchbegriffe eingegeben wurden, gehe jetzt alle nochmal durch
                     $sts = explode(' ', $this->query);
                     if (count($sts) > 1) {
-                    foreach ($sts as $st) {
-                        if (in_array($st,$this->stopwordlist) === false) {
-                        $ch=curl_init();
-                        curl_setopt($ch,CURLOPT_URL,$configArray['AuthorityData']['service_url']);
-                        curl_setopt($ch,CURLOPT_POSTFIELDS,"qs=".urlencode(str_replace("\"","",trim($st))));
-                        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-                        if( ! $enhanced = curl_exec($ch)) {
-                            trigger_error(curl_error($ch));
-                        }
-                        curl_close($ch);
+                        foreach ($sts as $st) {
+                            // Wenn der Suchbegriff nicht in der Stopwortliste steht, geh ihm nach und suche ihn im Normdatenindex
+                            if (in_array($st,$this->stopwordlist) === false) {
+                                $ch=curl_init();
+                                curl_setopt($ch,CURLOPT_URL,$configArray['AuthorityData']['service_url']);
+                                curl_setopt($ch,CURLOPT_POSTFIELDS,"qs=".urlencode(str_replace("\"","",trim($st))));
+                                curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+                                if( ! $enhanced = curl_exec($ch)) {
+                                    trigger_error(curl_error($ch));
+                                }
+                                curl_close($ch);
 
-                        if (trim($enhanced) != '') {
-                            $this->query .= trim($enhanced);
+                                if (trim($enhanced) != '') {
+                                    $terms[] = '('.trim($enhanced).')';
+                                }
+                            }
                         }
-                        }
-                    }
                     }
                 }
             }
+            }
         }
-        // echo "<pre>".$this->query."</pre>";
+        // print_r($terms);
+        $this->query .= ' OR ('.implode(' AND ', $terms).')';
+        //  echo "<pre>".$this->query."</pre>";
         // --- HACK END ---
 
         if (isset($this->totalTagResults)) {
