@@ -156,11 +156,13 @@ class Results extends Action
             'sideRecommendations', $searchObject->getRecommendationsTemplates('side')
         );
 
-        $dbr = $searchObject->getDBRecommendations();
-//print_r($dbr);
-        $interface->assign(
-            'dbRecommendations', $dbr
-        );
+        if (isset($configArray['DBR']['enabled']) && $configArray['DBR']['enabled'] == true) {
+            $dbr = $searchObject->getDBRecommendations();
+            //print_r($dbr);
+            $interface->assign(
+                'dbRecommendations', $dbr
+            );
+        }
 
         if ($searchObject->getResultTotal() < 1) {
             // No record found
