@@ -1282,9 +1282,9 @@ class SearchObject_Solr extends SearchObject_Base
                 }
             }
             }
-        }
         // print_r($terms);
         $this->query .= ' OR ('.implode(' AND ', $terms).')';
+        }
         //  echo "<pre>".$this->query."</pre>";
         // --- HACK END ---
 
