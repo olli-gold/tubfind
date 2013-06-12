@@ -6,8 +6,8 @@ if (window.XMLHttpRequest) {
 }
 
 if (http != null) {
-    var lookForString = encodeURI( 'html' );
-    http.open( "GET" , "/Search/DBRecommendations?lookfor=" + lookForString , true );
+    var lookForString = gup( 'lookfor' );
+    http.open( "GET" , "/AJAX/DBRecommendations?lookfor=" + lookForString , true );
 
     http.onreadystatechange = recommend;
     http.send( null );
@@ -18,4 +18,16 @@ function recommend() {
         var htmlResponse = http.responseText;
         document.getElementById( "dbRecommender" ).innerHTML = htmlResponse;
     }
+}
+
+function gup( name )
+{
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( window.location.href );
+  if( results == null )
+    return "";
+  else
+    return results[1];
 }

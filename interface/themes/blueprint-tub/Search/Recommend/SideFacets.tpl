@@ -90,7 +90,9 @@
   {/if}
 </div>
 
-{*include file="Search/Recommend/BremenDatabases.tpl"*}
+{if $dbrenabled == 1}
 <div id="dbRecommender">
-Hier sollten dann Datenbanken erscheinen
+    <h4>{translate text="Databases"}</h4>
+    <span class="ajax_availability" id="dbrWait">{translate text='Loading'}...</span>
 </div>
+{/if}
