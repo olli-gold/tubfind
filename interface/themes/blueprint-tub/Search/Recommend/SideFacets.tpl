@@ -90,4 +90,7 @@
   {/if}
 </div>
 
-{include file="Search/Recommend/BremenDatabases.tpl"}
+{*include file="Search/Recommend/BremenDatabases.tpl"*}
+<div id="dbRecommender">
+Hier sollten dann Datenbanken erscheinen
+</div>

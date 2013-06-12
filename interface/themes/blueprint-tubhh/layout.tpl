@@ -48,6 +48,7 @@
 
     {* Load common javascript functions *}
     {js filename="common.js"}
+    {js filename="dbr.js"}
 
     {* Load VuFind specific stylesheets *}
     {css media="screen, projection" filename="styles.css"}

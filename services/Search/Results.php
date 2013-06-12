@@ -156,7 +156,7 @@ class Results extends Action
             'sideRecommendations', $searchObject->getRecommendationsTemplates('side')
         );
 
-        if (isset($configArray['DBR']['enabled']) && $configArray['DBR']['enabled'] == true) {
+        if (false && isset($configArray['DBR']['enabled']) && $configArray['DBR']['enabled'] == true) {
             $dbr = $searchObject->getDBRecommendations();
             //print_r($dbr);
             $interface->assign(
