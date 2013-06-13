@@ -77,7 +77,7 @@
             {if $format=="Serial" || $format=="Journal" || $format=="Electronic" || $format=="Aufsätze" || $format=="eBook" || $format=="Elektronische Aufsätze"}
                 {*assign var="showAvail" value="false"*}
             {/if}
-            {if $format=="Electronic" || $format=="eBook" || $format=="Elektronische Aufsätze" || $format=="Elektronische Ressource"}
+            {if $format=="Electronic" || $format=="eBook" || $format=="Elektronische Aufsätze" || $format=="Elektronische Ressource" || $format=="electronic Article" }
                 {assign var="summInterlibraryLoan" value="0"}
                 {assign var="electronicResource" value="1"}
             {/if}
