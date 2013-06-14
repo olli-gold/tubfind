@@ -1,15 +1,19 @@
+{assign var="showAvail" value="1"}
+
 {if is_array($recordFormat)}
     {foreach from=$recordFormat item=displayFormat name=loop}
-        {if $displayFormat=="Electronic" || $displayFormat=="eBook" || $displayFormat=="Elektronische Aufsätze"}
+        {if $displayFormat=="Electronic" || $displayFormat=="eBook" || $displayFormat=="Elektronische Aufsätze"  || $displayFormat=="electronic Article"}
             {assign var="interlibraryLoan" value="0"}
+            {assign var="showAvail" value="0"}
         {/if}
         {if $displayFormat=="Journal" || $displayFormat=="Serial"}
             {assign var="showAssociated" value="1"}
         {/if}
     {/foreach}
 {else}
-    {if $recordFormat=="Electronic" || $recordFormat=="eBook" || $recordFormat=="Elektronische Aufsätze"}
+    {if $recordFormat=="Electronic" || $recordFormat=="eBook" || $recordFormat=="Elektronische Aufsätze" || $recordFormat=="electronic Article" }
         {assign var="interlibraryLoan" value="0"}
+        {assign var="showAvail" value="0"}
     {/if}
     {if $recordFormat=="Journal" || $recordFormat=="Serial"}
         {assign var="showAssociated" value="1"}
@@ -196,7 +200,7 @@
                             {if $interlibraryLoan=="1"}
                                 <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
                             {else}
-                                {if $isMultipartChildren == 0}
+                                {if $isMultipartChildren == 0 && $showAvail == 1}
                                     {translate text="Not for loan"}
                                 {/if}
                                 {if $nothingShown == "0" && $isMultipartChildren == 1}
@@ -209,7 +213,7 @@
                         {if $interlibraryLoan=="1"}
                             <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
                         {else}
-                            {if $isMultipartChildren == 0}
+                            {if $isMultipartChildren == 0 && $showAvail == 1}
                                 {translate text="Not for loan"}
                             {/if}
                             {if $nothingShown == "0" && $isMultipartChildren == 1}
