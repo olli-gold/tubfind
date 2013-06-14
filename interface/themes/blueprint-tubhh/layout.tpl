@@ -61,6 +61,10 @@
 	  <div class="header">
 		{include file="header.tpl"}
 	  </div>
+          <div id="access">
+              {include file="topnav.tpl"}
+          </div>
+          <div>&nbsp;</div>
 
 	  {if $showTopSearchBox}
 	  <div class="searchbox">
