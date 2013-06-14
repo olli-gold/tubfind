@@ -185,7 +185,14 @@ class GBVCentralRecord extends MarcRecord
         // an ISSN.  We may eventually want to make this rule more flexible,
         // but for now the ISSN restriction is designed to be consistent with
         // the way we display items on the search results list.
-        $hasOpenURL = ($this->openURLActive('holdings') && $this->getCleanISSN());
+        $hasOpenURL = ($this->openURLActive('results') && (
+                       in_array('Journal', $this->getFormats()) ||
+                       in_array('eJournal', $this->getFormats()) ||
+                       $this->getCleanISSN() ||
+                       in_array('Aufsätze', $this->getFormats()) ||
+                       in_array('Elektronische Aufsätze', $this->getFormats()) ||
+                       in_array('electronic Article', $this->getFormats())
+        ));
         if ($hasOpenURL) {
             $interface->assign('holdingsOpenURL', $this->getOpenURL());
         }
