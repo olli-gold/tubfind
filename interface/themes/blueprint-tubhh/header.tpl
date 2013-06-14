@@ -9,7 +9,7 @@
 	<a href="{$url}">
 	<!-- <img style="width:150px;height:50px;padding-left:20px;float:left;" src="{$path}/interface/themes/blueprint-tubhh/images/logo/tubfind_logo-grau.jpg" alt="TUBfind-Home" title="TUBfind-Home"/> -->
 	</a>
-	
+	&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red; font-weight:bold;">Dies ist das Entwicklungs- und Testsystem!</span>
 	<div style="float:left;padding-left:180px;">
         <form method="post" name="german" action="" id="germanForm"><input type="hidden" name="mylang" value="de" /></form>
         <form method="post" name="english" action="" id="englishForm"><input type="hidden" name="mylang" value="en" /></form>
