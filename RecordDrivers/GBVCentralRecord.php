@@ -485,6 +485,7 @@ class GBVCentralRecord extends MarcRecord
                     $parts[] = $key . '=' . urlencode($value);
                 }
             }
+
             return implode('&', $parts);
         }
 
