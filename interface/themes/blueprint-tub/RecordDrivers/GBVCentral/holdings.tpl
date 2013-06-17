@@ -199,7 +199,7 @@
                         {else}
                             {if $interlibraryLoan=="1"}
                                 <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
-                                <span> | <a href="http://www.tub.tu-harburg.de/ext/buchwunsch.php?{$holdingsOpenUrl|escape}">{translate text="Erwerbungsvorschlag"}</a></span>
+                                <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}?{$holdingsOpenUrl|escape}">{translate text="Erwerbungsvorschlag"}</a></span>
                             {else}
                                 {if $isMultipartChildren == 0 && $showAvail == 1}
                                     {translate text="Not for loan"}
@@ -213,7 +213,7 @@
                     {elseif $row.availability == -1}
                         {if $interlibraryLoan=="1"}
                             <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
-                            <span> | <a href="http://www.tub.tu-harburg.de/ext/buchwunsch.php?{$holdingsOpenUrl|escape}">{translate text="Erwerbungsvorschlag"}</a></span>
+                            <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}?{$holdingsOpenUrl|escape}">{translate text="Erwerbungsvorschlag"}</a></span>
                         {else}
                             {if $isMultipartChildren == 0 && $showAvail == 1}
                                 {translate text="Not for loan"}
