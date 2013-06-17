@@ -133,6 +133,7 @@
 
       {if $summInterlibraryLoan=="1"}
           <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$summId}" target="_blank">{translate text="interlibrary loan"}</a></span>
+          <span> | <a href="http://www.tub.tu-harburg.de/ext/buchwunsch.php?{$summOpenUrl|escape}">{translate text="Erwerbungsvorschlag"}</a></span>
       {/if}
 
     </div>
