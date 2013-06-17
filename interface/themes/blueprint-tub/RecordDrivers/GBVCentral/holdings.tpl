@@ -1,4 +1,5 @@
 {assign var="showAvail" value="1"}
+{assign var="showAcqProp" value="0"}
 
 {if is_array($recordFormat)}
     {foreach from=$recordFormat item=displayFormat name=loop}
@@ -9,6 +10,9 @@
         {if $displayFormat=="Journal" || $displayFormat=="Serial"}
             {assign var="showAssociated" value="1"}
         {/if}
+        {if $displayFormat=="Book"}
+            {assign var="showAcqProp" value="1"}
+        {/if}
     {/foreach}
 {else}
     {if $recordFormat=="Electronic" || $recordFormat=="eBook" || $recordFormat=="Elektronische Aufsätze" || $recordFormat=="electronic Article" }
@@ -17,6 +21,9 @@
     {/if}
     {if $recordFormat=="Journal" || $recordFormat=="Serial"}
         {assign var="showAssociated" value="1"}
+    {/if}
+    {if $recordFormat=="Book"}
+        {assign var="showAcqProp" value="1"}
     {/if}
 {/if}
 
@@ -199,7 +206,9 @@
                         {else}
                             {if $interlibraryLoan=="1"}
                                 <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
-                                <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}?{$holdingsOpenUrl|escape}">{translate text="Erwerbungsvorschlag"}</a></span>
+                                {if $showAcqProp=="1"}
+                                    <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}?{$holdingsOpenUrl|escape}&gvk.ppn={$id}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
+                                {/if}
                             {else}
                                 {if $isMultipartChildren == 0 && $showAvail == 1}
                                     {translate text="Not for loan"}
@@ -213,7 +222,9 @@
                     {elseif $row.availability == -1}
                         {if $interlibraryLoan=="1"}
                             <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
-                            <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}?{$holdingsOpenUrl|escape}">{translate text="Erwerbungsvorschlag"}</a></span>
+                            {if $showAcqProp=="1"}
+                                <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}?{$holdingsOpenUrl|escape}&gvk.ppn={$id}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
+                            {/if}
                         {else}
                             {if $isMultipartChildren == 0 && $showAvail == 1}
                                 {translate text="Not for loan"}

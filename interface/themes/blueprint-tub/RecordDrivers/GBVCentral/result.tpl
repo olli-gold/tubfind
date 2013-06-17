@@ -88,6 +88,9 @@
             {if $format=="Elektronische Ressource"}
                 {assign var="showCallNumber" value="0"}
             {/if}
+            {if $format=="Book"}
+                {assign var="showAcqProp" value="1"}
+            {/if}
         {/foreach}
     {if $showAvail=="true" && $summInterlibraryLoan=="0"}
       {if $summAjaxStatus}
@@ -133,7 +136,9 @@
 
       {if $summInterlibraryLoan=="1"}
           <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$summId}" target="_blank">{translate text="interlibrary loan"}</a></span>
-          <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}?{$summOpenUrl|escape}">{translate text="Erwerbungsvorschlag"}</a></span>
+          {if $showAcqProp=="1"}
+              <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}?{$summOpenUrl|escape}&gvk.ppn={$summId}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
+          {/if}
       {/if}
 
     </div>
