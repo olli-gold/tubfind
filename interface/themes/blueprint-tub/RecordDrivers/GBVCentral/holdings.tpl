@@ -207,7 +207,7 @@
                             {if $interlibraryLoan=="1"}
                                 <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
                                 {if $showAcqProp=="1"}
-                                    <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}?{$holdingsOpenUrl|escape}&gvk.ppn={$id}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
+                                    <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}{$holdingsOpenUrl|escape}&gvk.ppn={$id}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
                                 {/if}
                             {else}
                                 {if $isMultipartChildren == 0 && $showAvail == 1}
@@ -223,7 +223,7 @@
                         {if $interlibraryLoan=="1"}
                             <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
                             {if $showAcqProp=="1"}
-                                <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}?{$holdingsOpenUrl|escape}&gvk.ppn={$id}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
+                                <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}{$holdingsOpenUrl|escape}&gvk.ppn={$id}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
                             {/if}
                         {else}
                             {if $isMultipartChildren == 0 && $showAvail == 1}

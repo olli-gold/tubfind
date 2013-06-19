@@ -137,7 +137,7 @@
       {if $summInterlibraryLoan=="1"}
           <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$summId}" target="_blank">{translate text="interlibrary loan"}</a></span>
           {if $showAcqProp=="1"}
-              <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}?{$summOpenUrl|escape}&gvk.ppn={$summId}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
+              <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}{$summOpenUrl|escape}&gvk.ppn={$summId}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
           {/if}
       {/if}
 
