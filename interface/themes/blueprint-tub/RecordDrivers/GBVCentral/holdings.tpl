@@ -1,5 +1,6 @@
 {assign var="showAvail" value="1"}
 {assign var="showAcqProp" value="0"}
+{assign var="showArticleAvail" value="1"}
 
 {if is_array($recordFormat)}
     {foreach from=$recordFormat item=displayFormat name=loop}
@@ -13,6 +14,9 @@
         {if $displayFormat=="Book"}
             {assign var="showAcqProp" value="1"}
         {/if}
+        {if $displayFormat=="Article"}
+            {assign var="showArticleAvail" value="0"}
+        {/if}
     {/foreach}
 {else}
     {if $recordFormat=="Electronic" || $recordFormat=="eBook" || $recordFormat=="Elektronische Aufsätze" || $recordFormat=="electronic Article" }
@@ -24,6 +28,9 @@
     {/if}
     {if $recordFormat=="Book"}
         {assign var="showAcqProp" value="1"}
+    {/if}
+    {if $recordFormat=="Article"}
+        {assign var="showArticleAvail" value="0"}
     {/if}
 {/if}
 
@@ -210,7 +217,7 @@
                                     <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}{$holdingsOpenUrl|escape}&gvk.ppn={$id}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
                                 {/if}
                             {else}
-                                {if $isMultipartChildren == 0 && $showAvail == 1}
+                                {if $isMultipartChildren == 0 && $showAvail == 1 && $showArticleAvail == 1}
                                     {translate text="Not for loan"}
                                 {/if}
                                 {if $nothingShown == "0" && $isMultipartChildren == 1}
@@ -226,7 +233,7 @@
                                 <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}{$holdingsOpenUrl|escape}&gvk.ppn={$id}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
                             {/if}
                         {else}
-                            {if $isMultipartChildren == 0 && $showAvail == 1}
+                            {if $isMultipartChildren == 0 && $showAvail == 1 && $showArticleAvail == 1}
                                 {translate text="Not for loan"}
                             {/if}
                             {if $nothingShown == "0" && $isMultipartChildren == 1}
