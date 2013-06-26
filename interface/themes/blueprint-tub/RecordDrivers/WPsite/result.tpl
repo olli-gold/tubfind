@@ -9,7 +9,7 @@
   <div class="span-9">
     <div class="resultItemLine1">
       {if $summTitleGer}
-        <a href="{$summURLs.0|escape}" class="title">
+        <a href="{$urlDE|escape}" class="title">
         <img src="{$url}/interface/themes/blueprint-tub/images/de.gif" border="0" alt="Deutsch" title="Deutsch"/>
         {if is_array($summTitleGer)}
             {$summTitleGer.0|truncate:180:"..."|highlight:$lookfor}
@@ -18,7 +18,7 @@
         {/if}
         </a>
         {if $summTitleEng}
-            <br/><a href="{$summURLs.1|escape}" class="title">
+            <br/><a href="{$urlEN|escape}" class="title">
             <img src="{$url}/interface/themes/blueprint-tub/images/uk.gif" border="0" alt="English" title="English"/>
             {if is_array($summTitleEng)}
                 {$summTitleEng.0|truncate:180:"..."|highlight:$lookfor}
