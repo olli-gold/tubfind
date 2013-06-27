@@ -89,3 +89,10 @@
     {/foreach}
   {/if}
 </div>
+
+{if $dbrenabled == 1}
+<div id="dbRecommender">
+    <h4>{translate text="Databases"}</h4>
+    <span class="ajax_availability" id="dbrWait">{translate text='Loading'}...</span>
+</div>
+{/if}

@@ -17,9 +17,9 @@
       <b class="listtitle">
       {if !empty($summFullTitle)}
           {if is_array($summFullTitle)}
-              {$summFullTitle.0|truncate:90:"..."|escape}
+              {$summFullTitle.0|truncate:100:"..."|escape}
           {else}
-              {$summFullTitle|truncate:90:"..."|escape}
+              {$summFullTitle|truncate:100:"..."|escape}
           {/if}
       {else}
       {if !empty($summHighlightedTitle)}
@@ -77,7 +77,7 @@
             {if $format=="Serial" || $format=="Journal" || $format=="Electronic" || $format=="Aufsätze" || $format=="eBook" || $format=="Elektronische Aufsätze"}
                 {*assign var="showAvail" value="false"*}
             {/if}
-            {if $format=="Electronic" || $format=="eBook" || $format=="Elektronische Aufsätze" || $format=="Elektronische Ressource"}
+            {if $format=="Electronic" || $format=="eBook" || $format=="Elektronische Aufsätze" || $format=="Elektronische Ressource" || $format=="electronic Article" }
                 {assign var="summInterlibraryLoan" value="0"}
                 {assign var="electronicResource" value="1"}
             {/if}
@@ -87,6 +87,9 @@
             {/if}
             {if $format=="Elektronische Ressource"}
                 {assign var="showCallNumber" value="0"}
+            {/if}
+            {if $format=="Book"}
+                {assign var="showAcqProp" value="1"}
             {/if}
         {/foreach}
     {if $showAvail=="true" && $summInterlibraryLoan=="0"}
@@ -133,6 +136,9 @@
 
       {if $summInterlibraryLoan=="1"}
           <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$summId}" target="_blank">{translate text="interlibrary loan"}</a></span>
+          {if $showAcqProp=="1"}
+              <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}{$summOpenUrl|escape}&gvk.ppn={$summId}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
+          {/if}
       {/if}
 
     </div>

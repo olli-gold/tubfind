@@ -22,10 +22,8 @@
     <link rel="search" type="application/opensearchdescription+xml" title="Library Catalog Search" href="{$url}/Search/OpenSearch?method=describe" />
     
     {* Load Blueprint CSS framework *}
-    
     {css media="screen, projection" filename="blueprint/screen.css"}
     {css media="print" filename="blueprint/print.css"}
-    
     <!--[if lt IE 8]><link rel="stylesheet" href="{$url}/interface/themes/blueprint/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
     
     {* Set global javascript variables *}
@@ -50,10 +48,11 @@
 
     {* Load common javascript functions *}
     {js filename="common.js"}
+    {js filename="dbr.js"}
 
     {* Load VuFind specific stylesheets *}
     {css media="screen, projection" filename="styles.css"}
-    {css media="print" filename="print.css"}
+    {css media="screen" filename="print.css"}
     <!--[if lt IE 8]><link rel="stylesheet" href="{$url}/interface/themes/blueprint/css/ie.css" type="text/css" media="screen, projection"><![endif]-->
   </head>
 
@@ -62,29 +61,23 @@
 	  <div class="header">
 		{include file="header.tpl"}
 	  </div>
-	  
-	  <div id="access">
-		{include file="topnav.tpl"}
-	  </div>
-	  <div>&nbsp;</div>
-	  {if $showTopSearchBox}
-        {if $pageTemplate != 'advanced.tpl'}
-        	  <div class="searchbox">
+          <div id="access">
+              {include file="topnav.tpl"}
+          </div>
+          <div>&nbsp;</div>
 
+	  {if $showTopSearchBox}
+	  <div class="searchbox">
+        {if $pageTemplate != 'advanced.tpl'}
           {if $module=="Summon" || $module=="WorldCat" || $module=="Authority"}
             {include file="`$module`/searchbox.tpl"}
           {else}
             {include file="Search/searchbox.tpl"}
           {/if}
-          {else}
-          <div class="searchbox" style="height:50px;">
         {/if}
 	  </div>
-	  <div style="float:right;width:auto;margin-right:20px;margin-top:-100px;">
-	    {include file="pwmenu.tpl"}
-	  </div>
-	   <div class="clear"></div>
 	  {/if}
+
       {if $showBreadcrumbs}
       <div class="breadcrumbs">
         <div class="breadcrumbinner">
@@ -95,9 +88,19 @@
       {/if}
 
 	  <div class="main">
-        {if $useSolr || $useWorldcat || $useSummon}
+        {if $showtabs || $useSolr || $useWorldcat || $useSummon}
+        {if $gbvmessage}<span style="color:red">{$gbvmessage}</span>{/if}
         <div id="toptab">
           <ul>
+            {if $showtabs}
+            <li{if $tab == "gbv" || $tab == ""} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=GBV Central&tab=gbv&localonly=1">{translate text="GBV Discovery"}</a></li>
+            <li{if $tab == "localonly"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=localbiblio&tab=localonly">{translate text="Lokaler Index"}</a></li>
+            <li{if $tab == "wwwtub"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=wwwtub&tab=wwwtub">{translate text="TUBHH Webseiten"}</a></li>
+            <li{if $tab == "tubdok"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=TUBdok&tab=tubdok">{translate text="TUBdok"}</a></li>
+            <li{if $tab == "all"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=GBV Central&shard[]=TUBdok&shard[]=wwwtub&tab=all&localonly=1">{translate text="Alles mit GBV Discovery"}</a></li>
+            <li{if $tab == "nogbvall"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=localbiblio&shard[]=TUBdok&shard[]=wwwtub&tab=nogbvall">{translate text="Alles ohne GBV Discovery"}</a></li>
+            <li{if $tab == "tuhh"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=tuhhtest&tab=tuhh">{translate text="Test: TUHH Webseiten"}</a></li>
+            {/if}
             {if $useSolr}
             <li{if $module != "WorldCat" && $module != "Summon"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}">{translate text="University Library"}</a></li>
             {/if}
@@ -112,20 +115,10 @@
         {/if}
         {include file="$module/$pageTemplate"}
 	  </div>
+
 	  <div class="footer">
 		{include file="footer-tub.tpl"}
 	  </div>
-	  
-	<!--DBS-->
-	  <img src="https://dbspixel.hbz-nrw.de/count?id=AE830&amp;page=3" width="1" height="1">
-	<!-- Piwik -->
-	<script type="text/javascript">
-	  var pkBaseURL = (("https:" == document.location.protocol) ? "https://cl1.b.tu-harburg.de/piwik/" : "http://cl1.b.tu-harburg.de/piwik/");
-	  document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
-	</script>
-	<script type="text/javascript" src="/js/piwik.js"></script>
-	  <noscript><p><img src="http://cl1.b.tu-harburg.de/piwik/piwik.php?idsite=5" style="border:0" alt="" /></p></noscript>
-	<!-- End Piwik Tracking Code -->
     </div>
   </body>
 </html>

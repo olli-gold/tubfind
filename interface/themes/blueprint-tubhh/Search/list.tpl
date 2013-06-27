@@ -6,7 +6,6 @@
     {/foreach}
   {/if}
   
-  
   {* Listing Options *}
   <div class="resulthead">
     <div class="floatleft">
@@ -49,7 +48,8 @@
 
   {if $pageLinks.all}<div class="pagination">{$pageLinks.all}</div>{/if}
   
-   
+  {*include file="Search/Recommend/BremenDatabases.tpl"*}
+
   <div class="searchtools">
     <strong>{translate text='Search Tools'}:</strong>
     <a href="{$rssLink|escape}" class="feed">{translate text='Get RSS Feed'}</a>
@@ -75,4 +75,3 @@
 {* End Narrow Search Options *}
 
 <div class="clear"></div>
-

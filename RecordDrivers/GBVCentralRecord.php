@@ -185,7 +185,7 @@ class GBVCentralRecord extends MarcRecord
         // an ISSN.  We may eventually want to make this rule more flexible,
         // but for now the ISSN restriction is designed to be consistent with
         // the way we display items on the search results list.
-        $hasOpenURL = ($this->openURLActive('holdings') && $this->getCleanISSN());
+        $hasOpenURL = ($this->openURLActive('results'));
         if ($hasOpenURL) {
             $interface->assign('holdingsOpenURL', $this->getOpenURL());
         }
@@ -342,11 +342,21 @@ class GBVCentralRecord extends MarcRecord
             'rft.date' => $pubDate
         );
 
+        $urls = $this->getUrls();
+        if ($urls) {
+            foreach ($urls as $url => $desc) {
+                // check if we have a doi
+                if (strstr($url, 'http://dx.doi.org/') !== false) {
+                    $params['rft_id'] = 'info:doi/'.substr($url, 18);
+                }
+            }
+        }
+
         // Add additional parameters based on the format of the record:
         $formats = $this->getFormats();
 
         // If we have multiple formats, Book and Journal are most important...
-        if (in_array('Aufsätze', $formats) || in_array('Elektronische Aufsätze', $formats)) {
+        if (in_array('Aufsätze', $formats) || in_array('Elektronische Aufsätze', $formats) || in_array('electronic Article', $formats)) {
             $format = 'Article';
         }
         else if (in_array('Book', $formats) || in_array('eBook', $formats)) {
@@ -406,14 +416,16 @@ class GBVCentralRecord extends MarcRecord
             case 'Article':
                 $params['rft.issn'] = $this->getCleanISSN();
                 $params['rft.genre'] = 'article';
+                unset($params['rft.date']);
                 $params['rft.atitle'] = $params['rft.title'];
-                //unset($params['rft.date']);
                 $articleFields = $this->getArticleFieldedReference();
                 if ($articleFields['volume']) $params['rft.volume'] = $articleFields['volume'];
                 if ($articleFields['issue']) $params['rft.issue'] = $articleFields['issue'];
                 if ($articleFields['spage']) $params['rft.spage'] = $articleFields['spage'];
                 if ($articleFields['epage']) $params['rft.epage'] = $articleFields['epage'];
                 if ($articleFields['date']) $params['rft.date'] = $articleFields['date'];
+                $journalTitle = $this->getArticleHReference();
+                if ($journalTitle['jref']) $params['rft.jtitle'] = $journalTitle['jref'];
                 unset($params['rft.title']);
                 /*
                 if (isset($configArray['OpenURL']['resolver']) &&
@@ -473,6 +485,7 @@ class GBVCentralRecord extends MarcRecord
                     $parts[] = $key . '=' . urlencode($value);
                 }
             }
+
             return implode('&', $parts);
         }
 
@@ -618,7 +631,7 @@ class GBVCentralRecord extends MarcRecord
 
             // Perform the search and return either results or an error:
             $this->setHiddenFilters();
-            $result = $index->search($query, null, $this->hiddenFilters, 0, null, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false);
+            $result = $index->search($query, null, $this->hiddenFilters, 0, null, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
             if (PEAR::isError($result)) {
                 return $result;
@@ -661,7 +674,7 @@ class GBVCentralRecord extends MarcRecord
 
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
-        $result = $index->search($query, null, $this->hiddenFilters, 0, null, null, '', null, null, 'title, id',  HTTP_REQUEST_METHOD_POST , false, false);
+        $result = $index->search($query, null, $this->hiddenFilters, 0, null, null, '', null, null, 'title, id',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
         if (PEAR::isError($result)) {
             return $result;
@@ -762,7 +775,7 @@ class GBVCentralRecord extends MarcRecord
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
 
-        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST , false, false);
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
         return ($result['response'] > 0) ? $result['response'] : false;
     }
@@ -789,7 +802,7 @@ class GBVCentralRecord extends MarcRecord
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
 
-        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST , false, false);
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
         // Check if the PPNs are from the same origin (either both should have an NLZ-prefix or both should not have it)
         $resultArray = array();
@@ -836,7 +849,7 @@ class GBVCentralRecord extends MarcRecord
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
 
-        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST, false, false);
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST, false, false, false);
 
         return ($result['response'] > 0) ? $result['response'] : false;
     }
@@ -865,7 +878,7 @@ class GBVCentralRecord extends MarcRecord
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
 
-        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false);
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
         $showRegister = false;
         foreach ($result['response']['docs'] as $resp) {
@@ -897,7 +910,7 @@ class GBVCentralRecord extends MarcRecord
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
 
-        $result = $index->search($query, null, $this->hiddenFilters, 0, 1, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false);
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
         return ($result['response']['numFound'] > 0) ? true : false;
     }

@@ -33,6 +33,8 @@ require_once 'services/MyResearch/lib/Search.php';
 require_once 'sys/Pager.php';
 require_once 'sys/ResultScroller.php';
 
+require_once 'sys/Recommend/DBRecommender.php';
+
 /**
  * Results action for Search module
  *
@@ -94,6 +96,23 @@ class Results extends Action
             }
         }
 
+        // Assign active tab
+        if (array_key_exists('tab', $_REQUEST)) {
+            $interface->assign('tab', $_REQUEST['tab']);
+        }
+
+        if (isset($configArray['Tabs']['showTabs']) && $configArray['Tabs']['showTabs'] != '0') {
+            $interface->assign('showtabs', true);
+        }
+        if (isset($configArray['Tabs']['autoreload']) && $configArray['Tabs']['autoreload'] != '0') {
+            $rec = file_get_contents("http://www.tub.tu-harburg.de/ext/gbvindex/gbvslow");
+            // file_exists('/srv/www/gbvproblem')
+            if (substr($rec, 0, 4) == 'slow' && ($_REQUEST['tab'] == 'gbv' || $_REQUEST['tab'] == 'all' || $_REQUEST['tab'] == '' || array_key_exists('tab', $_REQUEST) === false)) {
+                $interface->assign('tab', 'nogbvall');
+                $interface->assign('gbvmessage', 'GBV Discovery ist derzeit zu langsam. Sie werden daher auf den lokalen Katalog umgeleitet. Aufs&auml;tze und Artikel k&ouml;nnen daher momentan nicht gefunden werden!');
+            }
+        }
+
         // TODO : Stats, move inside the search object
         // Setup Statistics Index Connection
         if ($configArray['Statistics']['enabled']) {
@@ -136,6 +155,10 @@ class Results extends Action
         $interface->assign(
             'sideRecommendations', $searchObject->getRecommendationsTemplates('side')
         );
+
+        if (isset($configArray['DBR']['enabled']) && $configArray['DBR']['enabled'] == true) {
+            $interface->assign('dbrenabled', 1);
+        }
 
         if ($searchObject->getResultTotal() < 1) {
             // No record found
@@ -244,6 +267,7 @@ class Results extends Action
             }
         }
     }
+
 }
 
 ?>

@@ -1,18 +1,36 @@
+{assign var="showAvail" value="1"}
+{assign var="showAcqProp" value="0"}
+{assign var="showArticleAvail" value="1"}
+
 {if is_array($recordFormat)}
     {foreach from=$recordFormat item=displayFormat name=loop}
-        {if $displayFormat=="Electronic" || $displayFormat=="eBook" || $displayFormat=="Elektronische Aufsätze"}
+        {if $displayFormat=="Electronic" || $displayFormat=="eBook" || $displayFormat=="Elektronische Aufsätze"  || $displayFormat=="electronic Article"}
             {assign var="interlibraryLoan" value="0"}
+            {assign var="showAvail" value="0"}
         {/if}
         {if $displayFormat=="Journal" || $displayFormat=="Serial"}
             {assign var="showAssociated" value="1"}
         {/if}
+        {if $displayFormat=="Book"}
+            {assign var="showAcqProp" value="1"}
+        {/if}
+        {if $displayFormat=="Article"}
+            {assign var="showArticleAvail" value="0"}
+        {/if}
     {/foreach}
 {else}
-    {if $recordFormat=="Electronic" || $recordFormat=="eBook" || $recordFormat=="Elektronische Aufsätze"}
+    {if $recordFormat=="Electronic" || $recordFormat=="eBook" || $recordFormat=="Elektronische Aufsätze" || $recordFormat=="electronic Article" }
         {assign var="interlibraryLoan" value="0"}
+        {assign var="showAvail" value="0"}
     {/if}
     {if $recordFormat=="Journal" || $recordFormat=="Serial"}
         {assign var="showAssociated" value="1"}
+    {/if}
+    {if $recordFormat=="Book"}
+        {assign var="showAcqProp" value="1"}
+    {/if}
+    {if $recordFormat=="Article"}
+        {assign var="showArticleAvail" value="0"}
     {/if}
 {/if}
 
@@ -31,12 +49,10 @@
 {assign var="thisIsAnURL" value="false"}
 
 {foreach from=$gbvholdings item=holding key=location}
-    {if $location}
-        {assign var="nothingShown" value="1"}
-    {/if}
     <h3>
     {if $holding.0.locationhref}
         {if $holding.0.locationhref == "\n"}
+            {assign var="nothingShown" value="1"}
             <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">
         {else}
             <a href="{$holding.0.locationhref}">
@@ -44,7 +60,14 @@
             {translate text=$location}
         </a>
     {else}
+        {if $location == "s. zugehörige Publikationen"}
+            {assign var="nothingShown" value="1"}
+            <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">
+        {/if}
         {translate text=$location}
+        {if $location == "s. zugehörige Publikationen"}
+            </a>
+        {/if}
     {/if}
     </h3>
     <table cellpadding="2" cellspacing="0" border="0" class="citation" summary="{translate text='Holdings details from'} {translate text=$location}">
@@ -82,7 +105,7 @@
             </td>
         </tr>
       {/if}
-      {if $holding.0.callnumber}
+      {if $holding.0.callnumber && $holding.0.callnumber != "-"}
         <tr>
           <th>{translate text="Call Number"}</th>
           <td class="callnumberResult">{$holding.0.callnumber|escape}</td>
@@ -116,7 +139,7 @@
         {if $row.barcode == "1" && count($volumes) == 0}
             <tr>
                 <th>{translate text="Copy"} {$row.number}</th>
-        {else}
+        {elseif $row.availability != -1}
             <tr>
                 <th>
                     {assign var="remarkShown" value="false"}
@@ -190,13 +213,32 @@
                         {else}
                             {if $interlibraryLoan=="1"}
                                 <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
+                                {if $showAcqProp=="1"}
+                                    <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}{$holdingsOpenUrl|escape}&gvk.ppn={$id}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
+                                {/if}
                             {else}
-                                {if $isMultipartChildren == 0}
+                                {if $isMultipartChildren == 0 && $showAvail == 1 && $showArticleAvail == 1}
                                     {translate text="Not for loan"}
                                 {/if}
                                 {if $nothingShown == "0" && $isMultipartChildren == 1}
+                                    {assign var="nothingShown" value="1"}
                                     <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
                                 {/if}
+                            {/if}
+                        {/if}
+                    {elseif $row.availability == -1}
+                        {if $interlibraryLoan=="1"}
+                            <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
+                            {if $showAcqProp=="1"}
+                                <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}{$holdingsOpenUrl|escape}&gvk.ppn={$id}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
+                            {/if}
+                        {else}
+                            {if $isMultipartChildren == 0 && $showAvail == 1 && $showArticleAvail == 1}
+                                {translate text="Not for loan"}
+                            {/if}
+                            {if $nothingShown == "0" && $isMultipartChildren == 1}
+                                {assign var="nothingShown" value="1"}
+                                <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
                             {/if}
                         {/if}
                     {/if}
@@ -218,6 +260,10 @@
                 <br/>{$row.notes.remark.$language}
             {/if}
         {/if}
+        {/if}
+        {if $nothingShown == "0" && $isMultipartChildren == 1}
+            {assign var="nothingShown" value="1"}
+            <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
         {/if}
                 </td>
             </tr>

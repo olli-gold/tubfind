@@ -8,18 +8,37 @@
   </div>
   <div class="span-9">
     <div class="resultItemLine1">
-      {foreach from=$summURLs item=recordurl}{/foreach}
-      <a href="{$recordurl|escape}" class="title">
-      {if !$summTitle}
-      {translate text='Title not available'}
+      {if $summTitleGer || $summTitleEng}
+        {if $summTitleGer}
+        <a href="{$urlDE|escape}" class="title">
+        <img src="{$url}/interface/themes/blueprint-tub/images/de.gif" border="0" alt="Deutsch" title="Deutsch"/>
+        {if is_array($summTitleGer)}
+            {$summTitleGer.0|truncate:180:"..."|highlight:$lookfor}
+        {else}
+            {$summTitleGer|truncate:180:"..."|highlight:$lookfor}
+        {/if}
+        </a>
+        {/if}
+        {if $summTitleEng}
+            <br/><a href="{$urlEN|escape}" class="title">
+            <img src="{$url}/interface/themes/blueprint-tub/images/uk.gif" border="0" alt="English" title="English"/>
+            {if is_array($summTitleEng)}
+                {$summTitleEng.0|truncate:180:"..."|highlight:$lookfor}
+            {else}
+                {$summTitleEng|truncate:180:"..."|highlight:$lookfor}
+            {/if}
+            </a>
+        {/if}
       {else}
-          {if is_array($summTitle)}
-              {$summTitle.0|truncate:180:"..."|highlight:$lookfor}
-          {else}
-              {$summTitle|truncate:180:"..."|highlight:$lookfor}
-          {/if}
+        <a href="{$summURLs.0|escape}" class="title">{if !summTitle}{translate text='Title not available'}{else}
+        {if is_array($summTitle)}
+            {$summTitle.0|truncate:180:"..."|highlight:$lookfor}
+        {else}
+            {$summTitle|truncate:180:"..."|highlight:$lookfor}
+        {/if}
       {/if}
       </a>
+      {/if}
     </div>
 
 {*

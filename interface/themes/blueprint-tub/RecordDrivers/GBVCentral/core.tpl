@@ -3,9 +3,9 @@
   <h1 class="recordtitle">
   {if !empty($coreFullTitle)}
     {if is_array($coreFullTitle)}
-        {$coreFullTitle.0|truncate:90:"..."|escape}
+        {$coreFullTitle.0|truncate:100:"..."|escape}
     {else}
-        {$coreFullTitle|truncate:90:"..."|escape}
+        {$coreFullTitle|truncate:100:"..."|escape}
     {/if}
   {else}
   {if is_array($coreShortTitle)}

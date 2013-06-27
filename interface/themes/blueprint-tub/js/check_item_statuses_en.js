@@ -43,11 +43,11 @@ function checkItemStatuses() {
                                 $('#status' + result.id).append(' until '+result.duedate);
                             }
                             //if (result.reservationUrl && result.location == 'Magazin') {
-                            if (result.reservationUrl) {
-                                $('#status' + result.id).append(' '+result.reservationUrl);
-                            }
                             if (result.duedate && result.availability == 'false' && result.reserve != 'true') {
                                 $('#status' + result.id).append(' <a href="https://katalog.b.tu-harburg.de/LBS_WEB/titleReservation.htm?BES=1&LAN=DU&USR=1000&PPN='+result.id+'">Reserve title</a>');
+                            }
+                            else if (result.reservationUrl) {
+                                $('#status' + result.id).append(' '+result.reservationUrl);
                             }
                         }
                         if (result.presenceOnly == '1') {
