@@ -92,7 +92,7 @@
                 {assign var="showAcqProp" value="1"}
             {/if}
         {/foreach}
-    {if $showAvail=="true" && $summInterlibraryLoan=="0"}
+    {if $showAvail=="true" && $summInterlibraryLoan==0}
       {if $summAjaxStatus}
         {if $showCallNumber == "1"}
             <span id="callnumber{$summId|escape}label">{translate text='Call Number'}:</span> <span class="ajax_availability hide" id="callnumber{$summId|escape}">{translate text='Loading'}...</span><br/>
@@ -130,7 +130,7 @@
       {/foreach}
 
       {*if !$summOpenUrl && empty($summURLs)*}
-      {if $showAvail=="true" && $summInterlibraryLoan=="0"}
+      {if $showAvail=="true" && $summInterlibraryLoan==0}
       <span class="ajax_availability hide" id="status{$summId|escape}">{translate text='Loading'}...</span>
       {/if}
 
