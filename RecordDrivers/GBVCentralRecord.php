@@ -3036,9 +3036,9 @@ class GBVCentralRecord extends MarcRecord
                 $a_names = $v->getSubfields('a');
                 $b_names = $v->getSubfields('b');
                 $c_names = $v->getSubfields('c');
-                $pubArr[$index]['place'] = $a_names[0]->getData();
-                $pubArr[$index]['name'] = $b_names[0]->getData();
-                $pubArr[$index]['date'] = $c_names[0]->getData();
+                if ($a_names[0]) $pubArr[$index]['place'] = $a_names[0]->getData();
+                if ($b_names[0]) $pubArr[$index]['name'] = $b_names[0]->getData();
+                if ($c_names[0]) $pubArr[$index]['date'] = $c_names[0]->getData();
                 $index++;
             }
         }
