@@ -60,6 +60,7 @@ class GBVCentralRecord extends MarcRecord
     public function getCoreMetadata() {
         global $interface;
         parent::getCoreMetadata();
+
         if (in_array('NL', $this->getCollections())) {
             $interface->assign('nlurls', $this->getURLs());
         }
@@ -80,6 +81,7 @@ class GBVCentralRecord extends MarcRecord
         $interface->assign('thesis', $this->getThesisInformation());
         //$interface->assign('coreAddtitle', $this->getTitleAddition());
         $interface->assign('coreFullTitle', $this->_normalize($this->getFullTitle()));
+
         /*
         $interface->assign('articleChildren', $this->getArticleChildren());
         $interface->assign('coreSubseries', $this->getSubseries());
@@ -1057,11 +1059,17 @@ class GBVCentralRecord extends MarcRecord
                     $subrecord['record_url'] = $record_url.$parentId;
                 }
                 $m = trim($subr['fullrecord']);
-                $m = preg_replace('/#31;/', "\x1F", $m);
-                $m = preg_replace('/#30;/', "\x1E", $m);
-                $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+                // check if we are dealing with MARCXML
+                $xmlHead = '<?xml version';
+                if (strcasecmp(substr($m, 0, strlen($xmlHead)), $xmlHead) === 0) {
+                    $m = new File_MARCXML($m, File_MARCXML::SOURCE_STRING);
+                } else {
+                    $m = preg_replace('/#31;/', "\x1F", $m);
+                    $m = preg_replace('/#30;/', "\x1E", $m);
+                    $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+                }
                 $marcRecord = $m->next();
-                if (is_a($marcRecord, 'File_MARC_Record') === true) {
+                if (is_a($marcRecord, 'File_MARC_Record') === true || is_a($marcRecord, 'File_MARCXML_Record') === true) {
                     $vs = $marcRecord->getFields('245');
                     if ($vs) {
                         foreach($vs as $v) {
@@ -1192,11 +1200,17 @@ class GBVCentralRecord extends MarcRecord
                 $subrecord['record_url'] = $record_url.$parentId;
             }
             $m = trim($subr['fullrecord']);
-            $m = preg_replace('/#31;/', "\x1F", $m);
-            $m = preg_replace('/#30;/', "\x1E", $m);
-            $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+            // check if we are dealing with MARCXML
+            $xmlHead = '<?xml version';
+            if (strcasecmp(substr($m, 0, strlen($xmlHead)), $xmlHead) === 0) {
+                $m = new File_MARCXML($m, File_MARCXML::SOURCE_STRING);
+            } else {
+                $m = preg_replace('/#31;/', "\x1F", $m);
+                $m = preg_replace('/#30;/', "\x1E", $m);
+                $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+            }
             $marcRecord = $m->next();
-            if (is_a($marcRecord, 'File_MARC_Record') === true) {
+            if (is_a($marcRecord, 'File_MARC_Record') === true || is_a($marcRecord, 'File_MARCXML_Record') === true) {
                 $vs = $marcRecord->getFields('245');
                 if ($vs) {
                     foreach($vs as $v) {
@@ -1240,12 +1254,18 @@ class GBVCentralRecord extends MarcRecord
                     $subrecord['record_url'] = $record_url.$subId;
                 }
                 $m = trim($subr['fullrecord']);
-                $m = preg_replace('/#31;/', "\x1F", $m);
-                $m = preg_replace('/#30;/', "\x1E", $m);
-                $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+                // check if we are dealing with MARCXML
+                $xmlHead = '<?xml version';
+                if (strcasecmp(substr($m, 0, strlen($xmlHead)), $xmlHead) === 0) {
+                    $m = new File_MARCXML($m, File_MARCXML::SOURCE_STRING);
+                } else {
+                    $m = preg_replace('/#31;/', "\x1F", $m);
+                    $m = preg_replace('/#30;/', "\x1E", $m);
+                    $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+                }
                 $marcRecord = $m->next();
+                if (is_a($marcRecord, 'File_MARC_Record') === true || is_a($marcRecord, 'File_MARCXML_Record') === true) {
                 // 800$t$v -> 773$q -> 830$v -> 245$a$b -> "Title not found"
-                if (is_a($marcRecord, 'File_MARC_Record') === true) {
                     $leader = $marcRecord->getLeader();
                     $indicator = substr($leader, 19, 1);
                     $journalIndicator = substr($leader, 7, 1);
@@ -1650,11 +1670,17 @@ class GBVCentralRecord extends MarcRecord
                 $subrecord['record_url'] = $record_url.$parentId;
             }
             $m = trim($subr['fullrecord']);
-            $m = preg_replace('/#31;/', "\x1F", $m);
-            $m = preg_replace('/#30;/', "\x1E", $m);
-            $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+            // check if we are dealing with MARCXML
+            $xmlHead = '<?xml version';
+            if (strcasecmp(substr($m, 0, strlen($xmlHead)), $xmlHead) === 0) {
+                $m = new File_MARCXML($m, File_MARCXML::SOURCE_STRING);
+            } else {
+                $m = preg_replace('/#31;/', "\x1F", $m);
+                $m = preg_replace('/#30;/', "\x1E", $m);
+                $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+            }
             $marcRecord = $m->next();
-            if (is_a($marcRecord, 'File_MARC_Record') === true) {
+            if (is_a($marcRecord, 'File_MARC_Record') === true || is_a($marcRecord, 'File_MARCXML_Record') === true) {
                 $vs = $marcRecord->getFields('245');
                 if ($vs) {
                     foreach($vs as $v) {
@@ -1697,12 +1723,18 @@ class GBVCentralRecord extends MarcRecord
                     $subrecord['record_url'] = $record_url.$subId;
                 }
                 $m = trim($subr['fullrecord']);
-                $m = preg_replace('/#31;/', "\x1F", $m);
-                $m = preg_replace('/#30;/', "\x1E", $m);
-                $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+                // check if we are dealing with MARCXML
+                $xmlHead = '<?xml version';
+                if (strcasecmp(substr($m, 0, strlen($xmlHead)), $xmlHead) === 0) {
+                    $m = new File_MARCXML($m, File_MARCXML::SOURCE_STRING);
+                } else {
+                    $m = preg_replace('/#31;/', "\x1F", $m);
+                    $m = preg_replace('/#30;/', "\x1E", $m);
+                    $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+                }
                 $marcRecord = $m->next();
+                if (is_a($marcRecord, 'File_MARC_Record') === true || is_a($marcRecord, 'File_MARCXML_Record') === true) {
                 // 800$t$v -> 773$q -> 830$v -> 245$a$b -> "Title not found"
-                if (is_a($marcRecord, 'File_MARC_Record') === true) {
                     $leader = $marcRecord->getLeader();
                     $indicator = substr($leader, 19, 1);
                     $journalIndicator = substr($leader, 7, 1);
@@ -2193,11 +2225,17 @@ class GBVCentralRecord extends MarcRecord
                 $subrecord['record_url'] = $record_url.$parentId;
             }
             $m = trim($subr['fullrecord']);
-            $m = preg_replace('/#31;/', "\x1F", $m);
-            $m = preg_replace('/#30;/', "\x1E", $m);
-            $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+            // check if we are dealing with MARCXML
+            $xmlHead = '<?xml version';
+            if (strcasecmp(substr($m, 0, strlen($xmlHead)), $xmlHead) === 0) {
+                $m = new File_MARCXML($m, File_MARCXML::SOURCE_STRING);
+            } else {
+                $m = preg_replace('/#31;/', "\x1F", $m);
+                $m = preg_replace('/#30;/', "\x1E", $m);
+                $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+            }
             $marcRecord = $m->next();
-            if (is_a($marcRecord, 'File_MARC_Record') === true) {
+            if (is_a($marcRecord, 'File_MARC_Record') === true || is_a($marcRecord, 'File_MARCXML_Record') === true) {
                 $vs = $marcRecord->getFields('245');
                 if ($vs) {
                     foreach($vs as $v) {
@@ -2240,12 +2278,18 @@ class GBVCentralRecord extends MarcRecord
                     $subrecord['record_url'] = $record_url.$subId;
                 }
                 $m = trim($subr['fullrecord']);
-                $m = preg_replace('/#31;/', "\x1F", $m);
-                $m = preg_replace('/#30;/', "\x1E", $m);
-                $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+                // check if we are dealing with MARCXML
+                $xmlHead = '<?xml version';
+                if (strcasecmp(substr($m, 0, strlen($xmlHead)), $xmlHead) === 0) {
+                    $m = new File_MARCXML($m, File_MARCXML::SOURCE_STRING);
+                } else {
+                    $m = preg_replace('/#31;/', "\x1F", $m);
+                    $m = preg_replace('/#30;/', "\x1E", $m);
+                    $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+                }
                 $marcRecord = $m->next();
+                if (is_a($marcRecord, 'File_MARC_Record') === true || is_a($marcRecord, 'File_MARCXML_Record') === true) {
                 // 800$t$v -> 773$q -> 830$v -> 245$a$b -> "Title not found"
-                if (is_a($marcRecord, 'File_MARC_Record') === true) {
                     $leader = $marcRecord->getLeader();
                     $indicator = substr($leader, 19, 1);
                     $journalIndicator = substr($leader, 7, 1);
@@ -2884,12 +2928,18 @@ class GBVCentralRecord extends MarcRecord
                     $subrecord['record_url'] = $record_url.$subId;
                 }
                 $m = trim($subr['fullrecord']);
-                $m = preg_replace('/#31;/', "\x1F", $m);
-                $m = preg_replace('/#30;/', "\x1E", $m);
-                $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+                // check if we are dealing with MARCXML
+                $xmlHead = '<?xml version';
+                if (strcasecmp(substr($m, 0, strlen($xmlHead)), $xmlHead) === 0) {
+                    $m = new File_MARCXML($m, File_MARCXML::SOURCE_STRING);
+                } else {
+                    $m = preg_replace('/#31;/', "\x1F", $m);
+                    $m = preg_replace('/#30;/', "\x1E", $m);
+                    $m = new File_MARC($m, File_MARC::SOURCE_STRING);
+                }
                 $marcRecord = $m->next();
+                if (is_a($marcRecord, 'File_MARC_Record') === true || is_a($marcRecord, 'File_MARCXML_Record') === true) {
                 // 800$t$v -> 773$q -> 830$v -> 245$a$b -> "Title not found"
-                if (is_a($marcRecord, 'File_MARC_Record') === true) {
                     $yearFields = $marcRecord->getFields('008');
                     $yearField = $yearFields[0];
                     $pos = strpos($yearField, 's');
