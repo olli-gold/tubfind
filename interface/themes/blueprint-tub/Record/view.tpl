@@ -1,6 +1,8 @@
 {if !empty($addThis)}
 <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js?pub={$addThis|escape:"url"}"></script>
 {/if}
+{js filename="morelikethis.js"}
+{js filename="editions.js"}
 
 {js filename="record.js"}
 {js filename="check_save_statuses.js"}
@@ -112,6 +114,15 @@
 </div>
 
 <div class="span-5 last">
+    <div class="sidegroup" id="similarrecs">
+        <h4>{translate text="Similar Items"}</h4>
+        <span class="ajax_availability" id="similarWait">{translate text='Loading'}...</span>
+    </div>
+    <div class="sidegroup" id="othereditions">
+    </div>
+</div>
+
+<!--<div class="span-5 last">
   {if is_array($similarRecords)}
     <div class="sidegroup">
     <h4>{translate text="Similar Items"}</h4>
@@ -200,5 +211,5 @@
   </div>
   {/if}
 </div>
-
+-->
 <div class="clear"></div>

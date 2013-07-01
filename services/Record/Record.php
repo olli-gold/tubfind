@@ -173,6 +173,7 @@ class Record extends Action
         );
 
         $this->cacheId = 'Record|' . $_REQUEST['id'] . '|' . get_class($this);
+/*
         if (!$interface->is_cached($this->cacheId)) {
             // Find Similar Records
             $similar = $this->db->getMoreLikeThis($_REQUEST['id']);
@@ -189,7 +190,7 @@ class Record extends Action
                 $interface->assign('editions', $editions);
             }
         }
-
+*/
 /*
         if (get_class($this->recordDriver) === 'GBVCentralRecord') {
         $isMultipart = $this->recordDriver->isMultipartChildren();
