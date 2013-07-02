@@ -28,6 +28,17 @@ function edgup( name )
   var results = regex.exec( window.location.href );
   if( results == null )
     return "";
-  else
-    return results[1];
+  else {
+    var returnwert;
+    if (results[1].indexOf('/') != -1) {
+      returnwert = results[1].slice(0, results[1].indexOf('/'));
+    }
+    else if (results[1].indexOf('?') != -1) {
+      returnwert = results[1].slice(0, results[1].indexOf('?'));
+    }
+    else {
+      returnwert = results[1];
+    }
+    return returnwert;
+  }
 }
