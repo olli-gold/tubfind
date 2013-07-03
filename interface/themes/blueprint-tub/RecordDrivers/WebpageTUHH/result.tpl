@@ -8,9 +8,7 @@
   </div>
   <div class="span-9">
     <div class="resultItemLine1">
-      {foreach from=$summURLs item=recordurl}
-      {/foreach}
-        <a href="{$recordurl|escape}" class="title">
+        <a href="{$urlDE|escape}" class="title">
         {if !summTitle}{translate text='Title not available'}{else}
         {if is_array($summTitle)}
             {$summTitle.0|truncate:180:"..."|highlight:$lookfor}
@@ -19,7 +17,7 @@
         {/if}
       </a>
       {/if}
-      <br/><a href="{$recordurl}" target="_blank">{$recordurl|truncate:54:'...':true:true}</a>
+      <br/><a href="{$urlDE}" target="_blank">{$urlDE|truncate:54:'...':true:true}</a>
       {* <br/><a href="{$url}/Record/{$summId|escape:"url"}" class="title">Internansicht</a> *}
     </div>
     

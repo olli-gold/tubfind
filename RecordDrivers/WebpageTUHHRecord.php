@@ -35,7 +35,9 @@ class WebpageTUHHRecord extends IndexRecord
         $interface->assign('summContent', $this->getContent());
         $interface->assign('summTitleGer', $this->getGermanTitle());
         $interface->assign('summTitleEng', $this->getEnglishTitle());
-        return 'RecordDrivers/WebpageTUHH/result.tpl';
+        $interface->assign('urlDE', $this->getGermanUrl());
+        $interface->assign('urlEN', $this->getEnglishUrl());
+         return 'RecordDrivers/WebpageTUHH/result.tpl';
     }
 
     /** 
@@ -72,6 +74,30 @@ class WebpageTUHHRecord extends IndexRecord
     {
         return isset($this->fields['titleEng']) ?
             $this->fields['titleEng'] : '';
+    }
+
+    /**
+     * Get the URL to the german article
+     *
+     * @access  protected
+     * @return  string
+     */
+    protected function getGermanUrl()
+    {
+        return isset($this->fields['url'][0]) ?
+            $this->fields['url'][0] : '';
+    }
+
+    /**
+     * Get the URL to the english article
+     *
+     * @access  protected
+     * @return  string
+     */
+    protected function getEnglishUrl()
+    {
+        return isset($this->fields['url'][1]) ?
+            $this->fields['url'][1] : '';
     }
 
     /**. 
