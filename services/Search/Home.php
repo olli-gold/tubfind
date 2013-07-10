@@ -67,21 +67,22 @@ class Home extends Action
             $interface->setTemplate('home.tpl');
 
             // Create our search object
-            $searchObject = SearchObjectFactory::initSearchObject();
+//            $searchObject = SearchObjectFactory::initSearchObject();
             // Re-use the advanced search facets method,
             //   it is (for now) calling the same facets.
             // The template however is looking for specific
             //   facets. Bear in mind for later.
-            $searchObject->initAdvancedFacets();
+//            $searchObject->initAdvancedFacets();
             // We don't want this search in the search history
-            $searchObject->disableLogging();
+//            $searchObject->disableLogging();
             // Go get the facets
-            $searchObject->processSearch();
-            $facetList = $searchObject->getFacetList();
+//            $searchObject->processSearch();
+//            $facetList = $searchObject->getFacetList();
             // Shutdown the search object
-            $searchObject->close();
+//            $searchObject->close();
 
             // Add a sorted version to the facet list:
+/*
             if (count($facetList) > 0) {
                 $facets = array();
                 foreach ($facetList as $facet => $details) {
@@ -94,6 +95,7 @@ class Home extends Action
                 }
                 $interface->assign('facetList', $facetList);
             }
+*/
         }
         $interface->display('layout.tpl', $cacheId);
     }
