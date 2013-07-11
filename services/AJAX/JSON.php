@@ -1040,16 +1040,19 @@ class JSON extends Action
             if ($availability !== 'reserve') $availability = 'unavailable';
         }
         // Location should not get transformed, if it is a hyperlink
+        $electronic = '0';
         $locationArr = explode(">", $location);
         if (count($locationArr) === 1) {
             $location = htmlentities($location, ENT_COMPAT, 'UTF-8');
         }
         else {
+            $electronic = '1';
             $locArr = explode("<", $locationArr[1]);
             $locArr[0] = htmlentities($locArr[0], ENT_COMPAT, 'UTF-8');
             $locationArr[1] = implode("<", $locArr);
             $location = implode(">", $locationArr);
         }
+
 
         // Send back the collected details:
         return array(
@@ -1065,7 +1068,8 @@ class JSON extends Action
             'callnumber' => '<span class="callnumberResult">'.htmlentities($callNumber, ENT_COMPAT, 'UTF-8').'</span>',
             'reservationUrl' => $reservationLink,
             'duedate' => $duedate,
-            'presenceOnly' => $presenceOnlyIndicator
+            'presenceOnly' => $presenceOnlyIndicator,
+            'electronic' => $electronic
         );
     }
 

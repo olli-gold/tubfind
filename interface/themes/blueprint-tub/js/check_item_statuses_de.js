@@ -50,11 +50,17 @@ function checkItemStatuses() {
                                 $('#status' + result.id).append(' '+result.reservationUrl);
                             }
                         }
-                        if (result.presenceOnly == '1') {
-                            $('#status' + result.id).append(' Nur Präsenznutzung');
+
+                        if (result.electronic == '1') {
+                            $('#status' + result.id).append(' evtl. nur im TUHH-Intranet');
                         }
-                        else if (result.presenceOnly == '2') {
-                            $('#status' + result.id).append(' Siehe Vollanzeige');
+                        else {
+                            if (result.presenceOnly == '1' && result.electronic == '0') {
+                                $('#status' + result.id).append(' Nur Präsenznutzung');
+                            }
+                            else if (result.presenceOnly == '2') {
+                                $('#status' + result.id).append(' Siehe Vollanzeige');
+                            }
                         }
                     });
                 } else {
