@@ -15,7 +15,7 @@
     {/if}
     
     {* always show Account button *}
-    <li><a rel="external" href="{$path}/MyResearch/Home">{translate text="Account"}</a></li>
+    <li>{translate text="opc_login"}<!--<a rel="external" href="{$path}/MyResearch/Home">{translate text="Library Account"}</a>--></li>
     
     {* show Logout if logged in *}
     {if $user}
