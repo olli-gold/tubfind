@@ -218,44 +218,164 @@ var listPager = {
 }
 
 /* pager for multisets in results.tpl */
-var tablePager = {
+/* list pager for multisets in result.tpl */
+var listPager = {
     init: function (elem) {
         var iterator = 1;
-        var factor = 10;
-        var sum = elem.children('tbody').children('tr').length;
-        if (sum > factor) {    
+        var factor = 5;
+        var sum = elem.children('li').length;
+        if (sum > factor) {
             for(var i = (factor); i < sum; i++) {
-                elem.children('tbody').children('tr').eq(i+1).addClass('offscreen');
+                elem.children('li').eq(i).addClass('offscreen');
             }
-            tablePager.getListEvent(elem, iterator, factor, sum);
+            listPager.showListEvents(elem);
+            listPager.hideListMinimizeEvents(elem);
+            listPager.setSumEntries(elem, sum);
+            listPager.listenEvents(elem, iterator, factor, sum);
+        } else {
+            listPager.hidePager(elem);
         }
     },
     getNextListEntries: function (elem, iterator, factor, sum) {
         var stop = (sum > (factor*iterator)) ? (factor*iterator) : sum;
-        elem.siblings('.pager').remove('div.pager');
-        elem.siblings('.allResults').remove('div.allResults');
         for (var i = (factor*(iterator-1)); i < stop; i++) {
-            elem.children('tbody').children('tr').eq(i+1).removeClass('offscreen');
+            elem.children('li').eq(i).removeClass('offscreen');
         }
-        if (sum > (factor*iterator)) {
-            tablePager.getListEvent(elem, iterator, factor, sum);
+        if (sum <= (factor*iterator)) {
+            listPager.showListMinimizeEvents(elem);
+            listPager.hideListEvents(elem);
         }
+        listPager.listenEvents(elem, iterator, factor, sum);
+
     },
     getAllListEntries: function (elem, iterator, factor, sum) {
-        elem.siblings('.pager').remove('div.pager');
-        elem.siblings('.allResults').remove('div.allResults');
+        listPager.showListMinimizeEvents(elem);
+        listPager.hideListEvents(elem);
         for (var i = (factor*(iterator-1)); i < sum; i++) {
-            elem.children('tbody').children('tr').eq(i+1).removeClass('offscreen');
+            elem.children('li').eq(i).removeClass('offscreen');
+        }
+        listPager.listenEvents(elem, iterator, factor, sum);
+    },
+    listenEvents: function (elem, iterator, factor, sum) {
+        elem.next('ul').children('.next-parts').click( function () {
+            listPager.getNextListEntries(elem, iterator + 1, factor, sum);
+        });
+        elem.next('ul').children('.all-parts').click( function () {
+            listPager.getAllListEntries(elem, iterator + 1 , factor, sum);
+        });
+        elem.next('ul').children('.setback-parts').click( function () {
+            iterator = 1;
+            listPager.init(elem);
+        });
+        /*$('.next-parts').click( function () {
+            listPager.getNextListEntries(elem, iterator + 1, factor, sum);
+        });
+        $('.all-parts').click( function () {
+            listPager.getAllListEntries(elem, iterator + 1 , factor, sum);
+        });
+        $('.setback-parts').click( function () {
+            listPager.init(elem);
+        });*/
+    },
+    showListEvents: function () {
+        $('ul .next-parts').show();
+        $('ul .all-parts').show();
+    },
+    hideListEvents: function () {
+        $('ul .next-parts').hide();
+        $('ul .all-parts').hide();
+    },
+    showListMinimizeEvents: function () {
+        $('ul .setback-parts').show();
+    },
+    hideListMinimizeEvents: function () {
+        $('ul .setback-parts').hide();
+    },
+    setSumEntries: function (elem, sum){
+        if ((elem).next('ul').find('li.hits').length == 0) {
+            $.getJSON(path + '/AJAX/JSON?method=getTranslation', {"id": "", "str": "Showing"}, function(response) {
+                 (elem).next('ul').children('li').eq(3).after('<li class="hits">'+ response.data.translation + ': ' + sum + '</li>');
+                // (elem).next('ul').eq(3).after('<li class="hits">'+ response.data.translation + ': ' + sum + '</li>');
+            });
         }
     },
-    getListEvent: function (elem, iterator, factor, sum) {
-        elem.after('<div class="pager">show more</div><div class="allResults">show all</div>');
-        elem.siblings('.pager').click( function () {
+    hidePager: function (elem) {
+        elem.next('ul.pager').remove();
+    }
+}
+
+/* pager for multisets in core.tpl */
+var tablePager = {
+    init: function (elem) {
+        var iterator = 1;
+        var factor = 5;
+        var sum = elem.children('tbody').children('tr').length;
+        if (sum > factor) {
+            for(var i = (factor); i < sum; i++) {
+                elem.children('tbody').children('tr').eq(i).addClass('offscreen');
+            }
+            tablePager.showListEvents(elem);
+            tablePager.hideListMinimizeEvents(elem);
+            tablePager.setSumEntries(sum);
+            tablePager.listenEvents(elem, iterator, factor, sum);
+        } else {
+            tablePager.hidePager(elem);
+        }
+    },
+    getNextListEntries: function (elem, iterator, factor, sum) {
+        var stop = (sum > (factor*iterator)) ? (factor*iterator) : sum;
+        for (var i = (factor*(iterator-1)); i < stop; i++) {
+            elem.children('tbody').children('tr').eq(i).removeClass('offscreen');
+        }
+        if (sum <= (factor*iterator)) {
+            tablePager.showListMinimizeEvents(elem);
+            tablePager.hideListEvents(elem);
+        }
+        tablePager.listenEvents(elem, iterator, factor, sum);
+
+    },
+    getAllListEntries: function (elem, iterator, factor, sum) {
+        tablePager.showListMinimizeEvents(elem);
+        tablePager.hideListEvents(elem);
+        for (var i = (factor*(iterator-1)); i < sum; i++) {
+            elem.children('tbody').children('tr').eq(i).removeClass('offscreen');
+        }
+        tablePager.listenEvents(elem, iterator, factor, sum);
+    },
+    listenEvents: function (elem, iterator, factor, sum) {
+        $('.next-parts').click( function () {
             tablePager.getNextListEntries(elem, iterator + 1, factor, sum);
         });
-        elem.siblings('.allResults').click( function () {
-            tablePager.getAllListEntries(elem, iterator + 1, factor, sum);
+        $('.all-parts').click( function () {
+            tablePager.getAllListEntries(elem, iterator +1 , factor, sum);
         });
+        $('.setback-parts').click( function () {
+            tablePager.init(elem);
+        });
+    },
+    showListEvents: function () {
+        $('ul .next-parts').show();
+        $('ul .all-parts').show();
+    },
+    hideListEvents: function () {
+        $('ul .next-parts').hide();
+        $('ul .all-parts').hide();
+    },
+    showListMinimizeEvents: function () {
+        $('ul .setback-parts').show();
+    },
+    hideListMinimizeEvents: function () {
+        $('ul .setback-parts').hide();
+    },
+    setSumEntries: function (sum){
+        if ($('ul.pager li.hits').length == 0) {
+            $.getJSON(path + '/AJAX/JSON?method=getTranslation', {"id": "", "str": "Showing"}, function(response) {
+                $('ul.pager li').eq(3).after('<li class="hits">'+ response.data.translation + ': ' + sum + '</li>');
+            });
+        }
+    },
+    hidePager: function () {
+        $('ul.pager').remove();
     }
 }
 

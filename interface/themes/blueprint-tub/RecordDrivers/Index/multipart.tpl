@@ -26,3 +26,15 @@
     {/foreach}
     </tbody>
 </table>
+
+<ul class="pager">
+    <li class="next-parts">
+       {translate text="multipart_next"}
+    </li>
+    <li class="setback-parts">
+       {translate text="multipart_reset"}
+    </li>
+    <li class="all-parts">
+       {translate text="multipart_all"}
+    </li>
+</ul>

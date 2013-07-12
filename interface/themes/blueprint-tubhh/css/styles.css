@@ -1540,3 +1540,57 @@ div.debug code {
     color: #FFFFFF;
     font-weight: bold;
 }
+
+.recordsubcontent .pager {
+    background: #def url("../images/finc/gradient-lightblue-y.png") repeat-x scroll 0 -3em;
+}
+.recordsubcontent .pager li
+{
+    display: inline;
+    padding: 0.75em 1em;
+    font-size: 1.125em;
+    /*border: black 1px solid;*/
+}
+.recordsubcontent .pager li.next-parts,
+.recordsubcontent .pager li.all-parts,
+.recordsubcontent .pager li.setback-parts,
+.recordsubcontent .pager li a {
+    cursor: pointer;
+    color: #135;
+}
+.recordsubcontent .pager li.next-parts:hover,
+.recordsubcontent .pager li.all-parts:hover,
+.recordsubcontent .pager li.setback-parts:hover,
+.recordsubcontent .pager li a:hover {
+    color: #157;
+}
+.recordsubcontent .pager li.hits {
+    float: right;
+    padding: 0 1em 0 0;
+}
+.result .multipart ul.pager {
+    display: block;
+    padding: 1em 0 0.5em 0 !important;
+}
+.multipart .pager li {
+    display: inline;
+}
+.multipart .pager li.next-parts,
+.multipart .pager li.all-parts,
+.multipart .pager li.setback-parts,
+.multipart .pager li a {
+    cursor: pointer;
+    color: #000 !important;
+    font-size: 0.875em;
+    letter-spacing: 0.0825em;
+}
+.multipart .pager li.next-parts:hover,
+.multipart .pager li.all-parts:hover,
+.multipart .pager li.setback-parts:hover,
+.multipart .pager li a:hover {
+    color: #666 !important;
+}
+.multipart .pager li.hits {
+    color: #000;
+    font-size: 0.875em;
+}
