@@ -21,6 +21,8 @@
     {/if}
     <link rel="search" type="application/opensearchdescription+xml" title="Library Catalog Search" href="{$url}/Search/OpenSearch?method=describe" />
     
+    <link rel="stylesheet" href="http://lincl1.b.tu-harburg.de:8000/combine/combine.php?type=css&files=theme/blueprint-tubhh/css/blueprint/screen.css,theme/blueprint-tubhh/css/styles.css,theme/blueprint-tubhh/css/print.css" type="text/css" media="screen, projection">
+
     {* Load Blueprint CSS framework *}
     {css media="screen, projection" filename="blueprint/screen.css"}
     {css media="print" filename="blueprint/print.css"}
@@ -33,6 +35,13 @@
     //]]>
     </script>
 
+    <link rel="stylesheet" type="text/css" media="screen, projection" href="{$url}/interface/themes/blueprint/js/jquery-ui-1.8.7.custom/css/smoothness/jquery-ui-1.8.7.custom.css" />
+
+    {* Load VuFind specific stylesheets *}
+    {css media="screen, projection" filename="styles.css"}
+    {css media="screen" filename="print.css"}
+    <!--[if lt IE 8]><link rel="stylesheet" href="{$url}/interface/themes/blueprint/css/ie.css" type="text/css" media="screen, projection"><![endif]-->
+
 	{* Load jQuery framework and plugins *}
     {js filename="jquery-1.4.4.min.js"}
     {js filename="jquery.form.js"}
@@ -41,8 +50,7 @@
     
     {* Load jQuery UI *}
     {js filename="jquery-ui-1.8.7.custom/js/jquery-ui-1.8.7.custom.min.js"}
-    <link rel="stylesheet" type="text/css" media="screen, projection" href="{$url}/interface/themes/blueprint/js/jquery-ui-1.8.7.custom/css/smoothness/jquery-ui-1.8.7.custom.css" />
-        
+
     {* Load dialog/lightbox functions *}
     {js filename="lightbox.js"}
 
@@ -50,10 +58,6 @@
     {js filename="common.js"}
     {js filename="dbr.js"}
 
-    {* Load VuFind specific stylesheets *}
-    {css media="screen, projection" filename="styles.css"}
-    {css media="screen" filename="print.css"}
-    <!--[if lt IE 8]><link rel="stylesheet" href="{$url}/interface/themes/blueprint/css/ie.css" type="text/css" media="screen, projection"><![endif]-->
   </head>
 
   <body>
@@ -120,5 +124,6 @@
 		{include file="footer-tub.tpl"}
 	  </div>
     </div>
+        
   </body>
 </html>
