@@ -21,8 +21,6 @@
     {/if}
     <link rel="search" type="application/opensearchdescription+xml" title="Library Catalog Search" href="{$url}/Search/OpenSearch?method=describe" />
     
-    <link rel="stylesheet" href="http://lincl1.b.tu-harburg.de:8000/combine/combine.php?type=css&files=theme/blueprint-tubhh/css/blueprint/screen.css,theme/blueprint-tubhh/css/styles.css,theme/blueprint-tubhh/css/print.css" type="text/css" media="screen, projection">
-
     {* Load Blueprint CSS framework *}
     {css media="screen, projection" filename="blueprint/screen.css"}
     {css media="print" filename="blueprint/print.css"}
