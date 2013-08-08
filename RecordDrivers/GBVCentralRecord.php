@@ -392,14 +392,13 @@ class GBVCentralRecord extends MarcRecord
                  * a journal run as an OpenURL; however, it doesn't work well with
                  * Zotero, so it is currently commented out -- instead, we just add
                  * some extra fields and then drop through to the default case.
+                 */
                    $params['rft_val_fmt'] = 'info:ofi/fmt:kev:mtx:journal';
                    $params['rft.genre'] = 'journal';
                    $params['rft.jtitle'] = $params['rft.title'];
                    $params['rft.issn'] = $this->getCleanISSN();
                    $params['rft.au'] = $this->getPrimaryAuthor();
-                   break;
-                */
-                $params['rft.issn'] = $this->getCleanISSN();
+//                $params['rft.issn'] = $this->getCleanISSN();
 
                 // Including a date in a title-level Journal OpenURL may be too
                 // limiting -- in some link resolvers, it may cause the exclusion
@@ -842,7 +841,7 @@ class GBVCentralRecord extends MarcRecord
         if ($fieldsToSearch) {
             $queryparts[] = $fieldsToSearch;
         }
-        $queryparts[] = 'format:Book';
+        $queryparts[] = '(format:Book OR format:"Serial Volume")';
         // Assemble the query parts and filter out current record:
         $query = implode(" AND ", $queryparts);
         $query = '('.$query.')';
