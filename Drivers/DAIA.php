@@ -258,7 +258,7 @@ class DAIA implements DriverInterface
                         for ($m = 0; $messageElements->item($m) !== null; $m++) {
                             if ($messageElements->item($m)->attributes->getNamedItem('errno')) {
                                 if ($messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue === '400') {
-                                    $result['status'] = 'On reserve';
+                                    #$result['status'] = 'On reserve';
                                     #$result['reserve'] = 'Yes';
                                 }
                                 if ($messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue === '404') {
@@ -509,7 +509,7 @@ class DAIA implements DriverInterface
                 $messageElements = $itemlist->item($c)->getElementsByTagName('message');
                 if($messageElements->length > 0 && $messageElements->item(0)->attributes->getNamedItem('errno') !== null) {
                     if ($messageElements->item(0)->attributes->getNamedItem('errno')->nodeValue === '400') {
-                        $status = 'reserve';
+                        #$status = 'reserve';
                         $reservedCounter++;
                     }
                     if ($messageElements->item(0)->attributes->getNamedItem('errno')->nodeValue === '404') {
@@ -523,7 +523,9 @@ class DAIA implements DriverInterface
                 $availability = 0;
             }
             $reserve = 'N';
-            if ($earliest_queue > 0 || $reservedCounter === count($itemlist)) $reserve = 'Y';
+            // Die folgende Zeile zeigt "Vormerkregal" als Standort an, wenn ein Medium vorgemerkt ist.
+            // Das ist jedoch nur dann richtig, wenn das Medium für den Vormerkenden abholbereit ist.
+            //if ($earliest_queue > 0 || $reservedCounter === count($itemlist)) $reserve = 'Y';
             $dateArray = explode('.', $earliest_duedate);
             $earliest_timestamp = null;
             if (count($dateArray) === 3) $earliest_timestamp = mktime(0, 0, 0, $dateArray[1], $dateArray[0], $dateArray[2]);
