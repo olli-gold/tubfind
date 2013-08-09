@@ -220,7 +220,7 @@ class JSON extends Action
      * @author Chris Delis <cedelis@uillinois.edu>
      * @author Tuan Nguyen <tuan@yorku.ca>
      */
-    public function getItemStatuses($testing = false)
+    public function getItemStatuses()
     {
         global $interface;
         global $configArray;
@@ -251,9 +251,7 @@ class JSON extends Action
             'available' => $interface->fetch('AJAX/status-available.tpl'),
             'unavailable' => $interface->fetch('AJAX/status-unavailable.tpl'),
             'missing' => $interface->fetch('AJAX/status-missing.tpl'),
-            'lost' => $interface->fetch('AJAX/status-lost.tpl'),
-            'reserve' => $interface->fetch('AJAX/status-reserve.tpl'),
-            'notforloan' => $interface->fetch('AJAX/status-notforloan.tpl'),
+            'lost' => $interface->fetch('AJAX/status-lost.tpl')
         );
 
         // Load callnumber and location settings:
@@ -314,13 +312,7 @@ class JSON extends Action
         }
 
         // Done
-        if ($testing === false) {
-            return $this->output($statuses, JSON::STATUS_OK);
-        }
-
-        // if this method is called for testing, return the pure json string without http headers
-        $output = array('data'=>$statuses,'status'=>JSON::STATUS_OK);
-        return json_encode($output);
+        return $this->output($statuses, JSON::STATUS_OK);
     }
 
     /**
@@ -957,8 +949,6 @@ class JSON extends Action
         $presenceOnlyIndicator = '0';
         $available_copies = 0;
         $lent = 0;
-        $availability = null;
-
         foreach ($record as $key => $info) {
             $timestamp[$key]  = $info['duedate_timestamp'];
             // Find an available copy
@@ -977,17 +967,11 @@ class JSON extends Action
             if ($info['duedate_timestamp']) {
                 $lent++;
             }
-            if ($info['status'] === 'Unavailable') {
-                $availability = 'unavailable';
-            }
             if ($info['status'] === 'missing') {
                 $availability = 'missing';
             }
             if ($info['status'] === 'lost') {
                 $availability = 'lost';
-            }
-            if ($info['status'] === 'reserve') {
-                $availability = 'reserve';
             }
             // Store call number/location info:
             $callNumbers[] = $info['callnumber'];
@@ -1026,10 +1010,8 @@ class JSON extends Action
         }
         // Collect details about links to show in result list
         $reservationLink = '';
-        $availability_message = null;
         if ($available) $availability = 'available';
-        else if ($availability != 'missing' && $availability != 'lost' && $availability != 'reserve' && $availability != 'unavailable') $availability = 'notforloan';
-        if ($availability !== null) $availability_message = $messages[$availability];
+        else if ($availability != 'missing' && $availability != 'lost') $availability = 'notforloan';
         // if all available copies must be recalled, we should show the place-a-hold-button
         if ($available && $placeaholdneeded === $available_copies) {
             $reservationLink = ' <a href="'.htmlspecialchars($placeaholdhref).'" target="_blank">'.translate('Place a Hold').'</a>'; 
@@ -1037,28 +1019,26 @@ class JSON extends Action
         // if no copy is available, we should show a recall button
         if ($available === false && $recallhref !== '') {
             $reservationLink = ' <a href="'.htmlspecialchars($recallhref).'" target="_blank">'.translate('Recall this').'</a>';
-            if ($availability !== 'reserve') $availability = 'unavailable';
+            $availability = 'unavailable';
         }
         // Location should not get transformed, if it is a hyperlink
-        $electronic = '0';
         $locationArr = explode(">", $location);
         if (count($locationArr) === 1) {
             $location = htmlentities($location, ENT_COMPAT, 'UTF-8');
         }
         else {
-            $electronic = '1';
             $locArr = explode("<", $locationArr[1]);
             $locArr[0] = htmlentities($locArr[0], ENT_COMPAT, 'UTF-8');
             $locationArr[1] = implode("<", $locArr);
             $location = implode(">", $locationArr);
         }
 
-
         // Send back the collected details:
         return array(
             'id' => $record[0]['id'],
             'availability' => ($available ? 'true' : 'false'),
-            'availability_message' => $availability_message,
+            'availability_message' =>
+                $messages[$availability],
             'location' => $location,
             'locationList' => false,
             'reserve' =>
@@ -1068,8 +1048,7 @@ class JSON extends Action
             'callnumber' => '<span class="callnumberResult">'.htmlentities($callNumber, ENT_COMPAT, 'UTF-8').'</span>',
             'reservationUrl' => $reservationLink,
             'duedate' => $duedate,
-            'presenceOnly' => $presenceOnlyIndicator,
-            'electronic' => $electronic
+            'presenceOnly' => $presenceOnlyIndicator
         );
     }
 
@@ -1102,9 +1081,6 @@ class JSON extends Action
             }
             if ($info['status'] === 'lost') {
                 $availability = 'lost';
-            }
-            if ($info['status'] === 'reserve') {
-                $availability = 'reserve';
             }
             // Store call number/location info:
             $locations[$info['location']]['callnumbers'][] = $info['callnumber'];
