@@ -337,7 +337,6 @@ class GBVCentralRecord extends MarcRecord
 
         // Start an array of OpenURL parameters:
         $params = array(
-            'gvk_ppn' => $this->fields['id'],
             'ctx_ver' => 'Z39.88-2004',
             'ctx_enc' => 'info:ofi/enc:UTF-8',
             'rfr_id' => "info:sid/{$coinsID}:tubfind",
