@@ -710,6 +710,7 @@ class GBVCentralRecord extends MarcRecord
         $result = $this->getTomes();
         foreach($result as $doc) {
             $part = $doc['volume'];
+            $retval[$cnt]['sort']=$doc['sort'];
             $retval[$cnt]['title']=$doc['title_full'][0];
             $retval[$cnt]['id']=$doc['id'];
             $retval[$cnt]['date'] = preg_replace("/[^0-9]/","", $doc['publishDate'][0]);
@@ -718,10 +719,11 @@ class GBVCentralRecord extends MarcRecord
             $cnt++;
         }
         foreach ($retval as $key => $row) {
+            $part0[$key] = (isset($row['sort'])) ? $row['sort'] : 0;
             $part1[$key] = (isset($row['partNum'])) ? $row['partNum'] : 0;
             $part2[$key] = (isset($row['date'])) ? $row['date'] : 0;
         }
-        array_multisort($part1, SORT_DESC, $part2, SORT_DESC, $retval );
+        array_multisort($part0, SORT_DESC, $part1, SORT_DESC, $part2, SORT_DESC, $retval );
         return $retval;
     }
 
@@ -744,13 +746,15 @@ class GBVCentralRecord extends MarcRecord
             $retval[$cnt]['volume'] = $doc['volume'];
             $retval[$cnt]['issue'] = $doc['issue'];
             $retval[$cnt]['pages'] = $doc['pages'];
+            $retval[$cnt]['sort'] = $doc['soer'];
             $cnt++;
         }
         foreach ($retval as $key => $row) {
+            $part0[$key] = (isset($row['sort'])) ? $row['sort'] : 0;
             $part1[$key] = (isset($row['date'])) ? $row['date'] : 0;
             $part2[$key] = (isset($row['title'])) ? $row['title'] : 0;
         }
-        array_multisort($part1, SORT_DESC, $part2, SORT_ASC, $retval );
+        array_multisort($part0, SORT_DESC, $part1, SORT_DESC, $part2, SORT_ASC, $retval );
         return $retval;
     }
 
@@ -1323,6 +1327,10 @@ class GBVCentralRecord extends MarcRecord
                                         if (count($v_names) > 0 && $parId === $id) {
                                             $subrecord['volume'] = $v_names[0]->getData();
                                         }
+                                        $e_names = $v->getSubfields('9');
+                                        if (count($e_names) > 0) {
+                                            $subrecord['sort'] = $e_names[0]->getData();
+                                        }
                                     }
                                 }
                             }
@@ -1360,6 +1368,10 @@ class GBVCentralRecord extends MarcRecord
                                         $v_names = $v->getSubfields('v');
                                         if (count($v_names) > 0 && $parId === $id) {
                                             $subrecord['volume'] = $v_names[0]->getData();
+                                        }
+                                        $e_names = $v->getSubfields('9');
+                                        if (count($e_names) > 0) {
+                                            $subrecord['sort'] = $e_names[0]->getData();
                                         }
                                     }
                                 }
@@ -1467,6 +1479,10 @@ class GBVCentralRecord extends MarcRecord
                                         if (count($v_names) > 0 && $parId === $id) {
                                             $subrecord['volume'] = $v_names[0]->getData();
                                         }
+                                        $e_names = $v->getSubfields('9');
+                                        if (count($e_names) > 0) {
+                                            $subrecord['sort'] = $e_names[0]->getData();
+                                        }
                                     }
                                 }
                             }
@@ -1486,6 +1502,10 @@ class GBVCentralRecord extends MarcRecord
                                     $v_names = $v->getSubfields('v');
                                     if (count($v_names) > 0 && $parId === $id) {
                                         $subrecord['volume'] = $v_names[0]->getData();
+                                    }
+                                    $e_names = $v->getSubfields('9');
+                                    if (count($e_names) > 0) {
+                                        $subrecord['sort'] = $e_names[0]->getData();
                                     }
                                 }
                             }
@@ -1555,7 +1575,7 @@ class GBVCentralRecord extends MarcRecord
 
                 $subrecords[] = $subrecord;
             }
-            #print_r($subrecords);
+            //print_r($subrecords);
             return $subrecords;
         #}
     }
@@ -1778,6 +1798,10 @@ class GBVCentralRecord extends MarcRecord
                                         if (count($v_names) > 0) {
                                             $subrecord['volume'] = $v_names[0]->getData();
                                         }
+                                        $e_names = $v->getSubfields('9');
+                                        if (count($e_names) > 0) {
+                                            $subrecord['sort'] = $e_names[0]->getData();
+                                        }
                                     }
                                 }
                             }
@@ -1801,6 +1825,10 @@ class GBVCentralRecord extends MarcRecord
                                         $v_names = $v->getSubfields('v');
                                         if (count($v_names) > 0) {
                                             $subrecord['volume'] = $v_names[0]->getData();
+                                        }
+                                        $e_names = $v->getSubfields('9');
+                                        if (count($e_names) > 0) {
+                                            $subrecord['sort'] = $e_names[0]->getData();
                                         }
                                     }
                                 }
@@ -1894,6 +1922,10 @@ class GBVCentralRecord extends MarcRecord
                                         if (count($v_names) > 0) {
                                             $subrecord['volume'] = $v_names[0]->getData();
                                         }
+                                        $e_names = $v->getSubfields('9');
+                                        if (count($e_names) > 0) {
+                                            $subrecord['sort'] = $e_names[0]->getData();
+                                        }
                                     }
                                 }
                             }
@@ -1906,6 +1938,10 @@ class GBVCentralRecord extends MarcRecord
                                     $v_names = $v->getSubfields('v');
                                     if (count($v_names) > 0) {
                                         $subrecord['volume'] = $v_names[0]->getData();
+                                    }
+                                    $e_names = $v->getSubfields('9');
+                                    if (count($e_names) > 0) {
+                                        $subrecord['sort'] = $e_names[0]->getData();
                                     }
                                 }
                             }
