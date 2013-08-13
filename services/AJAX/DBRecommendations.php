@@ -63,6 +63,7 @@ class DBRecommendations extends Action
                 'dbRecommendations', $databases
             );
         }
+        $interface->assign('showRanking', $dbRecommender->rankingIsActive());
 
         // Done, display the page
         $interface->display('Search/Recommend/BremenDatabases.tpl');

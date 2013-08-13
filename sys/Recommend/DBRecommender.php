@@ -36,6 +36,11 @@ class DBRecommender {
                 }
         }
 
+        public function rankingIsActive() {
+                global $configArray;
+                return $configArray['DBR']['showRanking'];
+        }
+
         public function retrieveDbData( $searchTerm ) {
                 $this->searchTerm = $searchTerm;
                 $recommenderURL = $this->recommenderURL.urlencode($searchTerm);
