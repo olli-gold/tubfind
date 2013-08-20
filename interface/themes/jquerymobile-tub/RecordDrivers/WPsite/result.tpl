@@ -3,7 +3,7 @@
   <div class="result recordId" id="record{$summId|escape}">
   <h3>
     {if $summTitleGer}
-        <img src="{$url}/interface/themes/blueprint-tub/images/de.gif" border="0" alt="Deutsch" title="Deutsch"/><a href="{$summURLs.0}">
+        <img src="{$url}/interface/themes/blueprint-tub/images/de.gif" border="0" alt="Deutsch" title="Deutsch"/><a href="{$urlDE}">
         {if is_array($summTitleGer)}
             {$summTitleGer.0|truncate:180:"..."|highlight:$lookfor}
         {else}
@@ -12,7 +12,7 @@
         </a>
         {if $summTitleEng}
             <br/>
-            <img src="{$url}/interface/themes/blueprint-tub/images/uk.gif" border="0" alt="English" title="English"/><a href="{$summURLs.1}">
+            <img src="{$url}/interface/themes/blueprint-tub/images/uk.gif" border="0" alt="English" title="English"/><a href="{$urlEN}">
             {if is_array($summTitleEng)}
                 {$summTitleEng.0|truncate:180:"..."|highlight:$lookfor}
             {else}

@@ -1,5 +1,4 @@
-{foreach from=$summURLs item=recordurl}{/foreach}
-<a rel="external" href="{$recordurl}">
+<a rel="external" href="{$urlDE}">
   <div class="result recordId" id="record{$summId|escape}">
   <h3>
     {if !$summTitle}
