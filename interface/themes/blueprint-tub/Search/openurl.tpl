@@ -9,7 +9,7 @@ class="fulltext openUrlWindow window_settings:{$openUrlWindow|escape}"
   {* put the openUrl here in a span (COinS almost) so we can retrieve it later *}
   <span title="{$openUrl|escape}" class="openUrl"></span>
   {if $openUrlGraphicDyn}
-    <img src="{$openUrlGraphicDyn|escape}&{$openUrl|escape}" alt="{translate text='Get full text'}" />
+    <img src="{$openUrlGraphicDyn|escape}&{$openUrl|escape}" />
   {elseif $openUrlGraphic}
     <img src="{$openUrlGraphic|escape}" alt="{translate text='Get full text'}" style="{if $openUrlGraphicWidth}width:{$openUrlGraphicWidth|escape}px;{/if}{if $openUrlGraphicHeight}height:{$openUrlGraphicHeight|escape}px;{/if}" />
   {else}
