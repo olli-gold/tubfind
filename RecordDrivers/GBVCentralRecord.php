@@ -434,6 +434,9 @@ class GBVCentralRecord extends MarcRecord
                     $params['sfx.ignore_date_threshold'] = 1;
                 }*/
                 break;
+            case 'electronic Resource':
+                $params['rft.genre'] = 'book';
+                break;
             default:
                 $params['rft_val_fmt'] = 'info:ofi/fmt:kev:mtx:dc';
                 $params['rft.creator'] = $this->getPrimaryAuthor();
