@@ -151,8 +151,9 @@ class PAIA extends DAIA
             $_SESSION['picauser'] = $loginUser;
             return $userArray;
         } else {
-            // if not found locally, look into LDAP for user data
+            // if not found locally, get user data from PAIA
             $result = $this->_paiaLogin($barcode, $password);
+print_r($result);
         }
 
         if (get_class($result) === 'PEAR_Error') {
@@ -176,7 +177,8 @@ class PAIA extends DAIA
     public function getMyProfile($user)
     {
 print_r($user);
-        $userinfo = $this->_getUserdata(array());
+        $userinfo = $this->_getUserdata($user['username']);
+print_r($userinfo);
         // firstname
         $recordList['firstname'] = $userinfo->firstname;
         // lastname
@@ -795,6 +797,7 @@ print_r($user);
         $array_response = json_decode($json_response, true);
 
         if (array_key_exists('access_token', $array_response)) {
+            $_SESSION['paiaToken'] = $array_response['accessToken'];
             return $this->_getUserDetails($array_response);
         }
         else if (array_key_exists('error', $array_response)) {
@@ -815,8 +818,7 @@ print_r($user);
      */
     private function _getUserDetails($data)
     {
-        $accessToken = $data['access_token'];
-        $user_response = $this->_getit('/paia/core/'.$data['patron'], $array_response['access_token']);
+        $user_response = $this->_getit('/paia/core/'.$data['patron'], $_SESSION['paiaToken']);
 
         $username = $user_response['name'];
         $nameArr = explode(',', $username);
@@ -835,7 +837,6 @@ print_r($user);
         $sessionuser = new User();
         $sessionuser->username = $this->_username;
         $sessionuser->cat_password = $this->_password;
-        $_SESSION['picauser'] = $sessionuser;
         */
         return $user;
     }
@@ -850,8 +851,7 @@ print_r($user);
      */
     private function _getUserdata($data)
     {
-        $accessToken = $data['access_token'];
-        $user_response = $this->_getit('/paia/core/'.$data['patron'], $array_response['access_token']);
+        $user_response = $this->_getit('/paia/core/'.$data, $_SESSION['paiaToken']);
 
         $username = $user_response['name'];
         $nameArr = explode(',', $username);
