@@ -436,7 +436,8 @@ class GBVCentralRecord extends MarcRecord
                 break;
             case 'electronic Resource':
                 $params['rft.genre'] = 'book';
-                break;
+                $params['rft.isbn'] = $this->getCleanISBN();
+                // Don't stop, take the default parameters also
             default:
                 $params['rft_val_fmt'] = 'info:ofi/fmt:kev:mtx:dc';
                 $params['rft.creator'] = $this->getPrimaryAuthor();
