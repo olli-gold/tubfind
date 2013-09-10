@@ -750,7 +750,7 @@ class GBVCentralRecord extends MarcRecord
             $retval[$cnt]['volume'] = $doc['volume'];
             $retval[$cnt]['issue'] = $doc['issue'];
             $retval[$cnt]['pages'] = $doc['pages'];
-            $retval[$cnt]['sort'] = $doc['soer'];
+            $retval[$cnt]['sort'] = $doc['sort'];
             $cnt++;
         }
         foreach ($retval as $key => $row) {
