@@ -2909,20 +2909,34 @@ class GBVCentralRecord extends MarcRecord
                 $parts[] = "oclc_num:" . $current;
             }
         }
+        $isbns = $this->getISBNs();
+        if (!empty($isbns)) {
+            foreach ($isbns as $current) {
+                $parts[] = 'isbn:' . $current;
+            }
+        }
+        /*
         $isbn = $this->getCleanISBN();
         if (!empty($isbn)) {
             $isbnList = $wc->getXISBN($isbn);
             foreach ($isbnList as $current) {
                 $parts[] = 'isbn:' . $current;
             }
+        }*/
+        $issns = $this->getISSNs();
+        if (!empty($issns)) {
+            foreach ($issns as $current) {
+                $parts[] = 'issn:' . $current;
+            }
         }
+        /*
         $issn = $this->getCleanISSN();
         if (!empty($issn)) {
             $issnList = $wc->getXISSN($issn);
             foreach ($issnList as $current) {
                 $parts[] = 'issn:' . $current;
             }
-        }
+        }*/
 
         // If we have query parts, we should try to find related records:
         if (!empty($parts)) {
@@ -2944,6 +2958,7 @@ class GBVCentralRecord extends MarcRecord
             // Perform the search and return either results or an error:
             $index = $this->getIndexEngine();
             $this->setHiddenFilters();
+
             // Query with filters applied
             $result = $index->search($query, null, $this->hiddenFilters, 0, 5);
             // Query without filters
