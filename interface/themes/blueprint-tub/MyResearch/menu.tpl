@@ -11,5 +11,6 @@
       {* Only highlight saved searches as active if user is logged in: *}
       <li{if $user && $pageTemplate=="history.tpl"} class="active"{/if}><a href="{$url}/Search/History?require_login">{translate text='history_saved_searches'}</a></li>
       <li><a href="http://www.tub.tu-harburg.de/lbspw">{translate text="Passwort"}</a></li>
+      <li><a  href="{$path}/MyResearch/Logout">{translate text="Log Out"}</a> </li>
     </ul>
   </div>

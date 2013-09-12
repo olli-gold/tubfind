@@ -252,6 +252,24 @@ print_r($userinfo);
      */
     public function getMyTransactions($patron)
     {
+        $pure_response = $this->_getit('/paia/core/'.$patron['cat_username'].'/items', $_SESSION['paiaToken']);
+        $json_start = strpos($pure_response, '{');
+        $json_response = substr($pure_response, $json_start);
+        $loans_response = json_decode($json_response, true);
+
+        // if the login auth token is invalid, renew it (this is possible unless the session is expired)
+        if ($loans_response['error'] && $loans_response['code'] == '401') {
+            $sessionuser = $_SESSION['picauser'];
+            $this->_paiaLogin($sessionuser->username, $sessionuser->cat_password);
+        
+            $pure_response = $this->_getit('/paia/core/'.$patron['cat_username'].'/items', $_SESSION['paiaToken']);
+            $json_start = strpos($pure_response, '{');
+            $json_response = substr($pure_response, $json_start);
+            $loans_response = json_decode($json_response, true);
+        }
+
+print_r($loans_response);
+
         $URL = "/loan/DB=1/USERINFO";
         $POST = array(
             "ACT" => "UI_LOL",
@@ -456,6 +474,24 @@ print_r($userinfo);
      */
     public function getMyFines($patron)
     {
+        $pure_response = $this->_getit('/paia/core/'.$patron['cat_username'].'/fees', $_SESSION['paiaToken']);
+        $json_start = strpos($pure_response, '{');
+        $json_response = substr($pure_response, $json_start);
+        $fees_response = json_decode($json_response, true);
+
+        // if the login auth token is invalid, renew it (this is possible unless the session is expired)
+        if ($loans_response['error'] && $loans_response['code'] == '401') {
+            $sessionuser = $_SESSION['picauser'];
+            $this->_paiaLogin($sessionuser->username, $sessionuser->cat_password);
+        
+            $pure_response = $this->_getit('/paia/core/'.$patron['cat_username'].'/fees', $_SESSION['paiaToken']);
+            $json_start = strpos($pure_response, '{');
+            $json_response = substr($pure_response, $json_start);
+            $fees_response = json_decode($json_response, true);
+        }
+
+print_r($fees_response);
+
         // The patron comes as an array...
         $p = $patron[0];
         $URL = "/loan/DB=1/LNG=DU/USERINFO";
@@ -529,6 +565,24 @@ print_r($userinfo);
      */
     public function getMyHolds($patron)
     {
+        $pure_response = $this->_getit('/paia/core/'.$patron['cat_username'].'/items', $_SESSION['paiaToken']);
+        $json_start = strpos($pure_response, '{');
+        $json_response = substr($pure_response, $json_start);
+        $loans_response = json_decode($json_response, true);
+
+        // if the login auth token is invalid, renew it (this is possible unless the session is expired)
+        if ($loans_response['error'] && $loans_response['code'] == '401') {
+            $sessionuser = $_SESSION['picauser'];
+            $this->_paiaLogin($sessionuser->username, $sessionuser->cat_password);
+        
+            $pure_response = $this->_getit('/paia/core/'.$patron['cat_username'].'/items', $_SESSION['paiaToken']);
+            $json_start = strpos($pure_response, '{');
+            $json_response = substr($pure_response, $json_start);
+            $loans_response = json_decode($json_response, true);
+        }
+
+print_r($loans_response);
+
         $URL = "/loan/DB=1/LNG=DU/USERINFO";
         $POST = array(
             "ACT" => "UI_LOR",
@@ -797,7 +851,11 @@ print_r($userinfo);
         $array_response = json_decode($json_response, true);
 
         if (array_key_exists('access_token', $array_response)) {
-            $_SESSION['paiaToken'] = $array_response['accessToken'];
+            $sessionuser = new User();
+            $sessionuser->username = $this->_username;
+            $sessionuser->cat_password = $this->_password;
+            $_SESSION['picauser'] = $sessionuser;
+            $_SESSION['paiaToken'] = $array_response['access_token'];
             return $this->_getUserDetails($array_response);
         }
         else if (array_key_exists('error', $array_response)) {
@@ -818,7 +876,21 @@ print_r($userinfo);
      */
     private function _getUserDetails($data)
     {
-        $user_response = $this->_getit('/paia/core/'.$data['patron'], $_SESSION['paiaToken']);
+        $pure_response = $this->_getit('/paia/core/'.$data['patron'], $_SESSION['paiaToken']);
+        $json_start = strpos($pure_response, '{');
+        $json_response = substr($pure_response, $json_start);
+        $user_response = json_decode($json_response, true);
+
+        // if the login auth token is invalid, renew it (this is possible unless the session is expired)
+        if ($user_response['error'] && $user_response['code'] == '401') {
+            $sessionuser = $_SESSION['picauser'];
+            $this->_paiaLogin($sessionuser->username, $sessionuser->cat_password);
+
+            $pure_response = $this->_getit('/paia/core/'.$data, $_SESSION['paiaToken']);
+            $json_start = strpos($pure_response, '{');
+            $json_response = substr($pure_response, $json_start);
+            $user_response = json_decode($json_response, true);
+        }
 
         $username = $user_response['name'];
         $nameArr = explode(',', $username);
@@ -851,7 +923,21 @@ print_r($userinfo);
      */
     private function _getUserdata($data)
     {
-        $user_response = $this->_getit('/paia/core/'.$data, $_SESSION['paiaToken']);
+        $pure_response = $this->_getit('/paia/core/'.$data, $_SESSION['paiaToken']);
+        $json_start = strpos($pure_response, '{');
+        $json_response = substr($pure_response, $json_start);
+        $user_response = json_decode($json_response, true);
+
+        // if the login auth token is invalid, renew it (this is possible unless the session is expired)
+        if ($user_response['error'] && $user_response['code'] == '401') {
+            $sessionuser = $_SESSION['picauser'];
+            $this->_paiaLogin($sessionuser->username, $sessionuser->cat_password);
+
+            $pure_response = $this->_getit('/paia/core/'.$data, $_SESSION['paiaToken']);
+            $json_start = strpos($pure_response, '{');
+            $json_response = substr($pure_response, $json_start);
+            $user_response = json_decode($json_response, true);
+        }
 
         $username = $user_response['name'];
         $nameArr = explode(',', $username);
