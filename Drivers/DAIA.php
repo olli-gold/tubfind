@@ -261,6 +261,10 @@ class DAIA implements DriverInterface
                                     #$result['status'] = 'On reserve';
                                     #$result['reserve'] = 'Yes';
                                 }
+                                if ($messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue === '402') {
+                                    $result['status'] = 'On transport';
+                                    #$result['reserve'] = 'Yes';
+                                }
                                 if ($messageElements->item($m)->attributes->getNamedItem('errno')->nodeValue === '404') {
                                     $result['status'] = 'missing';
                                 }
@@ -511,6 +515,9 @@ class DAIA implements DriverInterface
                     if ($messageElements->item(0)->attributes->getNamedItem('errno')->nodeValue === '400') {
                         #$status = 'reserve';
                         $reservedCounter++;
+                    }
+                    if ($messageElements->item(0)->attributes->getNamedItem('errno')->nodeValue === '402') {
+                        $status = 'on transport';
                     }
                     if ($messageElements->item(0)->attributes->getNamedItem('errno')->nodeValue === '404') {
                         $status = 'missing';
