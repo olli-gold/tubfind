@@ -114,11 +114,11 @@
 </div>
 
 <div class="span-5 last">
+    <div class="sidegroup" id="othereditions">
+    </div>
     <div class="sidegroup" id="similarrecs">
         <h4>{translate text="Similar Items"}</h4>
         <span class="ajax_availability" id="similarWait">{translate text='Loading'}...</span>
-    </div>
-    <div class="sidegroup" id="othereditions">
     </div>
 </div>
 
