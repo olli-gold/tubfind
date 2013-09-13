@@ -153,7 +153,6 @@ class PAIA extends DAIA
         } else {
             // if not found locally, get user data from PAIA
             $result = $this->_paiaLogin($barcode, $password);
-print_r($result);
         }
 
         if (get_class($result) === 'PEAR_Error') {
@@ -252,127 +251,59 @@ print_r($userinfo);
      */
     public function getMyTransactions($patron)
     {
-        $pure_response = $this->_getit('/paia/core/'.$patron['cat_username'].'/items', $_SESSION['paiaToken']);
-        $json_start = strpos($pure_response, '{');
-        $json_response = substr($pure_response, $json_start);
-        $loans_response = json_decode($json_response, true);
+        $loans_response = $this->_getAsArray('/paia/core/'.$patron['cat_username'].'/items');
 
-        // if the login auth token is invalid, renew it (this is possible unless the session is expired)
-        if ($loans_response['error'] && $loans_response['code'] == '401') {
-            $sessionuser = $_SESSION['picauser'];
-            $this->_paiaLogin($sessionuser->username, $sessionuser->cat_password);
-        
-            $pure_response = $this->_getit('/paia/core/'.$patron['cat_username'].'/items', $_SESSION['paiaToken']);
-            $json_start = strpos($pure_response, '{');
-            $json_response = substr($pure_response, $json_start);
-            $loans_response = json_decode($json_response, true);
-        }
+/*
+Array
+(
+    [doc] => Array
+        (
+            [0] => Array
+                (
+                    [status] => 3
+                    [item] => http://uri.gbv.de/document/opac-de-830:bar:830$28291370
+                    [about] => JavaScript und Ajax : das umfassend / Wenz, Christ 8., a Galileo  2008
+                    [label] => TI:TIX-116
+                    [queue] => 0
+                    [renewals] => 11
+                    [reminder] => 0
+                    [duedate] => 2013-09-25
+                    [cancancel] => 
+                    [storage] => Ausleihe
+                    [storageid] => http://paia.gbv.de/isil/DE-830/desk/1
+                )
 
-print_r($loans_response);
-
-        $URL = "/loan/DB=1/USERINFO";
-        $POST = array(
-            "ACT" => "UI_LOL",
-            "LNG" => "DU",
-            "BOR_U" => $_SESSION['picauser']->username,
-            "BOR_PW" => $_SESSION['picauser']->cat_password
-        );
-        $postit = $this->_postit($URL, $POST);
-        // How many items are there?
-        $holds = substr_count($postit, 'input type="checkbox" name="VB"');
-        $iframes = $holdsByIframe = substr_count($postit, '<iframe');
-        $ppns = array();
-        $expiration = array();
-        $transList = array();
-        $barcode = array();
-        $reservations = array();
-        $titles = array();
-        if ($holdsByIframe >= $holds) {
-            $position = strpos($postit, '<iframe');
-            for ($i = 0; $i < $iframes; $i++) {
-                $pos = strpos($postit, 'VBAR=', $position);
-                $value = substr($postit, $pos+9, 8);
-                $completeValue = substr($postit, $pos+5, 12);
-                $barcode[] = $completeValue;
-                $bc = $this->_getPpnByBarcode($value);
-                $ppns[] = $bc;
-                $position = $pos + 1;
-                $current_position = $position;
-                $position_state = null;
-                for ($n = 0; $n<6; $n++) {
-                    $current_position = $this->_strposBackwards(
-                        $postit, '<td class="value-small">', $current_position-1
-                    );
-                    if ($n === 1) {
-                        $position_reservations = $current_position;
-                    }
-                    if ($n === 2) {
-                        $position_expire = $current_position;
-                    }
-                    if ($n === 4) {
-                        $position_state = $current_position;
-                    }
-                    if ($n === 5) {
-                        $position_title = $current_position;
-                    }
-                }
-                if ($position_state !== null && substr($postit, $position_state+24, 8) !== 'bestellt') {
-                    $reservations[] = substr($postit, $position_reservations+24, 1);
-                    $expiration[] = substr($postit, $position_expire+24, 10);
-                    $renewals[] = $this->_getRenewals($completeValue);
-                    $closing_title = strpos($postit, '</td>', $position_title);
-                    $titles[] = $completeValue." ".substr($postit, $position_title+24, ($closing_title-$position_title-24));
-                }
-                else {
-                    $holdsByIframe--;
-                    array_pop($ppns);
-                    array_pop($barcode);
-                }
-            }
-            $holds = $holdsByIframe;
-        } else {
-            // no iframes in PICA catalog, use checkboxes instead
-            // Warning: reserved items have no checkbox in OPC! They wont appear
-            // in this list
-            $position = strpos($postit, 'input type="checkbox" name="VB"');
-            for ($i = 0; $i < $holds; $i++) {
-                $pos = strpos($postit, 'value=', $position);
-                $value = substr($postit, $pos+11, 8);
-                $completeValue = substr($postit, $pos+7, 12);
-                $barcode[] = $completeValue;
-                $ppns[] = $this->_getPpnByBarcode($value);
-                $position = $pos + 1;
-                $position_expire = $position;
-                for ($n = 0; $n<4; $n++) {
-                    $position_expire = strpos(
-                        $postit, '<td class="value-small">', $position_expire+1
-                    );
-                }
-                $expiration[] = substr($postit, $position_expire+24, 10);
-                $renewals[] = $this->_getRenewals($completeValue);
-            }
-        }
+    ssso:ReservedService: document service status 1 (reserved)
+    ssso:PreparedService: document service status 2 (ordered)
+    ssso:ExecutedService: document service status 3 (held)
+    ssso:ProvidedService: document service status 4 (provided)
+    ssso:RejectedService: document service status 4 (rejected)
+*/
+// Die PPN scheint nicht in der Rueckgabe enthalten zu sein - wo kriegen wir die her?
+        $holds = count($loans_response['doc']);
         for ($i = 0; $i < $holds; $i++) {
-            if ($ppns[$i] !== false) {
-                $transList[] = array(
-                    'id'      => $ppns[$i],
-                    'duedate' => $expiration[$i],
-                    'renewals' => $renewals[$i],
-                    'reservations' => $reservations[$i],
-                    'vb'      => $barcode[$i],
-                    'title'   => $titles[$i]
-                );
-            } else {
-                // There is a problem: no PPN found for this item... lets take id 0
-                // to avoid serious error (that will just return an empty title)
-                $transList[] = array(
-                    'id'      => 0,
-                    'duedate' => $expiration[$i],
-                    'renewals' => $renewals[$i],
-                    'reservations' => $reservations[$i],
-                    'vb'      => $barcode[$i],
-                    'title'   => $titles[$i]
-                );
+            if ($loans_response['doc'][$i]['status'] == '3') {
+                if (array_key_exists('ppn', $loans_response['doc'][$i]) === true) {
+                    $transList[] = array(
+                        'id'      => $loans_response['doc'][$i]['ppn'],
+                        'duedate' => $loans_response['doc'][$i]['duedate'],
+                        'renewals' => $loans_response['doc'][$i]['renewals'],
+                        'reservations' => $loans_response['doc'][$i]['queue'],
+                        'vb'      => $loans_response['doc'][$i]['item'],
+                        'title'   => $loans_response['doc'][$i]['about']
+                    );
+                } else {
+                    // There is a problem: no PPN found for this item... lets take id 0
+                    // to avoid serious error (that will just return an empty title)
+                    $transList[] = array(
+                        'id'      => 0,
+                        'duedate' => $loans_response['doc'][$i]['duedate'],
+                        'renewals' => $loans_response['doc'][$i]['renewals'],
+                        'reservations' => $loans_response['doc'][$i]['queue'],
+                        'vb'      => $loans_response['doc'][$i]['item'],
+                        'title'   => $loans_response['doc'][$i]['about']
+                    );
+                }
             }
         }
         //print_r($transList);
@@ -474,21 +405,7 @@ print_r($loans_response);
      */
     public function getMyFines($patron)
     {
-        $pure_response = $this->_getit('/paia/core/'.$patron['cat_username'].'/fees', $_SESSION['paiaToken']);
-        $json_start = strpos($pure_response, '{');
-        $json_response = substr($pure_response, $json_start);
-        $fees_response = json_decode($json_response, true);
-
-        // if the login auth token is invalid, renew it (this is possible unless the session is expired)
-        if ($loans_response['error'] && $loans_response['code'] == '401') {
-            $sessionuser = $_SESSION['picauser'];
-            $this->_paiaLogin($sessionuser->username, $sessionuser->cat_password);
-        
-            $pure_response = $this->_getit('/paia/core/'.$patron['cat_username'].'/fees', $_SESSION['paiaToken']);
-            $json_start = strpos($pure_response, '{');
-            $json_response = substr($pure_response, $json_start);
-            $fees_response = json_decode($json_response, true);
-        }
+        $fees_response = $this->_getAsArray('/paia/core/'.$patron['cat_username'].'/fees');
 
 print_r($fees_response);
 
@@ -565,118 +482,57 @@ print_r($fees_response);
      */
     public function getMyHolds($patron)
     {
-        $pure_response = $this->_getit('/paia/core/'.$patron['cat_username'].'/items', $_SESSION['paiaToken']);
-        $json_start = strpos($pure_response, '{');
-        $json_response = substr($pure_response, $json_start);
-        $loans_response = json_decode($json_response, true);
+        $loans_response = $this->_getAsArray('/paia/core/'.$patron['cat_username'].'/items');
 
-        // if the login auth token is invalid, renew it (this is possible unless the session is expired)
-        if ($loans_response['error'] && $loans_response['code'] == '401') {
-            $sessionuser = $_SESSION['picauser'];
-            $this->_paiaLogin($sessionuser->username, $sessionuser->cat_password);
-        
-            $pure_response = $this->_getit('/paia/core/'.$patron['cat_username'].'/items', $_SESSION['paiaToken']);
-            $json_start = strpos($pure_response, '{');
-            $json_response = substr($pure_response, $json_start);
-            $loans_response = json_decode($json_response, true);
-        }
+/*
+Array
+(
+    [doc] => Array
+        (
+            [0] => Array
+                (
+                    [status] => 3
+                    [item] => http://uri.gbv.de/document/opac-de-830:bar:830$28291370
+                    [about] => JavaScript und Ajax : das umfassend / Wenz, Christ 8., a Galileo  2008
+                    [label] => TI:TIX-116
+                    [queue] => 0
+                    [renewals] => 11
+                    [reminder] => 0
+                    [duedate] => 2013-09-25
+                    [cancancel] => 
+                    [storage] => Ausleihe
+                    [storageid] => http://paia.gbv.de/isil/DE-830/desk/1
+                )
 
-print_r($loans_response);
-
-        $URL = "/loan/DB=1/LNG=DU/USERINFO";
-        $POST = array(
-            "ACT" => "UI_LOR",
-            "BOR_U" => $_SESSION['picauser']->username,
-            "BOR_PW" => $_SESSION['picauser']->cat_password
-        );
-        $postit = $this->_postit($URL, $POST);
-
-        // How many items are there?
-        $holds = substr_count($postit, 'input type="checkbox" name="VB"');
-        $ppns = array();
-        $creation = array();
-        $position = strpos($postit, 'input type="checkbox" name="VB"');
+    ssso:ReservedService: document service status 1 (reserved)
+    ssso:PreparedService: document service status 2 (ordered)
+    ssso:ExecutedService: document service status 3 (held)
+    ssso:ProvidedService: document service status 4 (provided)
+    ssso:RejectedService: document service status 4 (rejected)
+*/
+// Die PPN scheint nicht in der Rueckgabe enthalten zu sein - wo kriegen wir die her?
+        $holds = count($loans_response['doc']);
         for ($i = 0; $i < $holds; $i++) {
-            $pos = strpos($postit, 'value=', $position);
-            $value = substr($postit, $pos+11, 8);
-            $ppns[] = $this->_getPpnByBarcode($value);
-            $position = $pos + 1;
-            $position_create = $position;
-            for ($n = 0; $n<3; $n++) {
-                $position_create = strpos(
-                    $postit, '<td class="value-small">', $position_create+1
-                );
+            if ($loans_response['doc'][$i]['status'] == '1' || $loans_response['doc'][$i]['status'] == '2') {
+                if (array_key_exists('ppn', $loans_response['doc'][$i]) === true) {
+                    $transList[] = array(
+                        'id'      => $loans_response['doc'][$i]['ppn'],
+                        'create' => $loans_response['doc'][$i]['create'],
+                        'title'   => $loans_response['doc'][$i]['about']
+                    );
+                } else {
+                    // There is a problem: no PPN found for this item... lets take id 0
+                    // to avoid serious error (that will just return an empty title)
+                    $transList[] = array(
+                        'id'      => 0,
+                        'create' => $loans_response['doc'][$i]['create'],
+                        'title'   => $loans_response['doc'][$i]['about']
+                    );
+                }
             }
-            $creation[] = str_replace('-', '.', substr($postit, $position_create+24, 10));
         }
-        /* items, which are ordered and have no signature yet, are not included in
-         * the for-loop getthem by checkbox PPN
-         */
-        $moreholds = substr_count($postit, 'input type="checkbox" name="PPN"');
-        $position = strpos($postit, 'input type="checkbox" name="PPN"');
-        for ($i = 0; $i < $moreholds; $i++) {
-            $pos = strpos($postit, 'value=', $position);
-            // get the length of PPN
-               $x = strpos($postit, '"', $pos+7);
-            $value = substr($postit, $pos+7, $x-$pos-7);
-            // problem: the value presented here does not contain the checksum!
-            // so its not a valid identifier
-            // we need to calculate the checksum
-            $checksum = 0;
-            for ($i=0; $i<strlen($value);$i++) {
-                $checksum += $value[$i]*(9-$i);
-            }
-            if ($checksum%11 === 1) {
-                $checksum = 'X';
-            } else if ($checksum%11 === 0) {
-                $checksum = 0;
-            } else {
-                $checksum = 11 - $checksum%11;
-            }
-            $ppns[] = $value.$checksum;
-            $position = $pos + 1;
-            $position_create = $position;
-            for ($n = 0; $n<3; $n++) {
-                $position_create = strpos(
-                    $postit, '<td class="value-small">', $position_create+1
-                );
-            }
-            $creation[] = str_replace('-', '.', substr($postit, $position_create+24, 10));
-        }
-
-        /* media ordered from closed stack is not visible on the UI_LOR page
-         * requested above... we need to do another request and filter the
-         * UI_LOL-page for requests
-         */
-        $POST_LOL = array(
-            "ACT" => "UI_LOL",
-            "BOR_U" => $_SESSION['picauser']->username,
-            "BOR_PW" => $_SESSION['picauser']->cat_password
-        );
-        $postit_lol = $this->_postit($URL, $POST_LOL);
-
-        $requests = substr_count(
-            $postit_lol, '<td class="value-small">bestellt</td>'
-        );
-        $position = 0;
-        for ($i = 0; $i < $requests; $i++) {
-            $position = strpos(
-                $postit_lol, '<td class="value-small">bestellt</td>', $position+1
-            );
-            $pos = strpos($postit_lol, '<td class="value-small">', ($position-100));
-            $nextClosingTd = strpos($postit_lol, '</td>', $pos);
-            $value = substr($postit_lol, $pos+27, ($nextClosingTd-$pos-27));
-            $ppns[] = $this->_getPpnByBarcode($value);
-            $creation[] = date('d.m.Y');
-        }
-
-        for ($i = 0; $i < ($holds+$moreholds+$requests); $i++) {
-            $holdList[] = array(
-                "id"       => $ppns[$i],
-                "create"   => $creation[$i]
-            );
-        }
-        return $holdList;
+        //print_r($transList);
+        return $transList;
     }
 
     /**
@@ -784,6 +640,25 @@ print_r($loans_response);
         return $data;
     }
 
+    private function _getAsArray($file) {
+        $pure_response = $this->_getit($file, $_SESSION['paiaToken']);
+        $json_start = strpos($pure_response, '{');
+        $json_response = substr($pure_response, $json_start);
+        $loans_response = json_decode($json_response, true);
+
+        // if the login auth token is invalid, renew it (this is possible unless the session is expired)
+        if ($loans_response['error'] && $loans_response['code'] == '401') {
+            $sessionuser = $_SESSION['picauser'];
+            $this->_paiaLogin($sessionuser->username, $sessionuser->cat_password);
+
+            $pure_response = $this->_getit($file, $_SESSION['paiaToken']);
+            $json_start = strpos($pure_response, '{');
+            $json_response = substr($pure_response, $json_start);
+            $loans_response = json_decode($json_response, true);
+        }
+
+        return $loans_response;
+    }
 
     /**
      * gets a PPN by its barcode
