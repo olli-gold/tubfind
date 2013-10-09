@@ -1295,6 +1295,9 @@ class SearchObject_Solr extends SearchObject_Base
         // The first record to retrieve:
         //  (page - 1) * limit = start
         $recordStart = ($this->page - 1) * $this->limit;
+        $clean = true;
+        global $module, $action;
+        if ($module == 'MyResearch' && ($action == 'Favorites' || $action == 'MyList')) { $clean = false; }
         $this->indexResult = $this->indexEngine->search(
             $this->query, // "author_id:16247640X*",      // Query string
             $this->index,      // DisMax Handler
@@ -1307,7 +1310,8 @@ class SearchObject_Solr extends SearchObject_Base
             $finalSort,        // Field to sort on
             $this->fields,     // Fields to return
             $this->method,     // HTTP Request method
-            $returnIndexErrors // Include errors in response?
+            $returnIndexErrors,// Include errors in response?
+            $clean             // should the input be cleaned up? (Not for Favorite-search)
         );
         // Get time after the query
         $this->stopQueryTimer();
