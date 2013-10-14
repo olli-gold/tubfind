@@ -78,7 +78,8 @@ class SearchTermsAutocomplete implements AutocompleteInterface
         if ($tag->N) {
             while ($tag->fetch()) {
                 if ($tag->query != '') {
-                    $tagList[] = utf8_encode($tag->query);
+//                    $tagList[] = utf8_encode($tag->query);
+                    $tagList[] = $tag->query;
                 }
             }
         }

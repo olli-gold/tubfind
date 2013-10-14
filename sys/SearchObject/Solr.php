@@ -1067,6 +1067,10 @@ class SearchObject_Solr extends SearchObject_Base
     ) {
 
         global $configArray;
+        global $module, $action;
+
+        $clean = true;
+        if ($module == 'MyResearch' && ($action == 'Favorites' || $action == 'MyList')) { $clean = false; }
 
         // Our search has already been processed in init()
 
@@ -1114,6 +1118,7 @@ class SearchObject_Solr extends SearchObject_Base
             $this->query = $query;
         }
 
+        if ($clean === true) {
         // Define Filter Query
         $filterQuery = $this->hiddenFilters;
         $orFilterQuery = array();
@@ -1145,7 +1150,8 @@ class SearchObject_Solr extends SearchObject_Base
                     . '('. implode(" OR ", $filter) . ')';
             }
         }
-        
+        }
+
         // If we are only searching one field use the DisMax handler
         //    for that field. If left at null let solr take care of it
         if (count($search) == 1 && isset($search[0]['index'])) {
@@ -1295,9 +1301,6 @@ class SearchObject_Solr extends SearchObject_Base
         // The first record to retrieve:
         //  (page - 1) * limit = start
         $recordStart = ($this->page - 1) * $this->limit;
-        $clean = true;
-        global $module, $action;
-        if ($module == 'MyResearch' && ($action == 'Favorites' || $action == 'MyList')) { $clean = false; }
         $this->indexResult = $this->indexEngine->search(
             $this->query, // "author_id:16247640X*",      // Query string
             $this->index,      // DisMax Handler
