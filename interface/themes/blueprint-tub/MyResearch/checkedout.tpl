@@ -120,8 +120,10 @@
                 {* Ist das Buch eine Fernleihe? *}
                 {if substr($resource.ils_details.vb,0,6) == '830$99'}
                     | {translate text='Title from interlibrary loan'}
+{*
                 {else}
                     | <a href="{$url}/MyResearch/Renew?VB={$resource.ils_details.vb|escape}">{translate text='Renew'}</a>
+*}
                 {/if}
               {else}
                 | <b>{translate text='Reservations'}:</b> {translate text=$resource.reservations|escape}
