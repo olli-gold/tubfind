@@ -106,7 +106,6 @@ class CheckedOut extends MyResearch
     {
         global $interface;
         $session_details = array();
-
         foreach ($transList as $key => $item) {
             if ($this->checkRenew['function'] == "renewMyItemsLink") {
                 // Build OPAC URL

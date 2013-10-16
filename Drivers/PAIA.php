@@ -279,7 +279,8 @@ Array
     ssso:ProvidedService: document service status 4 (provided)
     ssso:RejectedService: document service status 4 (rejected)
 */
-// Die PPN scheint nicht in der Rueckgabe enthalten zu sein - wo kriegen wir die her?
+
+// TODO: Die PPN ist nicht in der PAIA-Rueckgabe enthalten - wo kriegen wir die her?
         $holds = count($loans_response['doc']);
         for ($i = 0; $i < $holds; $i++) {
             if ($loans_response['doc'][$i]['status'] == '3') {
@@ -290,7 +291,9 @@ Array
                         'renewals' => $loans_response['doc'][$i]['renewals'],
                         'reservations' => $loans_response['doc'][$i]['queue'],
                         'vb'      => $loans_response['doc'][$i]['item'],
-                        'title'   => $loans_response['doc'][$i]['about']
+                        'title'   => $loans_response['doc'][$i]['about'],
+                        'renewable' => true,
+                        'renew_dDetails' => $loans_response['doc'][$i]['item']
                     );
                 } else {
                     // There is a problem: no PPN found for this item... lets take id 0
@@ -301,7 +304,9 @@ Array
                         'renewals' => $loans_response['doc'][$i]['renewals'],
                         'reservations' => $loans_response['doc'][$i]['queue'],
                         'vb'      => $loans_response['doc'][$i]['item'],
-                        'title'   => $loans_response['doc'][$i]['about']
+                        'title'   => $loans_response['doc'][$i]['about'],
+                        'renewable' => true,
+                        'renew_details' => $loans_response['doc'][$i]['item']
                     );
                 }
             }
@@ -364,6 +369,7 @@ Array
         }
         return $renewals;
     }
+
     /**
      * Renew item(s)
      *
@@ -372,24 +378,40 @@ Array
      * @return bool            True on success
      * @access public
      */
-    public function renew($recordId)
+    public function renewMyItems($details)
     {
-        $URL = "/loan/DB=1/LNG=DU/USERINFO";
-        $POST = array(
-            "ACT" => "UI_RENEWLOAN",
-            "BOR_U" => $_SESSION['picauser']->username,
-            "BOR_PW" => $_SESSION['picauser']->cat_password
-        );
-        if (is_array($recordId) === true) {
-            foreach ($recordId as $rid) {
-                array_push($POST['VB'], $recordId);
-            }
-        } else {
-            $POST['VB'] = $recordId;
+        $it = $details['details'];
+        $items = array();
+        foreach ($it as $item) {
+            $items[] = array('item' => stripslashes($item));
         }
-        $postit = $this->_postit($URL, $POST);
+        $patron = $details['patron'];
+        $post_data = array("doc" => $items);
+        $array_response = $this->_postAsArray('/paia/core/'.$patron['cat_username'].'/renew', $post_data);
 
-        return true;
+        $details = array();
+
+        if (array_key_exists('error', $array_response)) {
+            $details[] = array('success' => false, 'sys_message' => $array_response['error_description']);
+        }
+        else {
+            $elements = $array_response['doc'];
+            foreach ($elements as $element) {
+                if ($element['status'] == '3') {
+                    $details[] = array('success' => true, 'new_date' => $element['duedate'], 'new_time' => '23:59:59', 'item_id' => 0, 'sys_message' => 'Successfully renewed');
+                }
+                else {
+                    $details[] = array('success' => false, 'new_date' => $element['duedate'], 'new_time' => '23:59:59', 'item_id' => 0, 'sys_message' => 'Request rejected');
+                }
+            }
+        }
+        $returnArray = array('blocks' => false, 'details' => $details);
+
+        return $returnArray;
+    }
+
+    public function getRenewDetails($checkOutDetails) {
+        return($checkOutDetails['renew_details']);
     }
 
     /**
@@ -595,11 +617,57 @@ Array
         $postData = implode("&", $data_to_send);
         */
         // json-encoding
-        $postData = json_encode($data_to_send);
+        $postData = stripslashes(json_encode($data_to_send));
 
         // HTTP-Header vorbereiten
         $out  = "POST $file HTTP/1.1\r\n";
         $out .= "Host: " . $this->paiaHost . ":" . $this->paiaPort . "\r\n";
+        $out .= "Content-type: application/json; charset=UTF-8\r\n";
+        $out .= "Content-length: ". strlen($postData) ."\r\n";
+        $out .= "User-Agent: ".$_SERVER["HTTP_USER_AGENT"]."\r\n";
+        $out .= "Connection: Close\r\n";
+        $out .= "\r\n";
+        $out .= $postData;
+
+        if (!$conex = @fsockopen($this->paiaHost, $this->paiaPort, $errno, $errstr, 10)) {
+            return 0;
+        }
+        fwrite($conex, $out);
+        $data = '';
+        while (!feof($conex)) {
+            $data .= fgets($conex, 512);
+        }
+        fclose($conex);
+        return $data;
+    }
+
+    /**
+     * post something to a foreign host
+     *
+     * @param string $file         POST target URL
+     * @param string $data_to_send POST data
+     *
+     * @return string              POST response
+     * @access private
+     */
+    private function _postitresponse($file, $data_to_send, $access_token)
+    {
+        // Parameter verarbeiten
+        //print_r($data_to_send); # Zum Debuggen
+        // form-encoding
+        /*foreach ($data_to_send as $key => $dat) {
+            $data_to_send[$key]
+                = "$key=".rawurlencode(utf8_encode(stripslashes($dat)));
+        }
+        $postData = implode("&", $data_to_send);
+        */
+        // json-encoding
+        $postData = stripslashes(json_encode($data_to_send));
+
+        // HTTP-Header vorbereiten
+        $out  = "POST $file HTTP/1.1\r\n";
+        $out .= "Host: " . $this->paiaHost . ":" . $this->paiaPort . "\r\n";
+        $out .= "Authorization: Bearer ".$access_token."\r\n";
         $out .= "Content-type: application/json; charset=UTF-8\r\n";
         $out .= "Content-length: ". strlen($postData) ."\r\n";
         $out .= "User-Agent: ".$_SERVER["HTTP_USER_AGENT"]."\r\n";
@@ -652,6 +720,26 @@ Array
             $this->_paiaLogin($sessionuser->username, $sessionuser->cat_password);
 
             $pure_response = $this->_getit($file, $_SESSION['paiaToken']);
+            $json_start = strpos($pure_response, '{');
+            $json_response = substr($pure_response, $json_start);
+            $loans_response = json_decode($json_response, true);
+        }
+
+        return $loans_response;
+    }
+
+    private function _postAsArray($file, $data) {
+        $pure_response = $this->_postitresponse($file, $data, $_SESSION['paiaToken']);
+        $json_start = strpos($pure_response, '{');
+        $json_response = substr($pure_response, $json_start);
+        $loans_response = json_decode($json_response, true);
+
+        // if the login auth token is invalid, renew it (this is possible unless the session is expired)
+        if ($loans_response['error'] && $loans_response['code'] == '401') {
+            $sessionuser = $_SESSION['picauser'];
+            $this->_paiaLogin($sessionuser->username, $sessionuser->cat_password);
+
+            $pure_response = $this->_postitresponse($file, $data, $_SESSION['paiaToken']);
             $json_start = strpos($pure_response, '{');
             $json_response = substr($pure_response, $json_start);
             $loans_response = json_decode($json_response, true);
