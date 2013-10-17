@@ -1,8 +1,10 @@
 <div class="result recordId" id="record{$summId|escape}">
-  {* hide until complete
+  {if $bookBag}
   <label for="checkbox_{$summId|regex_replace:'/[^a-z0-9]/':''|escape}" class="offscreen">{translate text="Select this record"}</label>
-  <input id="checkbox_{$summId|regex_replace:'/[^a-z0-9]/':''|escape}" type="checkbox" name="id[]" value="{$summId|escape}" class="checkbox addToCartCheckbox"/>
-   *}
+  <input id="checkbox_{$summId|regex_replace:'/[^a-z0-9]/':''|escape}" type="checkbox" name="ids[]" value="{$summId|escape}" class="checkbox_ui"/>
+  <input type="hidden" name="idsAll[]" value="{$summId|escape}" />
+  {/if}
+
   <div class="span-2">
   {if $summThumb}
     <img src="{$summThumb|escape}" class="summcover" alt="{translate text='Cover Image'}"/>
