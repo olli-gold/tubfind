@@ -56,6 +56,28 @@
     {js filename="common.js"}
     {js filename="dbr.js"}
 
+
+    {js filename="jquery.cookie.js"}
+
+    {if $bookBag}
+      <script type="text/javascript">
+      var vufindString = Array();
+      vufindString.bulk_noitems_advice = "{translate text="bulk_noitems_advice"}";
+      vufindString.confirmEmpty = "{translate text="bookbag_confirm_empty"}";
+      vufindString.viewBookBag = "{translate text="View Book Bag"}";
+      vufindString.addBookBag = "{translate text="Add to Book Bag"}";
+      vufindString.removeBookBag = "{translate text="Remove from Book Bag"}";
+      vufindString.itemsAddBag = "{translate text="items_added_to_bookbag"}";
+      vufindString.itemsInBag = "{translate text="items_already_in_bookbag"}";
+      vufindString.bookbagMax = "{$bookBag->getMaxSize()}";
+      vufindString.bookbagFull = "{translate text="bookbag_full_msg"}";
+      vufindString.bookbagStatusFull = "{translate text="bookbag_full"}";
+      </script>
+
+      {js filename="cart.js"}
+      {assign var=bookBagItems value=$bookBag->getItems()}
+    {/if}
+
   </head>
 
   <body>
@@ -78,6 +100,10 @@
           {/if}
         {/if}
 	  </div>
+          <div style="float:right;width:auto;margin-right:20px;margin-top:-100px;">
+            {include file="pwmenu.tpl"}
+          </div>
+          <div class="clear"></div>
 	  {/if}
 
       {if $showBreadcrumbs}
