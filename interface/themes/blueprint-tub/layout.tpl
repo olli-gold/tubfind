@@ -33,7 +33,20 @@
     //]]>
     </script>
 
-	{* Load jQuery framework and plugins *}
+    <script type="text/javascript">
+    vufindString.bulk_noitems_advice = "{translate text="bulk_noitems_advice"}";
+    vufindString.confirmEmpty = "{translate text="bookbag_confirm_empty"}";
+    vufindString.viewBookBag = "{translate text="View Book Bag"}";
+    vufindString.addBookBag = "{translate text="Add to Book Bag"}";
+    vufindString.removeBookBag = "{translate text="Remove from Book Bag"}";
+    vufindString.itemsAddBag = "{translate text="items_added_to_bookbag"}";
+    vufindString.itemsInBag = "{translate text="items_already_in_bookbag"}";
+    vufindString.bookbagMax = "{$bookBag->getMaxSize()}";
+    vufindString.bookbagFull = "{translate text="bookbag_full_msg"}";
+    vufindString.bookbagStatusFull = "{translate text="bookbag_full"}";
+    </script>
+
+    {* Load jQuery framework and plugins *}
     {js filename="jquery-1.4.4.min.js"}
     {js filename="jquery.form.js"}
     {js filename="jquery.metadata.js"}
