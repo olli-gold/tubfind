@@ -253,33 +253,6 @@ class PAIA extends DAIA
     {
         $loans_response = $this->_getAsArray('/paia/core/'.$patron['cat_username'].'/items');
 
-/*
-Array
-(
-    [doc] => Array
-        (
-            [0] => Array
-                (
-                    [status] => 3
-                    [item] => http://uri.gbv.de/document/opac-de-830:bar:830$28291370
-                    [about] => JavaScript und Ajax : das umfassend / Wenz, Christ 8., a Galileo  2008
-                    [label] => TI:TIX-116
-                    [queue] => 0
-                    [renewals] => 11
-                    [reminder] => 0
-                    [duedate] => 2013-09-25
-                    [cancancel] => 
-                    [storage] => Ausleihe
-                    [storageid] => http://paia.gbv.de/isil/DE-830/desk/1
-                )
-
-    ssso:ReservedService: document service status 1 (reserved)
-    ssso:PreparedService: document service status 2 (ordered)
-    ssso:ExecutedService: document service status 3 (held)
-    ssso:ProvidedService: document service status 4 (provided)
-    ssso:RejectedService: document service status 4 (rejected)
-*/
-
 // TODO: Die PPN ist nicht in der PAIA-Rueckgabe enthalten - wo kriegen wir die her?
         $holds = count($loans_response['doc']);
         for ($i = 0; $i < $holds; $i++) {
@@ -429,64 +402,21 @@ Array
     {
         $fees_response = $this->_getAsArray('/paia/core/'.$patron['cat_username'].'/fees');
 
-print_r($fees_response);
-
-        // The patron comes as an array...
-        $p = $patron[0];
-        $URL = "/loan/DB=1/LNG=DU/USERINFO";
-        $POST = array(
-            "ACT" => "UI_LOC",
-            "BOR_U" => $_SESSION['picauser']->username,
-            "BOR_PW" => $_SESSION['picauser']->cat_password
-        );
-        $postit = $this->_postit($URL, $POST);
-
-        // How many items are there?
-        $holds = substr_count($postit, '<td class="plain"')/3;
-        $ppns = array();
-        $fineDate = array();
-        $description = array();
-        $fine = array();
-        $position = strpos($postit, '<td class="infotab2" align="left">Betrag<td>');
-        for ($i = 0; $i < $holds; $i++) {
-            $pos = strpos($postit, '<td class="plain"', $position);
-            // first class=plain => description
-            // length = position of next </td> - startposition
-            $nextClosingTd = strpos($postit, '</td>', $pos);
-            $description[$i] = substr($postit, $pos+18, ($nextClosingTd-$pos-18));
-            $position = $pos + 1;
-            // next class=plain => date of fee creation
-            $pos = strpos($postit, '<td class="plain"', $position);
-            $nextClosingTd = strpos($postit, '</td>', $pos);
-            $fineDate[$i] = substr($postit, $pos+18, ($nextClosingTd-$pos-18));
-            $position = $pos + 1;
-            // next class=plain => amount of fee
-            $pos = strpos($postit, '<td class="plain"', $position);
-            $nextClosingTd = strpos($postit, '</td>', $pos);
-            $fineString = substr($postit, $pos+32, ($nextClosingTd-$pos-32));
-            $feeString = explode(',', $fineString);
-            $feeString[1] = substr($feeString[1], 0, 2);
-            $fine[$i] = (double) implode('', $feeString);
-            $position = $pos + 1;
-        }
-
         $fineList = array();
-        $amountAll = 0;
-        for ($i = 0; $i < $holds; $i++) {
+        foreach ($fees_response['fee'] as $fine) {
             $fineList[] = array(
-                "amount"   => $fine[$i],
-                "checkout" => "",
-                "fine"     => $fineDate[$i] . ': ' .
-                    utf8_encode(html_entity_decode($description[$i])),
-                "duedate"  => ""
+                "amount"   => $fine['amount'],
+                "checkout" => $fine['item'],
+                "fine"     => $fine['date'] . ': ' . $fine['about'],
+                "duedate"  => "",
+                "type"     => $fine['feetype']
             );
-            $amountAll += $fine[$i];
             // id should be the ppn of the book resulting the fine but there's
             // currently no way to find out the PPN (we have neither barcode nor
             // signature...)
         }
         $fineList[] = array(
-            "balance"  => $amountAll
+            "balance"  => $fees_response['amount']
         );
         return $fineList;
     }
@@ -506,32 +436,6 @@ print_r($fees_response);
     {
         $loans_response = $this->_getAsArray('/paia/core/'.$patron['cat_username'].'/items');
 
-/*
-Array
-(
-    [doc] => Array
-        (
-            [0] => Array
-                (
-                    [status] => 3
-                    [item] => http://uri.gbv.de/document/opac-de-830:bar:830$28291370
-                    [about] => JavaScript und Ajax : das umfassend / Wenz, Christ 8., a Galileo  2008
-                    [label] => TI:TIX-116
-                    [queue] => 0
-                    [renewals] => 11
-                    [reminder] => 0
-                    [duedate] => 2013-09-25
-                    [cancancel] => 
-                    [storage] => Ausleihe
-                    [storageid] => http://paia.gbv.de/isil/DE-830/desk/1
-                )
-
-    ssso:ReservedService: document service status 1 (reserved)
-    ssso:PreparedService: document service status 2 (ordered)
-    ssso:ExecutedService: document service status 3 (held)
-    ssso:ProvidedService: document service status 4 (provided)
-    ssso:RejectedService: document service status 4 (rejected)
-*/
 // TODO: Die PPN ist nicht in der PAIA-Rueckgabe enthalten - wo kriegen wir die her?
         $holds = count($loans_response['doc']);
         for ($i = 0; $i < $holds; $i++) {
@@ -631,15 +535,6 @@ Array
      */
     private function _postit($file, $data_to_send)
     {
-        // Parameter verarbeiten
-        //print_r($data_to_send); # Zum Debuggen
-        // form-encoding
-        /*foreach ($data_to_send as $key => $dat) {
-            $data_to_send[$key]
-                = "$key=".rawurlencode(utf8_encode(stripslashes($dat)));
-        }
-        $postData = implode("&", $data_to_send);
-        */
         // json-encoding
         $postData = stripslashes(json_encode($data_to_send));
 
@@ -676,15 +571,6 @@ Array
      */
     private function _postitresponse($file, $data_to_send, $access_token)
     {
-        // Parameter verarbeiten
-        //print_r($data_to_send); # Zum Debuggen
-        // form-encoding
-        /*foreach ($data_to_send as $key => $dat) {
-            $data_to_send[$key]
-                = "$key=".rawurlencode(utf8_encode(stripslashes($dat)));
-        }
-        $postData = implode("&", $data_to_send);
-        */
         // json-encoding
         $postData = stripslashes(json_encode($data_to_send));
 
