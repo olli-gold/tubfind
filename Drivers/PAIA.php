@@ -63,6 +63,8 @@ class PAIA extends DAIA
 
         $configArray = parse_ini_file('conf/PAIA.ini', true);
 
+        $this->config = $configArray;
+
         $this->paiaHost = $configArray['PAIA']['Host'];
         $this->paiaPort = $configArray['PAIA']['Port'];
     }
@@ -175,9 +177,7 @@ class PAIA extends DAIA
      */
     public function getMyProfile($user)
     {
-print_r($user);
         $userinfo = $this->_getUserdata($user['username']);
-print_r($userinfo);
         // firstname
         $recordList['firstname'] = $userinfo->firstname;
         // lastname
@@ -532,7 +532,7 @@ Array
     ssso:ProvidedService: document service status 4 (provided)
     ssso:RejectedService: document service status 4 (rejected)
 */
-// Die PPN scheint nicht in der Rueckgabe enthalten zu sein - wo kriegen wir die her?
+// TODO: Die PPN ist nicht in der PAIA-Rueckgabe enthalten - wo kriegen wir die her?
         $holds = count($loans_response['doc']);
         for ($i = 0; $i < $holds; $i++) {
             if ($loans_response['doc'][$i]['status'] == '1' || $loans_response['doc'][$i]['status'] == '2') {
@@ -573,9 +573,33 @@ Array
      * PEAR error on failure of support classes
      * @access public
      */
-    //public function placeHold($holdDetails)
-    //{
-    //}
+    public function placeHold($holdDetails)
+    {
+        $item = $holdDetails['item_id'];
+        $items = array();
+        $items[] = array('item' => stripslashes($item));
+        $patron = $holdDetails['patron'];
+        $post_data = array("doc" => $items);
+        $array_response = $this->_postAsArray('/paia/core/'.$patron['cat_username'].'/request', $post_data);
+        $details = array();
+
+        if (array_key_exists('error', $array_response)) {
+            $details = array('success' => false, 'sys_message' => $array_response['error_description']);
+        }
+        else {
+            $elements = $array_response['doc'];
+            foreach ($elements as $element) {
+                if (array_key_exists('error', $element)) {
+                    $details = array('success' => false, 'sys_message' => $element['error']);
+                }
+                else {
+                    $details = array('success' => true, 'sys_message' => 'Successfully requested');
+                }
+            }
+        }
+        $returnArray = $details;
+        return $returnArray;
+    }
 
 
     /**
@@ -927,6 +951,25 @@ Array
         return $user;
         */
         return $user;
+    }
+
+    /**
+     * Public Function which retrieves renew, hold and cancel settings from the
+     * driver ini file.
+     *
+     * @param string $function The name of the feature to be checked
+     *
+     * @return array An array with key-value pairs.
+     * @access public
+     */
+    public function getConfig($function)
+    {
+        if (isset($this->config[$function]) ) {
+            $functionConfig = $this->config[$function];
+        } else {
+            $functionConfig = false;
+        }
+        return $functionConfig;
     }
 
 }

@@ -93,9 +93,7 @@ class Hold extends Record
                         );
                         return false;
                     }
-
                     $interface->assign('formURL', $this->logonURL);
-
                     $interface->assign('gatheredDetails', $this->gatheredDetails);
 
                     // Get List of PickUp Libraries
@@ -116,7 +114,6 @@ class Hold extends Record
                         $patron, $this->gatheredDetails
                     );
                     $interface->assign('defaultPickUpLocation', $defaultPickUpLoc);
-
                     if (isset($_POST['placeHold'])) {
                         // If the form contained a pickup location, make sure that
                         // the value has not been tampered with:
@@ -279,12 +276,12 @@ class Hold extends Record
             // Get Values Passed from holdings.php
             $i=0;
             foreach ($linkData as $details) {
-                $this->gatheredDetails[$details] = $_GET[$details];
+                $this->gatheredDetails[$details] = $_REQUEST[$details];
                 // Build Logon URL
                 if ($i == 0) {
-                    $this->logonURL = "?".$details."=".urlencode($_GET[$details]);
+                    $this->logonURL = "?".$details."=".urlencode($_REQUEST[$details]);
                 } else {
-                    $this->logonURL .= "&".$details."=".urlencode($_GET[$details]);
+                    $this->logonURL .= "&".$details."=".urlencode($_REQUEST[$details]);
                 }
                 $i++;
             }
