@@ -17,8 +17,8 @@
                     <td>{$fineValue.checkout}</td>
                     <td>{$fineValue.duedate}</td>
                     <td>{$fineValue.fine}</td>
-                    <td>{$fineValue.amount/100|string_format:"%.2f"}</td>
-                    <td>{$fineValue.balance/100|string_format:"%.2f"}</td>
+                    <td>{$fineValue.amount}</td>
+                    <td>{$fineValue.balance}</td>
                 </tr>
             {/foreach}
         </table>

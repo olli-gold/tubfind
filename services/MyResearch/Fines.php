@@ -64,7 +64,7 @@ class Fines extends MyResearch
                 for ($i = 0; $i < count($result); $i++) {
                     $row = &$result[$i];
                     $record = $this->db->getRecord($row['id']);
-                    $row['title'] = $record ? $record['title_short'] : null;
+                    $row['title'] = $record ? $record['title_short'][0] : $row['title'];
                 }
                 $interface->assign('rawFinesData', $result);
             }
