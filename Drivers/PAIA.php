@@ -65,6 +65,8 @@ class PAIA extends DAIA
 
         $this->config = $configArray;
 
+        $this->catalogHost = $configArray['Catalog']['Host'];
+
         $this->paiaHost = $configArray['PAIA']['Host'];
         $this->paiaPort = $configArray['PAIA']['Port'];
     }
@@ -253,20 +255,21 @@ class PAIA extends DAIA
     {
         $loans_response = $this->_getAsArray('/paia/core/'.$patron['cat_username'].'/items');
 
-// TODO: Die PPN ist nicht in der PAIA-Rueckgabe enthalten - wo kriegen wir die her?
         $holds = count($loans_response['doc']);
         for ($i = 0; $i < $holds; $i++) {
+            // get PPN from PICA catalog since it is not part of PAIA
+            $ppn = $this->_getPpnByBarcode(substr($loans_response['doc'][$i]['item'], -8));
             if ($loans_response['doc'][$i]['status'] == '3') {
-                if (array_key_exists('ppn', $loans_response['doc'][$i]) === true) {
+                if ($ppn !== false) {
                     $transList[] = array(
-                        'id'      => $loans_response['doc'][$i]['ppn'],
+                        'id'      => $ppn,
                         'duedate' => $loans_response['doc'][$i]['duedate'],
                         'renewals' => $loans_response['doc'][$i]['renewals'],
                         'reservations' => $loans_response['doc'][$i]['queue'],
                         'vb'      => $loans_response['doc'][$i]['item'],
                         'title'   => $loans_response['doc'][$i]['about'],
                         'renewable' => true,
-                        'renew_dDetails' => $loans_response['doc'][$i]['item']
+                        'renew_details' => $loans_response['doc'][$i]['item']
                     );
                 } else {
                     // There is a problem: no PPN found for this item... lets take id 0
@@ -436,14 +439,15 @@ class PAIA extends DAIA
     {
         $loans_response = $this->_getAsArray('/paia/core/'.$patron['cat_username'].'/items');
 
-// TODO: Die PPN ist nicht in der PAIA-Rueckgabe enthalten - wo kriegen wir die her?
         $holds = count($loans_response['doc']);
         for ($i = 0; $i < $holds; $i++) {
+            // get PPN from PICA catalog since it is not part of PAIA
+            $ppn = $this->_getPpnByBarcode(substr($loans_response['doc'][$i]['item'], -8));
             if ($loans_response['doc'][$i]['status'] == '1' || $loans_response['doc'][$i]['status'] == '2') {
                 if (array_key_exists('ppn', $loans_response['doc'][$i]) === true) {
                     $transList[] = array(
-                        'id'      => $loans_response['doc'][$i]['ppn'],
-                        'create' => $loans_response['doc'][$i]['create'],
+                        'id'      => $ppn,
+                        'create'  => $loans_response['doc'][$i]['create'],
                         'title'   => $loans_response['doc'][$i]['about']
                     );
                 } else {
@@ -451,7 +455,7 @@ class PAIA extends DAIA
                     // to avoid serious error (that will just return an empty title)
                     $transList[] = array(
                         'id'      => 0,
-                        'create' => $loans_response['doc'][$i]['create'],
+                        'create'  => $loans_response['doc'][$i]['create'],
                         'title'   => $loans_response['doc'][$i]['about']
                     );
                 }
