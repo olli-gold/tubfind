@@ -195,7 +195,15 @@
                             {/if}
                         {/if}
                         {* TODO: reserve holding via vufind *}
-                        {* <a href="{$url}/Record/{$id|escape:"url"}/Hold">{translate text="Place a Hold"}</a> *}
+                        <form method="POST" action="{$url}/Record/{$id|escape:"url"}/Hold">
+                        <input type="hidden" name="hashKey" value="2c69dc8fa7eded228820509bd80a3bb2" />
+                        {if $row.barcode != "1"}
+                        <input type="hidden" name="item_id" value="http://uri.gbv.de/document/opac-de-830:bar:830${$row.barcode|replace:'-':''}" />
+                        {else}
+                        <input type="hidden" name="item_id" value="http://uri.gbv.de/document/opac-de-830:bar:830${$row.callnumber|replace:'-':''}" />
+                        {/if}
+                        <input type="submit" name="placeHold" value="{translate text="Place a VuFind-Hold"}" />
+                        </form>
                     {elseif $row.availability == 0}
                         <span class="checkedout">{translate text=$row.status|escape}</span>
                         {if $row.queue}

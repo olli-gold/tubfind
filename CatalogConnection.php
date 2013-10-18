@@ -132,7 +132,6 @@ class CatalogConnection
     {
         global $configArray;
         $response = false;
-
         if ($this->getHoldsMode() != "none"
             && method_exists($this->driver, 'placeHold')
             && isset($functionConfig['HMACKeys'])
