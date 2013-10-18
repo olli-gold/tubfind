@@ -407,12 +407,15 @@ class PAIA extends DAIA
 
         $fineList = array();
         foreach ($fees_response['fee'] as $fine) {
+            $ppn = $this->_getPpnByBarcode(substr($fine['item'], -8));
             $fineList[] = array(
+                "id"       => $ppn,
                 "amount"   => $fine['amount'],
-                "checkout" => $fine['item'],
-                "fine"     => $fine['date'] . ': ' . $fine['about'],
+                "checkout" => "",
+                "title"    => $fine['about'],
+                "feedate"  => $fine['date'],
                 "duedate"  => "",
-                "type"     => $fine['feetype']
+                "fine"     => $fine['feetype']
             );
             // id should be the ppn of the book resulting the fine but there's
             // currently no way to find out the PPN (we have neither barcode nor
