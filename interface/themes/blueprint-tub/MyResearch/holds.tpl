@@ -43,8 +43,8 @@
           </div>
           <div class="span-10">
             {* If $resource.id is set, we have the full Solr record loaded and should display a link... *}
-            {if !empty($resource.title)}
-              <a href="{$url}/Record/{$resource.id|escape:"url"}" class="title">{$resource.title|escape}</a>
+            {if !empty($resource.title.0)}
+              <a href="{$url}/Record/{$resource.id|escape:"url"}" class="title">{$resource.title.0|escape}</a>
             {* If the record is not available in Solr, perhaps the ILS driver sent us a title we can show... *}
             {elseif !empty($resource.ils_details.title)}
               <a href="{$url}/Record/{$resource.id|escape:"url"}" class="title">{$resource.ils_details.title|escape}</a>

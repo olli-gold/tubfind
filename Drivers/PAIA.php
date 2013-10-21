@@ -257,9 +257,16 @@ class PAIA extends DAIA
 
         $holds = count($loans_response['doc']);
         for ($i = 0; $i < $holds; $i++) {
-            // get PPN from PICA catalog since it is not part of PAIA
-            $ppn = $this->_getPpnByBarcode(substr($loans_response['doc'][$i]['item'], -8));
             if ($loans_response['doc'][$i]['status'] == '3') {
+                // TODO: set renewable dynamically (not yet supported by PAIA)
+                $renewable = true;
+                $renew_details = $loans_response['doc'][$i]['item'];
+                if ($loans_response['doc'][$i]['canrenew'] == 1) {
+                    $renewable = true;
+                    $renew_details = $loans_response['doc'][$i]['item'];
+                }
+                // get PPN from PICA catalog since it is not part of PAIA
+                $ppn = $this->_getPpnByBarcode(substr($loans_response['doc'][$i]['item'], -8));
                 if ($ppn !== false) {
                     $transList[] = array(
                         'id'      => $ppn,
@@ -268,8 +275,8 @@ class PAIA extends DAIA
                         'reservations' => $loans_response['doc'][$i]['queue'],
                         'vb'      => $loans_response['doc'][$i]['item'],
                         'title'   => $loans_response['doc'][$i]['about'],
-                        'renewable' => true,
-                        'renew_details' => $loans_response['doc'][$i]['item']
+                        'renewable' => $renewable,
+                        'renew_details' => $renew_details
                     );
                 } else {
                     // There is a problem: no PPN found for this item... lets take id 0
@@ -281,8 +288,8 @@ class PAIA extends DAIA
                         'reservations' => $loans_response['doc'][$i]['queue'],
                         'vb'      => $loans_response['doc'][$i]['item'],
                         'title'   => $loans_response['doc'][$i]['about'],
-                        'renewable' => true,
-                        'renew_details' => $loans_response['doc'][$i]['item']
+                        'renewable' => $renewable,
+                        'renew_details' => $renew_details
                     );
                 }
             }
@@ -391,6 +398,54 @@ class PAIA extends DAIA
     }
 
     /**
+     * Cancel item(s)
+     *
+     * @param string $recordId Record identifier
+     *
+     * @return bool            True on success
+     * @access public
+     */
+    public function cancelHolds($cancelDetails)
+    {
+print_r($cancelDetails);
+        $it = $cancelDetails['details'];
+        $items = array();
+        foreach ($it as $item) {
+            $items[] = array('item' => stripslashes($item));
+        }
+        $patron = $cancelDetails['patron'];
+        $post_data = array("doc" => $items);
+
+        $array_response = $this->_postAsArray('/paia/core/'.$patron['cat_username'].'/cancel', $post_data);
+print_r($array_response);
+        $details = array();
+
+        if (array_key_exists('error', $array_response)) {
+            $details[] = array('success' => false, 'status' => $array_response['error_description'], 'sys_message' => $array_response['error']);
+        }
+        else {
+            $count = 0;
+            $elements = $array_response['doc'];
+            foreach ($elements as $element) {
+                if ($element['error']) {
+                    $details[] = array('success' => false, 'status' => $element['error'], 'sys_message' => 'Cancel request rejected');
+                }
+                else {
+                    $details[] = array('success' => true, 'status' => 'Success', 'sys_message' => 'Successfully cancelled');
+                    $count++;
+                }
+            }
+        }
+        $returnArray = array('count' => $count, 'items' => $details);
+
+        return $returnArray;
+    }
+
+    public function getCancelHoldDetails($checkOutDetails) {
+        return($checkOutDetails['cancel_details']);
+    }
+
+    /**
      * Get Patron Fines
      *
      * This is responsible for retrieving all fines by a specific patron.
@@ -444,22 +499,32 @@ class PAIA extends DAIA
 
         $holds = count($loans_response['doc']);
         for ($i = 0; $i < $holds; $i++) {
-            // get PPN from PICA catalog since it is not part of PAIA
-            $ppn = $this->_getPpnByBarcode(substr($loans_response['doc'][$i]['item'], -8));
+            // TODO: get date of creation from a reservation
+            // this is not yet supported by PAIA
             if ($loans_response['doc'][$i]['status'] == '1' || $loans_response['doc'][$i]['status'] == '2') {
-                if (array_key_exists('ppn', $loans_response['doc'][$i]) === true) {
+                // get PPN from PICA catalog since it is not part of PAIA
+                $ppn = $this->_getPpnByBarcode(substr($loans_response['doc'][$i]['item'], -8));
+                $cancel_details = false;
+                if ($loans_response['doc'][$i]['cancancel'] == 1) {
+                    $cancel_details = $loans_response['doc'][$i]['item'];
+                }
+                if ($ppn !== false) {
                     $transList[] = array(
-                        'id'      => $ppn,
-                        'create'  => $loans_response['doc'][$i]['create'],
-                        'title'   => $loans_response['doc'][$i]['about']
+                        'id'             => $ppn,
+                        'create'         => $loans_response['doc'][$i]['create'],
+                        'title'          => $loans_response['doc'][$i]['about'],
+                        'expire'         => $loans_response['doc'][$i]['duedate'],
+                        'cancel_details' => $cancel_details
                     );
                 } else {
                     // There is a problem: no PPN found for this item... lets take id 0
                     // to avoid serious error (that will just return an empty title)
                     $transList[] = array(
-                        'id'      => 0,
-                        'create'  => $loans_response['doc'][$i]['create'],
-                        'title'   => $loans_response['doc'][$i]['about']
+                        'id'             => 0,
+                        'create'         => $loans_response['doc'][$i]['create'],
+                        'title'          => $loans_response['doc'][$i]['about'],
+                        'expire'         => $loans_response['doc'][$i]['duedate'],
+                        'cancel_details' => $cancel_details
                     );
                 }
             }
@@ -474,7 +539,6 @@ class PAIA extends DAIA
      * Attempts to place a hold or recall on a particular item and returns
      * an array with result details or a PEAR error on failure of support classes
      *
-     * TODO: implement it for PICA
      * Make a request on a specific record
      *
      * @param array $holdDetails An array of item and patron data
