@@ -216,8 +216,16 @@
                             {if $row.recallhref}
                                 <a href="{$row.recallhref}" target="_blank">{translate text="Recall This"}</a>
                             {/if}
-                            {* TODO: reserve holding via vufind.
-                            <a href="{$url}/Record/{$id|escape:"url"}/Hold">{translate text="Recall This"}</a> *}
+                            {* TODO: reserve holding via vufind. *}
+                            <form method="POST" action="{$url}/Record/{$id|escape:"url"}/Hold">
+                            <input type="hidden" name="hashKey" value="2c69dc8fa7eded228820509bd80a3bb2" />
+                            {if $row.barcode != "1"}
+                            <input type="hidden" name="item_id" value="http://uri.gbv.de/document/opac-de-830:bar:830${$row.barcode|replace:'-':''}" />
+                            {else}
+                            <input type="hidden" name="item_id" value="http://uri.gbv.de/document/opac-de-830:bar:830${$row.callnumber|replace:'-':''}" />
+                            {/if}
+                            <input type="submit" name="placeHold" value="{translate text="Recall this via VuFind"}" />
+                            </form>
                         {else}
                             {if $interlibraryLoan=="1"}
                                 <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
