@@ -8,7 +8,8 @@
       <li{if $pageTemplate=="profile.tpl"} class="active"{/if}><a href="{$url}/MyResearch/Profile">{translate text='Profile'}</a></li>
       {* Only highlight saved searches as active if user is logged in: *}
       <li{if $user && $pageTemplate=="history.tpl"} class="active"{/if}><a href="{$url}/Search/History?require_login">{translate text='history_saved_searches'}</a></li>
-      <li><a href="http://www.tub.tu-harburg.de/lbspw">{translate text="Passwort"}</a></li>
+      <li{if $pageTemplate=="password.tpl"} class="active"{/if}><a href="{$url}/MyResearch/Password">{translate text='Password'}</a></li>
+      <li><a href="http://www.tub.tu-harburg.de/lbspw">{translate text="Passwortweiche"}</a></li>
       <li><a  href="{$path}/MyResearch/Logout">{translate text="Log Out"}</a> </li>
     </ul>
   </div>
