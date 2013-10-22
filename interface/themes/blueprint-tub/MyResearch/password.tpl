@@ -4,7 +4,8 @@
 
       {if $changeResult && $changeResult.success == false}
         <div class="error">{translate text=$changeResult.status}{if $changeResult.sysMessage} : {translate text=$changeResult.sysMessage|escape}{/if}</div>
-      {else if $changeResult.success == true}
+      {/if}
+      {if $changeResult && $changeResult.success == true}
         <div class="success">{translate text=$changeResult.status}</div>
       {/if}
 
