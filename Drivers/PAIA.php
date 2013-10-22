@@ -958,6 +958,13 @@ class PAIA extends DAIA
             }
             else {
                 $details = array('success' => true, 'status' => 'Successfully changed');
+
+                // TODO: push password also to LDAP (but make that configurable since this is non-standard)
+
+                // replace password for currently logged in user with the new one
+                $sessionuser->password = $newsecret;
+                $sessionuser->cat_password = $newsecret;
+                $_SESSION['picauser'] = $sessionuser;
             }
         }
         $returnArray = $details;
