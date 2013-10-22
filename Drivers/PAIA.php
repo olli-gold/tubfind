@@ -375,16 +375,16 @@ class PAIA extends DAIA
         $details = array();
 
         if (array_key_exists('error', $array_response)) {
-            $details[] = array('success' => false, 'sys_message' => $array_response['error_description']);
+            $details[] = array('success' => false, 'sysMessage' => $array_response['error_description']);
         }
         else {
             $elements = $array_response['doc'];
             foreach ($elements as $element) {
                 if ($element['status'] == '3') {
-                    $details[] = array('success' => true, 'new_date' => $element['duedate'], 'new_time' => '23:59:59', 'item_id' => 0, 'sys_message' => 'Successfully renewed');
+                    $details[] = array('success' => true, 'new_date' => $element['duedate'], 'new_time' => '23:59:59', 'item_id' => 0, 'sysMessage' => 'Successfully renewed');
                 }
                 else {
-                    $details[] = array('success' => false, 'new_date' => $element['duedate'], 'new_time' => '23:59:59', 'item_id' => 0, 'sys_message' => 'Request rejected');
+                    $details[] = array('success' => false, 'new_date' => $element['duedate'], 'new_time' => '23:59:59', 'item_id' => 0, 'sysMessage' => 'Request rejected');
                 }
             }
         }
@@ -407,7 +407,6 @@ class PAIA extends DAIA
      */
     public function cancelHolds($cancelDetails)
     {
-print_r($cancelDetails);
         $it = $cancelDetails['details'];
         $items = array();
         foreach ($it as $item) {
@@ -417,21 +416,20 @@ print_r($cancelDetails);
         $post_data = array("doc" => $items);
 
         $array_response = $this->_postAsArray('/paia/core/'.$patron['cat_username'].'/cancel', $post_data);
-print_r($array_response);
         $details = array();
 
         if (array_key_exists('error', $array_response)) {
-            $details[] = array('success' => false, 'status' => $array_response['error_description'], 'sys_message' => $array_response['error']);
+            $details[] = array('success' => false, 'status' => $array_response['error_description'], 'sysMessage' => $array_response['error']);
         }
         else {
             $count = 0;
             $elements = $array_response['doc'];
             foreach ($elements as $element) {
                 if ($element['error']) {
-                    $details[] = array('success' => false, 'status' => $element['error'], 'sys_message' => 'Cancel request rejected');
+                    $details[] = array('success' => false, 'status' => $element['error'], 'sysMessage' => 'Cancel request rejected');
                 }
                 else {
-                    $details[] = array('success' => true, 'status' => 'Success', 'sys_message' => 'Successfully cancelled');
+                    $details[] = array('success' => true, 'status' => 'Success', 'sysMessage' => 'Successfully cancelled');
                     $count++;
                 }
             }
@@ -559,16 +557,16 @@ print_r($array_response);
         $details = array();
 
         if (array_key_exists('error', $array_response)) {
-            $details = array('success' => false, 'sys_message' => $array_response['error_description']);
+            $details = array('success' => false, 'sysMessage' => $array_response['error_description']);
         }
         else {
             $elements = $array_response['doc'];
             foreach ($elements as $element) {
                 if (array_key_exists('error', $element)) {
-                    $details = array('success' => false, 'sys_message' => $element['error']);
+                    $details = array('success' => false, 'sysMessage' => $element['error']);
                 }
                 else {
-                    $details = array('success' => true, 'sys_message' => 'Successfully requested');
+                    $details = array('success' => true, 'sysMessage' => 'Successfully requested');
                 }
             }
         }
@@ -787,7 +785,7 @@ print_r($array_response);
      */
     private function _paiaLogin($username, $password)
     {
-        $post_data = array("username" => $username, "password" => $password, "grant_type" => "password", "scope" => "read_patron read_fees read_items write_items");
+        $post_data = array("username" => $username, "password" => $password, "grant_type" => "password", "scope" => "read_patron read_fees read_items write_items change_password");
         $login_response = $this->_postit('/paia/auth/login', $post_data);
 
         $json_start = strpos($login_response, '{');
@@ -927,6 +925,43 @@ print_r($array_response);
             $functionConfig = false;
         }
         return $functionConfig;
+    }
+
+    /**
+     * Public Function which changes the password in the library system
+     *
+     * @param string $function The name of the feature to be checked
+     *
+     * @return array An array with patron information.
+     * @access public
+     */
+    public function changePassword($patron, $newpassword)
+    {
+        $sessionuser = $_SESSION['picauser'];
+
+        $post_data = array("patron"       => $patron['username'],
+                           "username"     => $patron['firstname']." ".$patron['lastname'],
+                           "old_password" => $sessionuser->cat_password,
+                           "new_password" => $newpassword);
+
+        $array_response = $this->_postAsArray('/paia/auth/change', $post_data);
+
+        $details = array();
+
+        if (array_key_exists('error', $array_response)) {
+            $details = array('success' => false, 'status' => $array_response['error'], 'sysMessage' => $array_response['error_description']);
+        }
+        else {
+            $element = $array_response['patron'];
+            if (array_key_exists('error', $element)) {
+                $details = array('success' => false, 'status' => 'Failure changing password', 'sysMessage' => $element['error']);
+            }
+            else {
+                $details = array('success' => true, 'status' => 'Successfully changed');
+            }
+        }
+        $returnArray = $details;
+        return $returnArray;
     }
 
 }
