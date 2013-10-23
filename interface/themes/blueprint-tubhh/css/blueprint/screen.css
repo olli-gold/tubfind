@@ -265,3 +265,18 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 .clearfix:after, .container:after {content:"\0020";display:block;height:0;clear:both;visibility:hidden;overflow:hidden;}
 .clearfix, .container {display:block;}
 .clear {clear:both;}
+
+.facetTitleImg,
+.facetCheckbox {
+    display: block;	
+    border-radius: 3px;
+    border: 1px solid gray;
+}
+
+.facetTitleImg {
+    float: left;
+    background-color: white;
+    width: 9px;
+    height: 9px;
+    margin: 3px 4px 3px 3px;
+}
