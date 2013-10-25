@@ -16,40 +16,24 @@ body {
 
 @media (min-device-width: 1290px) {
     body {
-    background-image: url('https://www.tub.tu-harburg.de/wp-content/themes/TUBHH2-twentyeleven/images/bg/tuhh-bg-2000-60-gauss-1.jpg') !important;
-    background-color: #2f484f !important;
-    background-repeat: no-repeat !important;
-    background-position: top center !important;.
-    background-attachment: scroll !important;
-    /*
-    background:url("../images/bg/DSC_8555a-2000x4.jpg") no-repeat scroll center top !important;
-    background-color: #a59990 !important; */
+    background: url("http://www.tub.tu-harburg.de/wp-content/themes/TUBHH4-twentyeleven-child/images/bg/bg-tile.jpg") repeat fixed 50% 0% rgb(221, 221, 221);
     }
 }
 
 @media (max-width: 1280px) {
     body {
-    background-image: url('https://www.tub.tu-harburg.de/wp-content/themes/TUBHH2-twentyeleven/images/bg/tuhh-bg-1280-60-gauss-1.jpg') !important;
-    background-color: #2f484f !important;
-    background-repeat: no-repeat !important;
-    background-position: top center !important;.
-    background-attachment: scroll !important;
+    background: url("http://www.tub.tu-harburg.de/wp-content/themes/TUBHH4-twentyeleven-child/images/bg/bg-tile.jpg") repeat fixed 50% 0% rgb(221, 221, 221);
     }
 }
 
 @media (max-width: 799px) {
     body {
-    background-image: url('https://www.tub.tu-harburg.de/wp-content/themes/TUBHH2-twentyeleven/images/bg/tuhh-bg-1024-60-gauss-1.jpg') !important;
-    background-color: #2f484f !important;
-    background-repeat: no-repeat !important;
-    background-position: top center !important;.
-    background-attachment: scroll !important;
+    background: url("http://www.tub.tu-harburg.de/wp-content/themes/TUBHH4-twentyeleven-child/images/bg/bg-tile.jpg") repeat fixed 50% 0% rgb(221, 221, 221);
     }
 }
 @media (max-width: 650px) {
     body {
-    background:none !important;
-    background-color: #2F484F !important;
+    background: url("http://www.tub.tu-harburg.de/wp-content/themes/TUBHH4-twentyeleven-child/images/bg/bg-tile.jpg") repeat fixed 50% 0% rgb(221, 221, 221);
     }
 }
 
@@ -516,7 +500,7 @@ dl.narrowList a {
 .navmenu dd {
     padding: 0.1em 0 0.1em 0.4em;
     list-style-type: none;
-    border-bottom: 1px solid #e3e3e3;
+/*    border-bottom: 1px solid #e3e3e3; */
     margin: 0;
 }
 .navmenu dt {
