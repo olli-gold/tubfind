@@ -52,7 +52,9 @@ class Home extends Action
         global $configArray;
 
         // Set default filters to 1, apply default filters any time it comes from the homepage
-        $_SESSION['defaultFilters'] = 1;
+        if (array_key_exists('defaultFilters', $_SESSION) === false) {
+            $_SESSION['defaultFilters'] = 1;
+        }
 
         // Cache homepage
         $interface->caching = 0;
