@@ -256,13 +256,10 @@ class GBVCentralRecord extends MarcRecord
     {
         $vs = null;
         $inRef = $this->_getFirstFieldValue('773', array('i'));
-        if ($inRef == null) {
-            $inRef = "in:";
-        }
         $journalRef = $this->_getFirstFieldValue('773', array('t'));
         $articleRef = $this->_getFirstFieldValue('773', array('g'));
         $vs = $this->marcRecord->getFields('773');
-        if ($vs) {
+        if (count($vs) > 0) {
             foreach($vs as $v) {
                 $a_names = $v->getSubfields('w');
                 if (count($a_names) > 0) {
@@ -270,8 +267,9 @@ class GBVCentralRecord extends MarcRecord
                     $hrefId = $this->addNLZ($idArr[1]);
                 }
             }
-        }
-        if ($vs !== null) {
+            if ($inRef == null) {
+                $inRef = "in:";
+            }
             return array('inref' => $inRef, 'jref' => $journalRef, 'aref' => $articleRef, 'hrefId' => $hrefId);
         }
         return null;
