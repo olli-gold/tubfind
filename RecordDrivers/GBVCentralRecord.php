@@ -254,7 +254,11 @@ class GBVCentralRecord extends MarcRecord
      */
     protected function getArticleHReference()
     {
+        $vs = null;
         $inRef = $this->_getFirstFieldValue('773', array('i'));
+        if ($inRef == null) {
+            $inRef = "in:";
+        }
         $journalRef = $this->_getFirstFieldValue('773', array('t'));
         $articleRef = $this->_getFirstFieldValue('773', array('g'));
         $vs = $this->marcRecord->getFields('773');
@@ -267,7 +271,7 @@ class GBVCentralRecord extends MarcRecord
                 }
             }
         }
-        if ($inRef !== null) {
+        if ($vs !== null) {
             return array('inref' => $inRef, 'jref' => $journalRef, 'aref' => $articleRef, 'hrefId' => $hrefId);
         }
         return null;
