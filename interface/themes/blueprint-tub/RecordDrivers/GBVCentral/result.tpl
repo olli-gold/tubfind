@@ -63,7 +63,7 @@
       {translate text='by'}
       <a href="{$url}/Search/Results?lookfor={$summAuthor|escape:"url"}&type=Author&localonly=1">{$summAuthor|escape}</a>
       {/if}
-      {if $summDateSpan} {translate text='Bei uns vorhanden'}: {$summDateSpan|escape}
+      {if $summDateSpan} {translate text='Erscheinungsverlauf'}: {$summDateSpan|escape}
       {else}
       {if $summDate} {$summDate.0|escape}{/if}
       {/if}
