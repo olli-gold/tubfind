@@ -230,16 +230,18 @@
     </tr>
 
     {if $coreArticleHRef}
-        <tr valign="top">
-            <th> </th>
-            <td>{$coreArticleHRef.inref} 
-            {if $coreArticleHRef.hrefId}
-                <a href="{$url}/Record/{$coreArticleHRef.hrefId|upper}">{$coreArticleHRef.jref}</a>
-            {else}
-                {$coreArticleHRef.jref}
-            {/if}
-            {$coreArticleHRef.aref}</td>
-        </tr>
+        {foreach from=$coreArticleHRef item=articleHRef}
+            <tr valign="top">
+                <th> </th>
+                <td>{$articleHRef.inref} 
+                {if $articleHRef.hrefId}
+                    <a href="{$url}/Record/{$articleHRef.hrefId|upper}">{$articleHRef.jref}</a>
+                {else}
+                    {$articleHRef.jref}
+                {/if}
+                {$articleHRef.aref}</td>
+            </tr>
+        {/foreach}
     {/if}
 
     {if $recordLanguage}

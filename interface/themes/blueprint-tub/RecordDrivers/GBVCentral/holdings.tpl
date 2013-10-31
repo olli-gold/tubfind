@@ -302,13 +302,15 @@
 {/if}
 
 {if $coreArticleHRef}
-    {$coreArticleHRef.inref} 
-    {if $coreArticleHRef.hrefId}
-        <a href="{$url}/Record/{$coreArticleHRef.hrefId|upper}">{$coreArticleHRef.jref}</a>
-    {else}
-        {$coreArticleHRef.jref}
-    {/if}
-     {$coreArticleHRef.aref}<br/>
+    {foreach from=$coreArticleHRef item=articleHRef}
+        {$articleHRef.inref} 
+        {if $articleHRef.hrefId}
+            <a href="{$url}/Record/{$articleHRef.hrefId|upper}">{$articleHRef.jref}</a>
+        {else}
+            {$articleHRef.jref}
+        {/if}
+        {$articleHRef.aref}<br/>
+    {/foreach}
 {/if}
 {foreach from=$articleVol.docs item=artvol}
     {translate text="This article is printed in volume"}: <a href="{$url}/Record/{$artvol.id}">{$artvol.series2.0}</a><br/>
