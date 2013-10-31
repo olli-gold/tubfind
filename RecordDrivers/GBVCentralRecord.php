@@ -47,6 +47,10 @@ class GBVCentralRecord extends MarcRecord
 
         //$interface->assign('summRemarks', $this->getRemark());
 
+        if (in_array('Journal', $this->getFormats()) || in_array('eJournal', $this->getFormats())) {
+            $interface->assign('summDateSpan', $this->getDateSpan());
+        }
+
         $interface->assign('summInterlibraryLoan', $this->checkInterlibraryLoan());
         $interface->assign('summArticleHRef', $this->_normalize($this->getArticleHReference()));
 
@@ -3282,6 +3286,15 @@ class GBVCentralRecord extends MarcRecord
         }
 
         return $retval;
+    }
+
+    protected function getDateSpan() {
+        $spanArray = parent::getDateSpan();
+        $span = implode(' ', $spanArray);
+        if (substr($span, -1) === '-') {
+            $span .= ' '.translate('heute');
+        }
+        return($span);
     }
 
     /**
