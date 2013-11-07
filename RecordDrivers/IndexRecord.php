@@ -1964,6 +1964,11 @@ h = Seitenangabe Von Bis
         true : '';
     }
 
+    protected function getScore()
+    {
+        return isset($this->fields['score']) ? $this->fields['score'] : '';
+    }
+
 }
 
 function _callback_normalize(&$item, $key) {

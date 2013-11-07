@@ -54,10 +54,11 @@ class RecordDriverFactory
         global $configArray;
         
         // Determine driver path based on record type:
-        if (array_search('GBV Zentral', $record['institution']) !== false || $record['institution'] === 'GBV Zentral' || array_search('findex.gbv.de', $record['institution']) !== false || $record['institution'] === 'findex.gbv.de') {
+        if ($record['recordtype'] === 'marc' && (array_search('GBV Zentral', $record['institution']) !== false || $record['institution'] === 'GBV Zentral' || array_search('findex.gbv.de', $record['institution']) !== false || $record['institution'] === 'findex.gbv.de')) {
             $driver = 'GBVCentralRecord';
         }
         else {
+
             $driver = ucwords($record['recordtype']) . 'Record';
         }
         if (array_search('Catalog', $record['collection']) !== false || $record['collection'] === 'Catalog') {
