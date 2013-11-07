@@ -1,7 +1,7 @@
 {* Top Navigation aus WP *}
 
 <ul class="menu">
-<li class="menu-item"><a href="http://katalog.tub.tu-harburg.de">TUBfind</a>
+<li class="menu-item">{translate text="wp_link_main"}
     <ul class="sub-menu">
 	<li class="menu-item">{translate text="wp_link_ueber_uns"}</li>
 	<li class="menu-item">{translate text="wp_link_adresse"}</li>
