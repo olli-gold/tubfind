@@ -158,6 +158,11 @@ class PCRecord extends IndexRecord
         // but we'll also check the COinS section for compatibility with legacy
         // configurations (this moved between the RC2 and 1.0 releases).
         global $configArray;
+
+        if (isset($this->fields['url'])) {
+            return $this->fields['url'][0];
+        }
+
         $coinsID = isset($configArray['OpenURL']['rfr_id']) ?
             $configArray['OpenURL']['rfr_id'] :
             $configArray['COinS']['identifier'];
