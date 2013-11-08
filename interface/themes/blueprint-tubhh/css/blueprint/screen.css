@@ -323,3 +323,10 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 .hidden { 
     display: none;
 }
+
+input.checkbox_ui {
+    float: right;
+    margin-top: 3em;
+    margin-left: -1em;
+    margin-right: .4em;
+}
