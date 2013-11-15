@@ -47,6 +47,10 @@ class GBVCentralRecord extends MarcRecord
 
         //$interface->assign('summRemarks', $this->getRemark());
 
+        if (in_array('Journal', $this->getFormats()) || in_array('eJournal', $this->getFormats())) {
+            $interface->assign('summDateSpan', $this->getDateSpan());
+        }
+
         $interface->assign('summInterlibraryLoan', $this->checkInterlibraryLoan());
         $interface->assign('summArticleHRef', $this->_normalize($this->getArticleHReference()));
 
@@ -254,21 +258,36 @@ class GBVCentralRecord extends MarcRecord
      */
     protected function getArticleHReference()
     {
-        $inRef = $this->_getFirstFieldValue('773', array('i'));
-        $journalRef = $this->_getFirstFieldValue('773', array('t'));
-        $articleRef = $this->_getFirstFieldValue('773', array('g'));
+        $vs = null;
         $vs = $this->marcRecord->getFields('773');
-        if ($vs) {
+        if (count($vs) > 0) {
+            $refs = array();
             foreach($vs as $v) {
+                $inRefField = $v->getSubfields('i');
+                if (count($inRefField) > 0) {
+                    $inRef = $inRefField[0]->getData();
+                }
+                else {
+                    $inRef = "in:";
+                }
+                $journalRefField = $v->getSubfields('t');
+                if (count($journalRefField) > 0) {
+                    $journalRef = $journalRefField[0]->getData();
+                }
+                $articleRefField = $v->getSubfields('g');
+                if (count($articleRefField) > 0) {
+                    $articleRef = $articleRefField[0]->getData();
+                }
                 $a_names = $v->getSubfields('w');
                 if (count($a_names) > 0) {
                     $idArr = explode(')', $a_names[0]->getData());
                     $hrefId = $this->addNLZ($idArr[1]);
                 }
+                if ($journalRef || $articleRef) {
+                    $refs[] = array('inref' => $inRef, 'jref' => $journalRef, 'aref' => $articleRef, 'hrefId' => $hrefId);
+                }
             }
-        }
-        if ($inRef !== null) {
-            return array('inref' => $inRef, 'jref' => $journalRef, 'aref' => $articleRef, 'hrefId' => $hrefId);
+            return $refs;
         }
         return null;
     }
@@ -3267,6 +3286,15 @@ class GBVCentralRecord extends MarcRecord
         }
 
         return $retval;
+    }
+
+    protected function getDateSpan() {
+        $spanArray = parent::getDateSpan();
+        $span = implode(' ', $spanArray);
+        if (substr($span, -1) === '-') {
+            $span .= ' '.translate('heute');
+        }
+        return($span);
     }
 
     /**
