@@ -1,10 +1,6 @@
 <?php
 /**
- * ILS Driver for VuFind to get information from PAIA
- *
- * Authentication in this driver is handled via LDAP, not via normal PICA!
- * First check local vufind database, and if no user is found, check LDAP.
- * LDAP configuration settings are taken from vufinds config.ini
+ * ILS Driver for VuFind to get information from PICA using PAIA interface
  *
  * PHP version 5
  *
@@ -32,7 +28,6 @@
 require_once 'Interface.php';
 require_once 'DAIA.php';
 require_once 'services/MyResearch/lib/User.php';
-require_once 'sys/authn/LDAPConfigurationParameter.php';
 
 /**
  * ILS Driver for VuFind to get information from PICA
@@ -50,7 +45,6 @@ class PAIA extends DAIA
 {
     private $_username;
     private $_password;
-    private $_ldapConfigurationParameter;
 
     /**
      * Constructor
