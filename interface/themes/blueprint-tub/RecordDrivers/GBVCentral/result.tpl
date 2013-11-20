@@ -143,7 +143,7 @@
 
       {*if !$summOpenUrl && empty($summURLs)*}
       {if $showAvail=="true" && $summInterlibraryLoan==0 && $electronicResource != "1"}
-      <span class="ajax_availability hide" id="status{$summId|escape}">{translate text='Loading'}...</span>
+          <span class="ajax_availability hide" id="status{$summId|escape}">{translate text='Loading'}...</span>
       {/if}
 
       {if $summInterlibraryLoan=="1"}
