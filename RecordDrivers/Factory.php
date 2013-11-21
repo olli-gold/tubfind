@@ -60,6 +60,9 @@ class RecordDriverFactory
         else {
             $driver = ucwords($record['recordtype']) . 'Record';
         }
+        if (array_search('Catalog', $record['collection']) !== false || $record['collection'] === 'Catalog') {
+            $driver = 'GBVLocalRecord';
+        }
         $path = "{$configArray['Site']['local']}/RecordDrivers/{$driver}.php";
         
         // If we can't load the driver, fall back to the default, index-based one:
