@@ -38,6 +38,18 @@ class PCRecord extends IndexRecord
         return 'RecordDrivers/PC/result.tpl';
     }
 
+    public function getCoreMetadata() {
+        global $interface;
+        parent::getCoreMetadata();
+        $interface->assign('primoRecord', true);
+        /*
+        $interface->assign('articleChildren', $this->getArticleChildren());
+        $interface->assign('coreSubseries', $this->getSubseries());
+        */
+
+        return 'RecordDrivers/Index/core.tpl';
+    }
+
     /**
      * Get the item's place of publication.
      *
