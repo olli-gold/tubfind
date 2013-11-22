@@ -58,6 +58,8 @@ class GBVCentralRecord extends MarcRecord
         $interface->assign('summFullTitle', $this->_normalize($this->getFullTitle()));
         $interface->assign('summAddTitle', $this->_normalize($this->getTitleAddition()));
 
+        $interface->assign('volumename', $this->getVolumeName($this->marcRecord));
+
         return 'RecordDrivers/GBVCentral/result.tpl';
     }
 
@@ -86,12 +88,28 @@ class GBVCentralRecord extends MarcRecord
         //$interface->assign('coreAddtitle', $this->getTitleAddition());
         $interface->assign('coreFullTitle', $this->_normalize($this->getFullTitle()));
 
+        $interface->assign('volumename', $this->getVolumeName($this->marcRecord));
+
         /*
         $interface->assign('articleChildren', $this->getArticleChildren());
         $interface->assign('coreSubseries', $this->getSubseries());
         */
 
         return 'RecordDrivers/GBVCentral/core.tpl';
+    }
+
+    protected function getVolumeName($record) {
+        $titleFields = $record->getFields('245');
+        $vol = array();
+        if ($titleFields) {
+            foreach($titleFields as $titleField) {
+                $volumeFields = $titleField->getSubfields('p');
+                if (count($volumeFields) > 0) {
+                    $vol[] = $volumeFields[0]->getData();
+                }
+            }
+        }
+        return $vol;
     }
 
     /**

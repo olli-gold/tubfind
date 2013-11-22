@@ -118,6 +118,17 @@
         {/foreach}
     {/if}
 
+    {if !empty($volumename)}
+    <tr valign="top">
+      <th>{translate text='Volume title'}: </th>
+      <td>
+        {foreach from=$volumename item=field name=loop}
+          {$field|escape}<br/>
+        {/foreach}
+      </td>
+    </tr>
+    {/if}
+
     {if !empty($coreNextTitles)}
     <tr valign="top">
       <th>{translate text='New Title'}: </th>

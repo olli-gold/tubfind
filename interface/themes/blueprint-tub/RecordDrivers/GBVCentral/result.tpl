@@ -59,6 +59,14 @@
     </div>
 
     <div class="resultItemLine2">
+      {if !empty($volumename)}
+        {translate text='Volume title'}: 
+          {foreach from=$volumename item=field name=loop}
+            {$field|escape} 
+          {/foreach}
+        <br/>
+      {/if}
+
       {if !empty($summAuthor)}
       {translate text='by'}
       <a href="{$url}/Search/Results?lookfor={$summAuthor|escape:"url"}&type=Author&localonly=1">{$summAuthor|escape}</a>
