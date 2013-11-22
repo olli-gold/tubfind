@@ -142,7 +142,7 @@
       {/foreach}
 
       {*if !$summOpenUrl && empty($summURLs)*}
-      {if $showAvail=="true" && $summInterlibraryLoan==0}
+      {if $showAvail=="true" && $summInterlibraryLoan==0 && $electronicResource != "1"}
       <span class="ajax_availability hide" id="status{$summId|escape}">{translate text='Loading'}...</span>
       {/if}
 
