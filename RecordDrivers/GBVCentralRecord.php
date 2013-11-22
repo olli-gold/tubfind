@@ -3070,6 +3070,13 @@ class GBVCentralRecord extends MarcRecord
                     $pos = strpos($yearField, 's');
                     $year = substr($yearField, $pos+1, 4);
                     $subrecord['publishDate'][] = $year;
+                    $titleFields = $marcRecord->getFields('245');
+                    $titleField = $titleFields[0];
+                    $volField = $titleField->getSubfields('p');
+                    if (count($volField) > 0) {
+                        $vol = $volField[0]->getData();
+                    }
+                    $subrecord['volume'] = $vol;
                 }
                 $resultRecords[] = $subrecord;
             }
