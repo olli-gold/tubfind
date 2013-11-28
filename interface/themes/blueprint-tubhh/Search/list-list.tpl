@@ -1,4 +1,11 @@
-{js filename="check_item_statuses.js"}
+{if $smarty.post.mylang}
+{assign var="jsFileName" value="check_item_statuses_"|cat:$smarty.post.mylang|cat:".js"}
+{elseif $smarty.cookies.language}
+{assign var="jsFileName" value="check_item_statuses_"|cat:$smarty.cookies.language|cat:".js"}
+{else}
+{assign var="jsFileName" value="check_item_statuses_de.js"}
+{/if}
+{js filename=$jsFileName}
 {js filename="check_save_statuses.js"}
 {if $showContext}
 {js filename="search_hierarchyTree.js}
