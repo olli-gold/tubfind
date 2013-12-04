@@ -33,6 +33,9 @@
       {/if}
 
       {if $summDate} {$summDate.0|escape}{/if}
+
+      {if $doi}<br/><a href="http://dx.doi.org/{$doi}" target="_new">http://dx.doi.org/{$doi}</a>{/if}
+
       {if $summArticleRef}
         <br/>
         {$summArticleRef}

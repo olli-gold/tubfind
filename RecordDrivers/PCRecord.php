@@ -22,9 +22,9 @@ require_once 'RecordDrivers/IndexRecord.php';
 require_once 'RecordDrivers/MarcRecord.php';
 
 /**
- * Website Record Driver
+ * PrimoCentral Record Driver
  *
- * This class is designed to handle Website records.  Much of its functionality
+ * This class is designed to handle PrimoCentral records.  Much of its functionality
  * is inherited from the default index-based driver.
  */
 class PCRecord extends IndexRecord
@@ -35,6 +35,7 @@ class PCRecord extends IndexRecord
         parent::getSearchResult($view);
         $interface->assign('summInterlibraryLoan', $this->checkInterlibraryLoan());
         $interface->assign('score', $this->getScore());
+        $interface->assign('doi', $this->getDoi());
         return 'RecordDrivers/PC/result.tpl';
     }
 
@@ -42,6 +43,7 @@ class PCRecord extends IndexRecord
         global $interface;
         parent::getCoreMetadata();
         $interface->assign('primoRecord', true);
+        $interface->assign('doi', $this->getDoi());
         /*
         $interface->assign('articleChildren', $this->getArticleChildren());
         $interface->assign('coreSubseries', $this->getSubseries());
@@ -71,6 +73,24 @@ class PCRecord extends IndexRecord
         return array();
     }
 
+    /**
+     * Get the item's DOI address (if available).
+     *
+     * @access  protected
+     * @return  array
+     */
+    protected function getDoi() {
+        if (isset($this->fields['doi'])) {
+            if (is_array($this->fields['doi'])) {
+                $return = implode(',', $this->fields['doi']);
+            }
+            else {
+                $return = $this->fields['doi'];
+            }
+            return $return;
+        }
+        return null;
+    }
     /**
      * Get an array of all the formats associated with the record.
      *

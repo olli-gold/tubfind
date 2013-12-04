@@ -122,7 +122,7 @@
 
     {if !empty($corePublications)}
     <tr valign="top">
-      <th>{translate text='Publisher'}: </th>
+      <th>{translate text='Year published'}: </th>
       <td>
         {foreach from=$corePublications item=field name=loop}
             {$field|escape}<br/>
