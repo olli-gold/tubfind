@@ -14,8 +14,26 @@
   </div>
   <div class="span-9">
     <div class="resultItemLine1">
-      <a href="{$url}/Record/{$summId|escape:"url"}" class="title" title="{foreach from=$summRemarks item=rem}{$rem}
-      {/foreach}">
+      <a href="{$url}/Record/{$summId|escape:"url"}" class="title" title="{if !empty($summFullTitle)}
+          {if is_array($summFullTitle)}
+              {$summFullTitle.0|escape}
+          {else}
+              {$summFullTitle|escape}
+          {/if}
+      {else}
+          {if $summTitleSeries}
+          {if is_array($summTitleSeries)}
+              {$summTitleSeries.0.name|escape} {$summTitleSeries.0.number|escape}
+          {else}
+              {$summTitleSeries.name|escape} {$summTitleSeries.number|escape}
+          {/if}
+          {elseif is_array($summShortTitle)}
+              {$summShortTitle.0|escape}
+      {else}
+          {$summShortTitle|escape}
+      {/if}
+      {/if}
+">
       <b class="listtitle">
       {if !empty($summFullTitle)}
           {if is_array($summFullTitle)}
