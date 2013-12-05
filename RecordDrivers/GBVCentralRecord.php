@@ -450,6 +450,8 @@ class GBVCentralRecord extends MarcRecord
                 ) {
                     $params['sfx.ignore_date_threshold'] = 1;
                 }
+                $params['disable_directlink'] = "true";
+                $params['sfx.directlink'] = "off";
                 break;
             case 'Article':
                 $params['rft.issn'] = $this->getCleanISSN();
