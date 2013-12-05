@@ -283,7 +283,7 @@ class SearchObject_Solr extends SearchObject_Base
         $this->initFilters();
         $this->initLimit();
 
-        if ($_SESSION['defaultFilters'] === 1) {
+        if ($_SESSION['defaultFilters'] == 1) {
             foreach ($this->defaultFilter as $rawFilter) {
                 $this->addFilter($rawFilter);
             }

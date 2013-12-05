@@ -13,13 +13,14 @@
         <div class="checkboxFilter{if $recordCount < 1 && !$current.selected && !$current.alwaysVisible} hide{/if}">
               <input type="checkbox" name="filter[]" value="{$current.filter|escape}"
                 {if $current.selected}checked="checked"{/if} id="{$current.desc|replace:' ':''|escape}"
-                onclick="document.location.href='{$current.toggleUrl|escape}';" />
+                onclick="{if ($current.desc=="Only locally available items")}toggleLocal(this.checked,'{$current.toggleUrl|escape}');{else}document.location.href='{$current.toggleUrl|escape}';{/if}" />
               <label for="{$current.desc|replace:' ':''|escape}">{translate text=$current.desc}</label>
         </div>
       {*/if*}
       {/foreach}
   {/if}
-<!--  {if $filterList}
+<!--
+  {if $filterList}
     <strong>{translate text='Remove Filters'}</strong>
     <ul class="filters">
     {foreach from=$filterList item=filters key=field}
@@ -28,7 +29,8 @@
       {/foreach}
     {/foreach}
     </ul>
-  {/if} -->
+  {/if}
+-->
   {if $sideFacetSet && $recordCount > 0}
     {foreach from=$sideFacetSet item=cluster key=title}
     {if isset($dateFacets.$title)}
