@@ -143,7 +143,8 @@
             <li{if $module == "Summon"} class="active"{/if}><a href="{$url}/Summon/Search?lookfor={$lookfor|escape:"url"}">{translate text="Journal Articles"}</a></li>
             {/if}
           </ul>
-        </div>        
+        </div>
+        <div class="clear" style="height:0px;">&nbsp;</div>
         {/if}
         {include file="$module/$pageTemplate"}
 	  </div>
