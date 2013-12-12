@@ -1122,7 +1122,13 @@ class SearchObject_Solr extends SearchObject_Base
         // Define Filter Query
         $filterQuery = $this->hiddenFilters;
         $orFilterQuery = array();
+
+        $removeDefaultFilter = false;
         foreach ($this->filterList as $field => $filter) {
+            if ($field == 'showAll') {
+                $removeDefaultFilter = true;
+                continue;
+            }
             foreach ($filter as $value) {
                 // Special case -- allow trailing wildcards and ranges:
                 if (substr($value, -1) == '*'
@@ -1141,6 +1147,13 @@ class SearchObject_Solr extends SearchObject_Base
                     } else {
                         $filterQuery[] = "$field:\"$value\"";
                     }
+                }
+            }
+        }
+        if ($removeDefaultFilter === true) {
+            foreach ($this->defaultFilter as $defKey => $defValue) {
+                if ($key = array_search($defValue, $filterQuery) !== false) {
+                    $new = array_splice($filterQuery, ($key-1), 1);
                 }
             }
         }
