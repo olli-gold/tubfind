@@ -1,3 +1,19 @@
+{if $smarty.post.mylang}
+{assign var="jsFileName" value="check_item_statuses_"|cat:$smarty.post.mylang|cat:".js"}
+{elseif $smarty.cookies.language}
+{assign var="jsFileName" value="check_item_statuses_"|cat:$smarty.cookies.language|cat:".js"}
+{else}
+{assign var="jsFileName" value="check_item_statuses_de.js"}
+{/if}
+{js filename=$jsFileName}
+{js filename="check_save_statuses.js"}
+{js filename="jquery.cookie.js"}
+{js filename="cart.js"}
+{js filename="openurl.js"}
+{if $showPreviews}
+{js filename="preview.js"}
+{/if}
+
 {js filename="bulk_actions.js"}
 {if $bookBag}
 <script type="text/javascript">
