@@ -693,12 +693,3 @@ function lessFacets(name) {
     $("#narrowGroupHidden_"+name).slideUp('fast', function () { $("#narrowGroupHidden_"+name).addClass("offscreen"); });    
 }
 
-function toggleLocal(status,forward) {
-    if (status == true) {
-        document.location.href='/AJAX/ToggleLocal?act=1&forward='+forward;
-    }
-    else {
-        document.location.href='/AJAX/ToggleLocal?act=0&forward='+forward;
-    }
-}
-

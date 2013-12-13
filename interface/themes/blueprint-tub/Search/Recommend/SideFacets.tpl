@@ -13,7 +13,7 @@
         <div class="checkboxFilter{if $recordCount < 1 && !$current.selected && !$current.alwaysVisible} hide{/if}">
               <input type="checkbox" name="filter[]" value="{$current.filter|escape}"
                 {if $current.selected}checked="checked"{/if} id="{$current.desc|replace:' ':''|escape}"
-                onclick="{if ($current.desc=="Only locally available items")}toggleLocal(this.checked,'{$current.toggleUrl|escape}');{else}document.location.href='{$current.toggleUrl|escape}';{/if}" />
+                onclick="document.location.href='{$current.toggleUrl|escape}';" />
               <label for="{$current.desc|replace:' ':''|escape}">{translate text=$current.desc}</label>
         </div>
       {*/if*}

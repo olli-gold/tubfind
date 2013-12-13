@@ -78,6 +78,7 @@ class SearchObject_Solr extends SearchObject_Base
     // Used to pass hidden filter queries to Solr
     protected $hiddenFilters = array();
     protected $defaultFilter = array();
+    protected $defFilterFields = array();
     // Multiselect facets
     protected $multiSelectFacets = array();
 
@@ -141,7 +142,9 @@ class SearchObject_Solr extends SearchObject_Base
         // End
 
         // Load search preferences:
-        $searchSettings = getExtraConfigArray('searches');
+        $iniName = 'searches';
+        if (in_array('Primo Central', $_SESSION['shards']) === true) $iniName = 'searches_primocentral';
+        $searchSettings = getExtraConfigArray($iniName);
         if (isset($searchSettings['General']['default_handler'])) {
             $this->defaultIndex = $searchSettings['General']['default_handler'];
         }
@@ -173,9 +176,14 @@ class SearchObject_Solr extends SearchObject_Base
                 $this->addHiddenFilter($rawFilter);
             }
         }
+        if (isset($searchSettings['DefaultFilterFields'])) {
+            foreach ($searchSettings['DefaultFilterFields'] as $defFilterField) {
+                $this->defFilterFields[] = $defFilterField;
+            }
+        }
         if (isset($searchSettings['DefaultFilters'])) {
-            foreach ($searchSettings['DefaultFilters'] as $rawFilter) {
-                $this->defaultFilter[] = $rawFilter;
+            foreach ($searchSettings['DefaultFilters'] as $defFilter) {
+                $this->defaultFilter[] = $defFilter;
             }
         }
         if (isset($searchSettings['Basic_Searches'])) {
@@ -1125,7 +1133,7 @@ class SearchObject_Solr extends SearchObject_Base
 
         $removeDefaultFilter = false;
         foreach ($this->filterList as $field => $filter) {
-            if ($field == 'showAll') {
+            if (in_array($field, $this->defFilterFields) === true) {
                 $removeDefaultFilter = true;
                 continue;
             }

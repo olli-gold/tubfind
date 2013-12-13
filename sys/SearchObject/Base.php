@@ -233,11 +233,6 @@ abstract class SearchObject_Base
                 if ($this->filterList[$field][$i] == $value) {
                     // If so remove it.
                     unset($this->filterList[$field][$i]);
-/*
-                    if (in_array($oldFilter, $this->defaultFilter) === true) {
-                        $_SESSION['defaultFilters'] = 0;
-                    }
-*/
                     // Flag that we now need to rebuild the array:
                     $rebuildArray = true;
                 }
