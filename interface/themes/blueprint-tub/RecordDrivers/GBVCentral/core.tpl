@@ -373,21 +373,24 @@
       </td>
     </tr>
     {/if}
-<!--
-    {if !empty($coreURLs) || $coreOpenURL}
+
+    {if !empty($coreURLs) && (in_array("Inhaltsverzeichnis", $coreURLs) || in_array("Inhaltstext", $coreURLs) || in_array("Kurzbeschreibung", $coreURLs)
+         || in_array("Ausführliche Beschreibung", $coreURLs) || in_array("Rezension", $coreURLs) 
+         || in_array("Beschreibung für den Leser", $coreURLs) || in_array("Autorenbiografie", $coreURLs))}
     <tr valign="top">
-      <th>{translate text='Online Access'}: </th>
+      <th>{translate text='More information'}: </th>
       <td>
         {foreach from=$coreURLs item=desc key=currentUrl name=loop}
-          <a href="{if $proxy}{$proxy}/login?url={$currentUrl|escape:"url"}{else}{$currentUrl|escape}{/if}">{$desc|escape}</a><br/>
+          {if $desc == "Inhaltsverzeichnis" || $desc == "Inhaltstext" || $desc == "Kurzbeschreibung" 
+              || $desc == "Ausführliche Beschreibung" || $desc == "Rezension" 
+              || $desc == "Beschreibung für den Leser" || $desc == "Autorenbiografie"}
+                  <a href="{if $proxy}{$proxy}/login?url={$currentUrl|escape:"url"}{else}{$currentUrl|escape}{/if}">{$desc|escape}</a><br/>
+          {/if}
         {/foreach}
-        {if $coreOpenURL}
-          {include file="Search/openurl.tpl" openUrl=$coreOpenURL}<br/>
-        {/if}
       </td>
     </tr>
     {/if}
--->
+
     <tr valign="top">
       <th>{translate text='Tags'}: </th>
       <td>
