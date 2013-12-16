@@ -232,7 +232,7 @@ class GBVCentralRecord extends MarcRecord
      * @access  protected
      * @return  string
      */
-    protected function checkInterlibraryLoan()
+    public function checkInterlibraryLoan()
     {
         // Return null if we have no table of contents:
         $fields = $this->marcRecord->getFields('912');

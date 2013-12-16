@@ -237,6 +237,8 @@ class Cart_Model
         foreach ($this->_items as $item) {
             if ($record = $this->db->getRecord($item)) {
                 // TODO: perhaps we could use RecordDriver here
+                $recordDriver = RecordDriverFactory::initRecordDriver($record);
+                $record['recordDriver'] = $recordDriver;
                 $records[] = $record;
             }
         }

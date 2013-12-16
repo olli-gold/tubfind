@@ -18,6 +18,7 @@
 {if !empty($records)}
   <ul class="cartContent">
   {foreach from=$records item=record}
+    {assign var=interlibraryLoan value=$record.recordDriver->checkInterlibraryLoan()}
     {* assuming we're dealing with VuFind records *}
     <li class="result recordId" id="record{$record.id|escape}">
       <label for="checkbox_{$record.id|regex_replace:'/[^a-z0-9]/':''|escape}" class="offscreen">{translate text="Select this record"}</label>
@@ -57,7 +58,7 @@
                 {*assign var="showAvail" value="false"*}
             {/if}
             {if $format=="Electronic" || $format=="eBook" || $format=="Elektronische Aufsätze" || $format=="Elektronische Ressource" || $format=="electronic Article" }
-                {assign var="summInterlibraryLoan" value="0"}
+                {assign var="interlibraryLoan" value="0"}
                 {assign var="electronicResource" value="1"}
             {/if}
             {if $format=="Elektronische Aufsätze"}
@@ -71,7 +72,7 @@
                 {assign var="showAcqProp" value="1"}
             {/if}
         {/foreach}
-    {if $showAvail=="true" && $summInterlibraryLoan==0}
+    {if $showAvail=="true" && $interlibraryLoan==0}
       {if $listAjaxStatus}
         {if $showCallNumber == "1"}
             <span id="callnumber{$record.id|escape}label">{translate text='Call Number'}:</span> <span class="ajax_availability hide" id="callnumber{$record.id|escape}">{translate text='Loading'}...</span><br/>
@@ -103,11 +104,11 @@
       {/if}
 
       {*if !$summOpenUrl && empty($summURLs)*}
-      {if $showAvail=="true" && $summInterlibraryLoan==0 && $electronicResource != "1"}
+      {if $showAvail=="true" && $interlibraryLoan==0 && $electronicResource != "1"}
           <span class="ajax_availability hide" id="status{$record.id|escape}">{translate text='Loading'}...</span>
       {/if}
 
-      {if $summInterlibraryLoan=="1"}
+      {if $interlibraryLoan=="1"}
           <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$record.id}" target="_blank">{translate text="interlibrary loan"}</a></span>
           {if $showAcqProp=="1"}
               <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}{$summOpenUrl|escape}&gvk_ppn={$summId}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
