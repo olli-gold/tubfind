@@ -15,6 +15,7 @@
 {js filename="preview.js"}
 {/if}
 
+{*
 {if $bookBag}
 <form method="post" name="bulkActionForm" action="{$url}/Cart/Home">
   <div class="bulkActionButtons">
@@ -28,6 +29,7 @@
     <div class="clear"></div>
   </div>
 {/if}
+*}
 
   <ul class="recordSet">
   {foreach from=$recordSet item=record name="recordLoop"}
@@ -39,6 +41,7 @@
   {/foreach}
   </ul>
   
+{*
 {if $bookBag}  
   <div class="bulkActionButtons">
     <input type="checkbox" class="selectAllCheckboxes floatleft" name="selectAll" id="addFormCheckboxSelectAllBottom"/> <label class="floatleft" for="addFormCheckboxSelectAllBottom">{translate text="select_page"}</label>
@@ -52,3 +55,4 @@
   </div>
 </form>
 {/if}
+*}

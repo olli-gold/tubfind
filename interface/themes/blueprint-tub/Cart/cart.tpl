@@ -24,10 +24,10 @@
       <label for="checkbox_{$record.id|regex_replace:'/[^a-z0-9]/':''|escape}" class="offscreen">{translate text="Select this record"}</label>
       <input id="checkbox_{$record.id|regex_replace:'/[^a-z0-9]/':''|escape}" type="checkbox" name="ids[]" value="{$record.id|escape}" class="checkbox"/>
       <input type="hidden" name="idsAll[]" value="{$record.id|escape}" />
-      <a title="{translate text='View Record'}" href="{$url}/Record/{$record.id|escape}">{$record.title.0|escape}</a>
+      {*<a title="{translate text='View Record'}" href="{$url}/Record/{$record.id|escape}">{$record.title.0|escape}</a>*}
     <div class="span-2">
-    {if $listThumb}
-      <img src="{$listThumb|escape}" class="summcover" alt="{translate text='Cover Image'}"/>
+    {if $record.recordDriver->getThumbnail()}
+      <img src="{$record.recordDriver->getThumbnail()|escape}" class="summcover" alt="{translate text='Cover Image'}"/>
     {else}
       <img src="{$path}/bookcover.php" class="summcover" alt="{translate text='No Cover Image'}"/>
     {/if}
@@ -40,11 +40,11 @@
           {$record.title|escape}
       {/if}
       </a><br/>
-      {if $listAuthor}
-        {translate text='by'}: <a href="{$url}/Search/Results?lookfor={$listAuthor|escape:"url"}&type=Author&localonly=1">{$listAuthor|escape}</a><br/>
+      {if $record.authorStr}
+        {translate text='by'}: <a href="{$url}/Search/Results?lookfor={$record.authorStr|escape:"url"}&type=Author&localonly=1">{$record.authorStr|escape}</a><br/>
       {/if}
 
-      {foreach from=$listFormats item=format}
+      {foreach from=$record.format item=format}
         <span class="iconlabel {$format|lower|regex_replace:"/[^a-z0-9]/":""}">{translate text=$format}</span>
       {/foreach}
     </div>
@@ -53,11 +53,11 @@
         {assign  var="showAvail" value="true"}
         {assign var="showCallNumber" value="1"}
         {assign var="listAjaxStatus" value="1"}
-        {foreach from=$listFormats item=format}  {*$format=="eBook" ||*}
+        {foreach from=$record.format item=format}  {*$format=="eBook" ||*}
             {if $format=="Serial" || $format=="Journal" || $format=="Electronic" || $format=="Aufsätze" || $format=="eBook" || $format=="Elektronische Aufsätze"}
                 {*assign var="showAvail" value="false"*}
             {/if}
-            {if $format=="Electronic" || $format=="eBook" || $format=="Elektronische Aufsätze" || $format=="Elektronische Ressource" || $format=="electronic Article" }
+            {if $format=="Electronic" || $format=="eBook" || $format=="Elektronische Aufsätze" || $format=="electronic Resource" || $format=="electronic Article" }
                 {assign var="interlibraryLoan" value="0"}
                 {assign var="electronicResource" value="1"}
             {/if}
@@ -65,7 +65,7 @@
                 {assign var="showAvail" value="false"}
                 {assign var="showAllLinks" value="1"}
             {/if}
-            {if $format=="Elektronische Ressource"}
+            {if $format=="electronic Resource"}
                 {assign var="showCallNumber" value="0"}
             {/if}
             {if $format=="Book"}
@@ -83,18 +83,12 @@
       {/if}
     {/if}
 
-      {if $nlurls}
-          {*<br/>{translate text="Available via German National license."}*}
-          {foreach from=$nlurls key=recordurl item=urldesc}
-              <br/>{translate text="NL"}: <a href="{$recordurl}">{$urldesc}</a>
-          {/foreach}
-      {/if}
-      {if $summOpenUrl}
+      {if $record.recordDriver->getOpenUrl()}
           <br/>
-          {include file="Search/openurl.tpl" openUrl=$summOpenUrl}
+          {include file="Search/openurl.tpl" openUrl=$record.recordDriver->getOpenUrl()}
       {/if}
-      {if !empty($summURLs) && $electronicResource == "1" && $showAllLinks == "1" && !$nlurls && $showCallNumber == "1"}
-        {foreach from=$summURLs key=recordurl item=urldesc}
+      {if $record.recordDriver->getURLs() && $electronicResource == "1" && $showAllLinks == "1" && !$nlurls && $showCallNumber == "1"}
+        {foreach from=$record.recordDriver->getURLs() key=recordurl item=urldesc}
           <br/><a href="{$recordurl|escape}" class="fulltext" target="new">
           {*{if $recordurl == $urldesc}{translate text='Get full text'}{else}*}
           {$urldesc|escape}

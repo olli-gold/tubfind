@@ -1773,7 +1773,7 @@ h = Seitenangabe Von Bis
      * @return array
      * @access protected
      */
-    protected function getURLs()
+    public function getURLs()
     {
         $urls = array();
         if (isset($this->fields['url']) && is_array($this->fields['url'])) {
@@ -1874,7 +1874,7 @@ h = Seitenangabe Von Bis
      * @return mixed
      * @access protected
      */
-    protected function getThumbnail($size = 'small')
+    public function getThumbnail($size = 'small')
     {
         global $configArray;
 

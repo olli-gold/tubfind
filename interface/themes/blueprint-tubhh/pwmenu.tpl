@@ -12,7 +12,7 @@
         {/if}
     {/if}
 
-    <li><a href="{$path}/Cart/Home">{translate text="Book Bag"}</a></li>
+    <li><a href="{$path}/Cart/Home">{translate text="Book Bag"} <span id="cartSize"></span></a></li>
 
     {if !$user}
         {if $authMethod == 'Shibboleth'}

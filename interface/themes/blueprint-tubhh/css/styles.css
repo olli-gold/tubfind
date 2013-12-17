@@ -452,6 +452,11 @@ ul.recordSet .addToFavLink {
     padding-bottom:0.4em;
     padding-top:0.4em;
 }
+.bookbagLightbox {
+    margin-top: .4em; 
+    padding-bottom:0.4em;
+    padding-top:0.4em;
+}
 .savedLists ul { margin-top: 0; }
 .savedLists ul li { padding:0; }
 
@@ -614,7 +619,7 @@ dl.narrowList a {
     margin-right:1em;
 }
 .fav {
-    background-image:url(../images/silk/add.png);
+    background-image:url(../images/silk/disk-black.png);
     background-repeat:no-repeat;
     background-position: left; 
     padding:.5em .5em .5em 20px;
@@ -1598,7 +1603,7 @@ div.debug code {
 }
 
 .bookbagAdd {
-    background-image:url(../images/fugue/bookbagAdd.png);
+    background-image:url(../images/silk/add.png);
     background-repeat:no-repeat;
     background-position: left top;
     padding:0 .5em .5em 20px;
@@ -1606,7 +1611,7 @@ div.debug code {
 }
 
 .bookbagDelete {
-    background-image:url(../images/fugue/bookbagDelete.png);
+    background-image:url(../images/silk/delete.png);
     background-repeat:no-repeat;
     background-position: left top;
     padding:0 .5em .5em 20px;

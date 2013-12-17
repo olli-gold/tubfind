@@ -1314,7 +1314,7 @@ class MarcRecord extends IndexRecord
      * @return array
      * @access protected
      */
-    protected function getURLs()
+    public function getURLs()
     {
         $retVal = array();
 

@@ -1,9 +1,11 @@
 <div class="result recordId" id="record{$summId|escape}">
+{*
   {if $bookBag}
   <label for="checkbox_{$summId|regex_replace:'/[^a-z0-9]/':''|escape}" class="offscreen">{translate text="Select this record"}</label>
   <input id="checkbox_{$summId|regex_replace:'/[^a-z0-9]/':''|escape}" type="checkbox" name="ids[]" value="{$summId|escape}" class="checkbox_ui"/>
   <input type="hidden" name="idsAll[]" value="{$summId|escape}" />
   {/if}
+*}
 
   <div class="span-2">
   {if $summThumb}
@@ -115,11 +117,16 @@
 
   <div class="span-4 last">
     <a id="saveRecord{$summId|escape}" href="{$url}/Record/{$summId|escape:"url"}/Save" class="fav tool saveRecord" title="{translate text='Add to favorites'}">{translate text='Add to favorites'}</a>
-    
     {* Display the lists that this record is saved to *}
     <div class="savedLists info hide" id="savedLists{$summId|escape}">
       <strong>{translate text="Saved in"}:</strong>
     </div>
+    {if $bookBag}
+      <div class="bookbagLightbox info hide" id="inbookbag{$summId|escape}">
+        <strong>{translate text="in Book Bag"}</strong>
+      </div>
+      <a id="keepRecord{$summId|escape}" href="#" class="recordCart bookbagAdd offscreen" title="{translate text='Add to Book Bag'}" keepId="{$summId|escape}">{translate text='Add to Book Bag'}</a>
+    {/if}
   </div>
   
   <div class="clear"></div>
