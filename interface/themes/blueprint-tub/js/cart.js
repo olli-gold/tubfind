@@ -13,9 +13,11 @@ $(document).ready(function() {
         if(cartRecordId != undefined) {
             if ($(this).hasClass('bookbagAdd')) {
                 updateCartSummary(addItemToCartCookie(cartRecordId));
+                $('#inbookbag'+cartRecordId).removeClass('hide');
                 $(this).html(vufindString.removeBookBag).removeClass('bookbagAdd').addClass('bookbagDelete');
             } else {
                 updateCartSummary(removeItemFromCartCookie(cartRecordId));
+                $('#inbookbag'+cartRecordId).addClass('hide');
                 $(this).html(vufindString.addBookBag).removeClass('bookbagDelete').addClass('bookbagAdd');
             }
         }
