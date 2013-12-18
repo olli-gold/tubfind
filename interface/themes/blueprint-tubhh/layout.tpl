@@ -55,6 +55,7 @@
     {* Load common javascript functions *}
     {js filename="common.js"}
     {js filename="dbr.js"}
+    {js filename="sfxbuttons.js"}
 
 
     {js filename="jquery.cookie.js"}

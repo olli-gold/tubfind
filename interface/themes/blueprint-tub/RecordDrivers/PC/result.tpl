@@ -67,6 +67,8 @@
           {include file="Search/openurl.tpl" openUrl=$summOpenUrl}
       {/if}
 
+      <span class="hidden" id="sfxmenu{$summId|escape}"><a href="{$sfxmenu}"><img src="{$sfxbutton}" alt="SFX" /></a></span>
+
       {if !empty($summURLs)}
         {foreach from=$summURLs key=recordurl item=urldesc}
           <br/><a href="{$recordurl|escape}" class="fulltext" target="new">{if $recordurl == $urldesc}{translate text='Get full text'}{else}{$urldesc|escape}{/if}</a>
@@ -82,8 +84,6 @@
       {if !$summOpenUrl && empty($summURLs) && $showAvail=="true"}
       <span class="ajax_availability hide" id="status{$summId|escape}">{translate text='Loading'}...</span>
       {/if}
-
-      <br/><a href="{$sfxmenu}"><img src="{$sfxbutton}" alt="SFX" /></a>
 
     </div>
 
