@@ -83,6 +83,7 @@
       <span class="ajax_availability hide" id="status{$summId|escape}">{translate text='Loading'}...</span>
       {/if}
 
+      <br/><a href="{$sfxmenu}"><img src="{$sfxbutton}" alt="SFX" /></a>
 
     </div>
 

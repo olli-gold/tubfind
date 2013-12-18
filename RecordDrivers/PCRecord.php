@@ -36,6 +36,8 @@ class PCRecord extends IndexRecord
         $interface->assign('summInterlibraryLoan', $this->checkInterlibraryLoan());
         $interface->assign('score', $this->getScore());
         $interface->assign('doi', $this->getDoi());
+        $interface->assign('sfxmenu', $this->getSfxMenu());
+        $interface->assign('sfxbutton', $this->getSfxMenuButton());
         return 'RecordDrivers/PC/result.tpl';
     }
 
@@ -44,6 +46,8 @@ class PCRecord extends IndexRecord
         parent::getCoreMetadata();
         $interface->assign('primoRecord', true);
         $interface->assign('doi', $this->getDoi());
+        $interface->assign('sfxmenu', $this->getSfxMenu());
+        $interface->assign('sfxbutton', $this->getSfxMenuButton());
         /*
         $interface->assign('articleChildren', $this->getArticleChildren());
         $interface->assign('coreSubseries', $this->getSubseries());
@@ -177,6 +181,23 @@ class PCRecord extends IndexRecord
         return $issn;
     }
 
+    public function getSfxMenuButton() {
+        global $configArray;
+        $openUrlButton = isset($configArray['OpenURL']['graphic']) ?
+            $configArray['OpenURL']['graphic'] :
+            null;
+        return $openUrlButton;
+    }
+
+    public function getSfxMenu() {
+        global $configArray;
+        $openUrl = isset($configArray['OpenURL']['url']) ?
+            $configArray['OpenURL']['url'] :
+            null;
+        if ($openUrl === null) return null;
+        return $openUrl.'?'.$this->getOpenURL(true);
+    }
+
     /**
      * Get the OpenURL parameters to represent this record (useful for the
      * title attribute of a COinS span tag).
@@ -184,7 +205,7 @@ class PCRecord extends IndexRecord
      * @return string OpenURL parameters.
      * @access public
      */
-    public function getOpenURL()
+    public function getOpenURL($menu = false)
     {
         // Get the COinS ID -- it should be in the OpenURL section of config.ini,
         // but we'll also check the COinS section for compatibility with legacy
@@ -192,7 +213,29 @@ class PCRecord extends IndexRecord
         global $configArray;
 
         if (isset($this->fields['url'])) {
-            return $this->fields['url'][0];
+            $params = array();
+            $urlArray = explode('?', $this->fields['url'][0]);
+            $paramsArray = explode('&', $urlArray[1]);
+            foreach ($paramsArray as $paramElement) {
+                $paramElementArray = explode('=', $paramElement);
+                $params[$paramElementArray[0]] = $paramElementArray[1];
+            }
+            if ($menu == true) {
+                $params['disable_directlink'] = "true";
+                $params['sfx.directlink'] = "off";
+            }
+            // Assemble the URL:
+            $parts = array();
+            foreach ($params as $key => $value) {
+                if ($key == 'svc.fulltext') continue;
+                if (is_array($value) === true) {
+                    $parts[] = $key . '=' . urlencode($value[0]);
+                }
+                else {
+                    $parts[] = $key . '=' . urlencode($value);
+                }
+            }
+            return implode('&', $parts);
         }
 
         $coinsID = isset($configArray['OpenURL']['rfr_id']) ?
@@ -214,6 +257,7 @@ class PCRecord extends IndexRecord
             'rft.title' => $this->getTitle(),
             'rft.date' => $pubDate
         );
+
 
         // Add additional parameters based on the format of the record:
         $formats = $this->getFormats();
@@ -335,6 +379,11 @@ class PCRecord extends IndexRecord
             e = issue
             h = Seitenangabe Von Bis
             */
+
+            if ($menu == true) {
+                $params['disable_directlink'] = "true";
+                $params['sfx.directlink'] = "off";
+            }
 
             // Assemble the URL:
             $parts = array();
