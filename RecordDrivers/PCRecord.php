@@ -38,6 +38,7 @@ class PCRecord extends IndexRecord
         $interface->assign('doi', $this->getDoi());
         $interface->assign('sfxmenu', $this->getSfxMenu());
         $interface->assign('sfxbutton', $this->getSfxMenuButton());
+        $interface->assign('pcURLs', $this->getURLs());
         return 'RecordDrivers/PC/result.tpl';
     }
 
@@ -48,6 +49,7 @@ class PCRecord extends IndexRecord
         $interface->assign('doi', $this->getDoi());
         $interface->assign('sfxmenu', $this->getSfxMenu());
         $interface->assign('sfxbutton', $this->getSfxMenuButton());
+        $interface->assign('pcURLs', $this->getURLs());
         /*
         $interface->assign('articleChildren', $this->getArticleChildren());
         $interface->assign('coreSubseries', $this->getSubseries());
@@ -198,6 +200,17 @@ class PCRecord extends IndexRecord
         return $openUrl.'?'.$this->getOpenURL(true);
     }
 
+    public function getURLs() {
+        global $configArray;
+        $openUrl = isset($configArray['OpenURL']['url']) ?
+            $configArray['OpenURL']['url'] :
+            null;
+        if (isset($this->fields['url']) && stristr($this->fields['url'][0], $openUrl) === false) {
+            return $this->fields['url'];
+        }
+        return null;
+    }
+
     /**
      * Get the OpenURL parameters to represent this record (useful for the
      * title attribute of a COinS span tag).
@@ -212,30 +225,38 @@ class PCRecord extends IndexRecord
         // configurations (this moved between the RC2 and 1.0 releases).
         global $configArray;
 
-        if (isset($this->fields['url'])) {
-            $params = array();
-            $urlArray = explode('?', $this->fields['url'][0]);
-            $paramsArray = explode('&', $urlArray[1]);
-            foreach ($paramsArray as $paramElement) {
-                $paramElementArray = explode('=', $paramElement);
-                $params[$paramElementArray[0]] = $paramElementArray[1];
+        $openUrl = isset($configArray['OpenURL']['url']) ?
+            $configArray['OpenURL']['url'] :
+            null;
+
+        if (isset($this->fields['url']) && stristr($this->fields['url'][0], $openUrl) !== false) {
+            if ($menu == false) {
+                $urlArray = explode('?', $this->fields['url'][0]);
+                return $urlArray[1];
             }
-            if ($menu == true) {
+            else {
+                $params = array();
+                $urlArray = explode('?', $this->fields['url'][0]);
+                $paramsArray = explode('&', $urlArray[1]);
+                foreach ($paramsArray as $paramElement) {
+                    $paramElementArray = explode('=', $paramElement);
+                    $params[$paramElementArray[0]] = $paramElementArray[1];
+                }
                 $params['disable_directlink'] = "true";
                 $params['sfx.directlink'] = "off";
-            }
-            // Assemble the URL:
-            $parts = array();
-            foreach ($params as $key => $value) {
-                if ($key == 'svc.fulltext') continue;
-                if (is_array($value) === true) {
-                    $parts[] = $key . '=' . urlencode($value[0]);
+                // Assemble the URL:
+                $parts = array();
+                foreach ($params as $key => $value) {
+                    if ($key == 'svc.fulltext') continue;
+                    if (is_array($value) === true) {
+                        $parts[] = $key . '=' . urlencode($value[0]);
+                    }
+                    else {
+                        $parts[] = $key . '=' . urlencode($value);
+                    }
                 }
-                else {
-                    $parts[] = $key . '=' . urlencode($value);
-                }
+                return implode('&', $parts);
             }
-            return implode('&', $parts);
         }
 
         $coinsID = isset($configArray['OpenURL']['rfr_id']) ?
