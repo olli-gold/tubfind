@@ -28,7 +28,7 @@
     {foreach from=$transList item=resource name="recordLoop"}
       <li class="result{if ($smarty.foreach.recordLoop.iteration % 2) == 0} alt{/if}">
       {if $renewForm}
-        {if $resource.ils_details.renewable && isset($resource.ils_details.renew_details)}
+        {if $resource.ils_details.renewable && isset($resource.ils_details.renew_details) && $resource.ils_details.reservations == 0}
             <label for="checkbox_{$resource.id|regex_replace:'/[^a-z0-9]/':''|escape}" class="offscreen">{translate text="Select this record"}</label>
             <input type="checkbox" name="renewSelectedIDS[]" value="{$resource.ils_details.renew_details}" class="checkbox" style="margin-left: 0" id="checkbox_{$resource.id|regex_replace:'/[^a-z0-9]/':''|escape}" />
             <input type="hidden" name="renewAllIDS[]" value="{$resource.ils_details.renew_details}" />
@@ -116,7 +116,7 @@
               {elseif $resource.renewals > 0}
                 | <b>{translate text='Renewals'}:</b> {translate text=$resource.renewals|escape}
               {/if}
-              {if $resource.reservations == 0}
+              {if $resource.ils_details.reservations == 0}
                 {* Ist das Buch eine Fernleihe? *}
                 {if substr($resource.ils_details.vb,0,6) == '830$99'}
                     | {translate text='Title from interlibrary loan'}
@@ -126,7 +126,7 @@
 *}
                 {/if}
               {else}
-                | <b>{translate text='Reservations'}:</b> {translate text=$resource.reservations|escape}
+                | <b>{translate text='Reservations'}:</b> {translate text=$resource.ils_details.reservations|escape}
                 {/if}
               {/if}
 
