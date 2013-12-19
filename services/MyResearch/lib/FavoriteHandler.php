@@ -93,6 +93,10 @@ class FavoriteHandler
     {
         global $interface;
 
+        // Setup Search Engine Connection
+        $db = ConnectionManager::connectToIndex();
+
+
         // Initialise from the current search globals
         $searchObject = SearchObjectFactory::initSearchObject();
         $searchObject->init();
@@ -102,14 +106,27 @@ class FavoriteHandler
         if (array_key_exists('VuFind', $this->_ids)
             && count($this->_ids['VuFind']) > 0
         ) {
+            $html = array();
+            foreach ($this->_ids['VuFind'] as $cid) {
+                if ($record = $db->getRecord($cid)) {
+                    $rec = RecordDriverFactory::initRecordDriver($record);
+                    $html[] = $interface->fetch(
+                        $rec->getListEntry($this->_user, $this->_listId, $this->_allowEdit)
+                    );
+                }
+            }
+            $interface->assign('resourceList', $html);
+
             if (!$searchObject->setQueryIDs($this->_ids['VuFind'])) {
                 $this->infoMsg = 'too_many_favorites';
             }
             $result = $searchObject->processSearch();
+/*
             $resourceList = $searchObject->getResultListHTML(
                 $this->_user, $this->_listId, $this->_allowEdit
             );
             $interface->assign('resourceList', $resourceList);
+*/
         } else {
             // If no records are displayed, $allowListEdit will be missing;
             // make sure it gets assigned so the list can be edited:
