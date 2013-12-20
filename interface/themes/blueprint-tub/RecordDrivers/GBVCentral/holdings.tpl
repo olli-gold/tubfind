@@ -185,12 +185,13 @@
                         {if $row.loan_availability == "0"}
                             <strong>{translate text="Only for presence use"}</strong>
                         {/if}
-                        {if $location != "Magazin" }
+                        {if !$row.recallhref}
+                        {* if $location != "Magazin" *}
                             {* Take holding from reading room *}
                             {translate text="Please pick up this holding from its position in the reading room"}
                         {else}
                             {* order holdings from closed stack if there is a reservation link *}
-                            {if $row.recallhref}
+                            {*if $row.recallhref*}
                                 <a href="{$row.recallhref}" target="_blank">{translate text="Place a Hold"}</a>
                                 {* reserve holding via vufind *}
                                 <form method="POST" action="{$url}/Record/{$id|escape:"url"}/Hold">
@@ -202,7 +203,7 @@
                                     {/if}
                                     <input type="submit" name="placeHold" value="{translate text="Place a VuFind-Hold"}" />
                                 </form>
-                            {/if}
+                            {*/if*}
                         {/if}
                     {elseif $row.availability == 0}
                         <span class="checkedout">{translate text=$row.status|escape}</span>
