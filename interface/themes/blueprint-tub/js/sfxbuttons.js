@@ -15,12 +15,14 @@ function checkFulltextButtons() {
 
 function checkImage(currentId) {
         var ouimage = document.getElementById("openurlimage"+currentId);
-        ouimage.onload = function(){
-            if (ouimage.complete){
-                var height = ouimage.height;
-                var width = ouimage.width;
-                if (width <= 1 && height <= 1) {
-                    $('#sfxmenu'+currentId).removeClass('hidden');
+        if (ouimage) {
+            ouimage.onload = function(){
+                if (ouimage.complete){
+                    var height = ouimage.height;
+                    var width = ouimage.width;
+                    if (width <= 1 && height <= 1) {
+                        $('#sfxmenu'+currentId).removeClass('hidden');
+                    }
                 }
             }
         }
