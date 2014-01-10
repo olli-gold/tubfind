@@ -99,7 +99,7 @@ class FavoriteHandler
 
         // Paging variables
         $page = 1;
-        $page = $_REQUEST['page'];
+        if ($_REQUEST['page']) $page = $_REQUEST['page'];
         $perPage = 20;
         $startRecord = (($page - 1) * $perPage) + 1;
         $summary = array('startRecord' => $startRecord, 'perPage' => $perPage, 'page' => $page, 'resultTotal' => count($this->_ids['VuFind']));
@@ -127,18 +127,23 @@ class FavoriteHandler
         if (array_key_exists('VuFind', $this->_ids)
             && count($this->_ids['VuFind']) > 0
         ) {
-            $counter = 0;
-            foreach ($this->_ids['VuFind'] as $cid) {
-                if ($counter < $perPage*$page) {
-                    if ($record = $db->getRecord($cid)) {
+            $counter = $startRecord;
+#            foreach ($this->_ids['VuFind'] as $idx => $cid) {
+                while ($counter <= $summary['endRecord']) {
+                    if ($record = $db->getRecord($this->_ids['VuFind'][$counter])) {
                         $rec = RecordDriverFactory::initRecordDriver($record);
                         $html[] = $interface->fetch(
                             $rec->getListEntry($this->_user, $this->_listId, $this->_allowEdit)
                         );
-                        $counter++;
                     }
+                    else {
+                        $html[] = $interface->fetch(
+                            IndexRecord::getEmptyListEntry($this->_ids['VuFind'][$counter], $this->_user, $this->_listId, $this->_allowEdit)
+                        );
+                    }
+                    $counter++;
                 }
-            }
+#            }
             $interface->assign('resourceList', $html);
 
 /*
