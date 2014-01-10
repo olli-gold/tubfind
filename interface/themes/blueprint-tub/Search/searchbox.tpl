@@ -15,7 +15,9 @@
       {/foreach}
       </select>
       <input type="submit" name="submit" value="{translate text="Find"}"/>
-      <a href="{$path}/Search/Advanced" class="small">{translate text="Advanced"}</a> | 
+      {if $tab != "primo"}
+        <a href="{$path}/Search/Advanced" class="small">{translate text="Advanced"}</a> | 
+      {/if}
       <a href="{$path}/Search/History"  class="small">{translate text='Search History'}</a> | 
       <a href="{$url}/Search/TagCloud" class="small">{translate text='TagCloud'}</a>
 
