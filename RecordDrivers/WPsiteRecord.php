@@ -120,7 +120,7 @@ class WPsiteRecord extends IndexRecord
      * @return array
      * @access protected
      */
-    protected function getURLs()
+    public function getURLs()
     {
         $urls = array();
         if (isset($this->fields['url']) && is_array($this->fields['url'])) {
