@@ -166,6 +166,11 @@ class SearchObject_Solr extends SearchObject_Base
         ) {
             $this->defaultSortByType = $searchSettings['DefaultSortingByType'];
         }
+        if (isset($searchSettings['DefaultFilters'])) {
+            foreach ($searchSettings['DefaultFilters'] as $defFilter) {
+                $this->defaultFilter[] = $defFilter;
+            }
+        }
         if (isset($searchSettings['HiddenFilters'])) {
             foreach ($searchSettings['HiddenFilters'] as $field => $subfields) {
                 $this->addHiddenFilter($field.':'.'"'.$subfields.'"');
@@ -179,11 +184,6 @@ class SearchObject_Solr extends SearchObject_Base
         if (isset($searchSettings['DefaultFilterFields'])) {
             foreach ($searchSettings['DefaultFilterFields'] as $defFilterField) {
                 $this->defFilterFields[] = $defFilterField;
-            }
-        }
-        if (isset($searchSettings['DefaultFilters'])) {
-            foreach ($searchSettings['DefaultFilters'] as $defFilter) {
-                $this->defaultFilter[] = $defFilter;
             }
         }
         if (isset($searchSettings['Basic_Searches'])) {
@@ -1160,8 +1160,9 @@ class SearchObject_Solr extends SearchObject_Base
         }
         if ($removeDefaultFilter === true) {
             foreach ($this->defaultFilter as $defKey => $defValue) {
-                if ($key = array_search($defValue, $filterQuery) !== false) {
-                    $new = array_splice($filterQuery, ($key-1), 1);
+                $key = array_search($defValue, $filterQuery);
+                if ($key !== false) {
+                    $new = array_splice($filterQuery, $key, 1);
                 }
             }
         }
