@@ -293,7 +293,7 @@ class SearchObject_Solr extends SearchObject_Base
 
         if ($_SESSION['defaultFilters'] == 1) {
             foreach ($this->defaultFilter as $rawFilter) {
-                $this->addFilter($rawFilter);
+                $this->addHiddenFilter($rawFilter);
             }
         }
         //********************
