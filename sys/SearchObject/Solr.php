@@ -291,10 +291,8 @@ class SearchObject_Solr extends SearchObject_Base
         $this->initFilters();
         $this->initLimit();
 
-        if ($_SESSION['defaultFilters'] == 1) {
-            foreach ($this->defaultFilter as $rawFilter) {
-                $this->addHiddenFilter($rawFilter);
-            }
+        foreach ($this->defaultFilter as $rawFilter) {
+            $this->addHiddenFilter($rawFilter);
         }
         //********************
         // Basic Search logic
@@ -1130,6 +1128,10 @@ class SearchObject_Solr extends SearchObject_Base
         // Define Filter Query
         $filterQuery = $this->hiddenFilters;
         $orFilterQuery = array();
+
+        if (array_key_exists('localonly', $_REQUEST) === true && $_REQUEST['localonly'] == "0") {
+            $this->addFilter('showAll:true');
+        }
 
         $removeDefaultFilter = false;
         foreach ($this->filterList as $field => $filter) {

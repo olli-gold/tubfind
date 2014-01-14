@@ -50,11 +50,6 @@ class Home extends Action
     {
         global $configArray;
 
-        // Set default filters to 1, apply default filters any time it comes from the homepage
-        if (array_key_exists('defaultFilters', $_SESSION) === false) {
-            $_SESSION['defaultFilters'] = 1;
-        }
-
         // Execute Default Tab
         $defaultTab = isset($configArray['Site']['defaultRecordTab']) ?
             $configArray['Site']['defaultRecordTab'] : 'Holdings';
