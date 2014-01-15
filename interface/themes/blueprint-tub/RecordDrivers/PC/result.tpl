@@ -23,13 +23,16 @@
     </div>
 
     <div class="resultItemLine2">
-      {if !empty($summAuthor)}
+      {if !empty($summAuthor.0)}
       {translate text='by'}
       {foreach from=$summAuthor item=aut}
-        <a href="{$url}/Author/Home?author={$aut|escape:"url"}">
+        <a href="{$url}/Search/Results?lookfor={$aut|escape:"url"}">
             {$aut|escape}
-        </a>,
+        </a>
       {/foreach}
+      {if $multiaut > 1}
+        {translate text='and others'}
+      {/if}
       {/if}
 
       {if $summDate} {$summDate.0|escape}{/if}

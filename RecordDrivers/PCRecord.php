@@ -39,6 +39,7 @@ class PCRecord extends IndexRecord
         $interface->assign('sfxmenu', $this->getSfxMenu());
         $interface->assign('sfxbutton', $this->getSfxMenuButton());
         $interface->assign('pcURLs', $this->getURLs());
+        $interface->assign('multiaut', $this->getAuthorsCount());
         return 'RecordDrivers/PC/result.tpl';
     }
 
@@ -418,6 +419,31 @@ class PCRecord extends IndexRecord
             }
             return implode('&', $parts);
         }
+
+    protected function getAuthorsCount() {
+        $authors = array();
+        $aut = parent::getPrimaryAuthor();
+        $authors = explode(';', $aut);
+        return count($authors);
+    }
+
+    protected function getPrimaryAuthor() {
+        $authors = array();
+        $aut = parent::getPrimaryAuthor();
+        $authors = explode(';', $aut);
+        return $authors[0];
+    }
+
+    protected function getSecondaryAuthors() {
+        $authors = array();
+        $aut = parent::getPrimaryAuthor();
+        $authors = explode(';', $aut);
+        array_shift($authors);
+        /*foreach ($authors_n as $aut_n) {
+            $authors[] = urlencode($aut_n);
+        }*/
+        return $authors;
+    }
                                                                                                                             
 }
 
