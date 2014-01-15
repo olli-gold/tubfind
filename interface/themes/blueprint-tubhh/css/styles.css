@@ -788,6 +788,13 @@ dl.narrowList a {
     padding:0 .5em .5em 20px;
     margin-right:1em;
 }
+.unknown {
+    background-image:url(../images/silk/unknown.png);
+    background-repeat:no-repeat;
+    background-position: left top;
+    padding:0 .5em .5em 20px;
+    margin-right:1em;
+}
 .journal {
     background-image:url(../images/silk/report.png);
     background-repeat:no-repeat;
