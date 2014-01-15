@@ -64,7 +64,7 @@ class SideFacets implements RecommendationInterface
         $mainSection = empty($params[0]) ? 'Results' : $params[0];
         $checkboxSection = isset($params[1]) ? $params[1] : false;
         $iniName = isset($params[2]) ? $params[2] : 'facets';
-        if (in_array('Primo Central', $_SESSION['shards']) === true) $iniName = 'facets_primocentral';
+        if (in_array('Primo Central', $_SESSION['shards']) === true || in_array('GBV Primo Bridged', $_SESSION['shards']) === true) $iniName = 'facets_primocentral';
         // Load the desired facet information...
         $this->config = getExtraConfigArray($iniName);
         // All standard facets to display:
