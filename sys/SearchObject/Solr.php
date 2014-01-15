@@ -143,7 +143,7 @@ class SearchObject_Solr extends SearchObject_Base
 
         // Load search preferences:
         $iniName = 'searches';
-        if (in_array('Primo Central', $_SESSION['shards']) === true) $iniName = 'searches_primocentral';
+        if (in_array('Primo Central', $_SESSION['shards']) === true || in_array('GBV Primo Bridged', $_SESSION['shards']) === true) $iniName = 'searches_primocentral';
         $searchSettings = getExtraConfigArray($iniName);
         if (isset($searchSettings['General']['default_handler'])) {
             $this->defaultIndex = $searchSettings['General']['default_handler'];
