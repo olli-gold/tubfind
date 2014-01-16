@@ -97,8 +97,6 @@ class SearchObject_Solr extends SearchObject_Base
      */
     public function __construct()
     {
-        // if Session has not been started, start it now
-        if (empty($_SESSION)) session_start();
         // Call base class constructor
         parent::__construct();
 
