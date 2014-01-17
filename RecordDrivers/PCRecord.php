@@ -56,7 +56,17 @@ class PCRecord extends IndexRecord
         $interface->assign('coreSubseries', $this->getSubseries());
         */
 
-        return 'RecordDrivers/Index/core.tpl';
+        return 'RecordDrivers/PC/core.tpl';
+    }
+
+    public function getHoldings()
+    {
+        global $interface;
+        global $configArray;
+
+        parent::getHoldings();
+
+        return 'RecordDrivers/PC/holdings.tpl';
     }
 
     /**
