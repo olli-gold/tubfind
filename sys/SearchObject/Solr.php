@@ -71,6 +71,11 @@ class SearchObject_Solr extends SearchObject_Base
     // OTHER VARIABLES
     // Index
     protected $indexEngine = null;
+    // Authorized Mode
+    protected $authorizedMode = false;
+    protected $authorizedModeField = null;
+    protected $authorizedModeValue = null;
+    protected $authorizedIPRange = null;
     // Facets information
     protected $allFacetSettings = array();    // loaded from facets.ini
     // Optional, used on author screen for example
@@ -160,6 +165,12 @@ class SearchObject_Solr extends SearchObject_Base
         if (isset($searchSettings['General']['retain_filters_by_default'])) {
             $this->retainFiltersByDefault
                 = $searchSettings['General']['retain_filters_by_default'];
+        }
+        if (isset($searchSettings['AuthorizedMode']['enabled'])) {
+            $this->authorizedMode = $searchSettings['AuthorizedMode']['enabled'];
+            $this->authorizedModeField = $searchSettings['AuthorizedMode']['field'];
+            $this->authorizedModeValue = $searchSettings['AuthorizedMode']['value'];
+            $this->authorizedIPRange = $searchSettings['AuthorizedMode']['ipRange'];
         }
         if (isset($searchSettings['DefaultSortingByType'])
             && is_array($searchSettings['DefaultSortingByType'])
@@ -1125,6 +1136,15 @@ class SearchObject_Solr extends SearchObject_Base
         }
 
         if ($clean === true) {
+
+        $authorized = false;
+        if (substr($_SERVER['REMOTE_ADDR'], 0, strlen($this->authorizedIPRange)) == $this->authorizedIPRange && $this->authorizedMode != false && $this->authorizedModeField && $this->authorizedModeValue) {
+            $authorized = true;
+        }
+        if ($authorized === true) {
+            $this->addHiddenFilter($this->authorizedModeField.':'.$this->authorizedModeValue);
+        }
+
         // Define Filter Query
         $filterQuery = $this->hiddenFilters;
         $orFilterQuery = array();
