@@ -76,6 +76,7 @@ class SearchObject_Solr extends SearchObject_Base
     protected $authorizedModeField = null;
     protected $authorizedModeValue = null;
     protected $authorizedIPRange = null;
+    protected $authorizedModeRemoveDefaultFilter = null;
     // Facets information
     protected $allFacetSettings = array();    // loaded from facets.ini
     // Optional, used on author screen for example
@@ -171,6 +172,7 @@ class SearchObject_Solr extends SearchObject_Base
             $this->authorizedModeField = $searchSettings['AuthorizedMode']['field'];
             $this->authorizedModeValue = $searchSettings['AuthorizedMode']['value'];
             $this->authorizedIPRange = $searchSettings['AuthorizedMode']['ipRange'];
+            $this->authorizedModeRemoveDefaultFilter = $searchSettings['AuthorizedMode']['removeDefaultFilter'];
         }
         if (isset($searchSettings['DefaultSortingByType'])
             && is_array($searchSettings['DefaultSortingByType'])
@@ -1137,12 +1139,19 @@ class SearchObject_Solr extends SearchObject_Base
 
         if ($clean === true) {
 
+        $removeDefaultFilters = array();
+
         $authorized = false;
-        if (substr($_SERVER['REMOTE_ADDR'], 0, strlen($this->authorizedIPRange)) == $this->authorizedIPRange && $this->authorizedMode != false && $this->authorizedModeField && $this->authorizedModeValue) {
+        if (substr($_SERVER['REMOTE_ADDR'], 0, strlen($this->authorizedIPRange)) == $this->authorizedIPRange && $this->authorizedMode != false && (($this->authorizedModeField && $this->authorizedModeValue) || $this->authorizedModeRemoveDefaultFilter)) {
             $authorized = true;
         }
         if ($authorized === true) {
-            $this->addHiddenFilter($this->authorizedModeField.':'.$this->authorizedModeValue);
+            if ($this->authorizedModeField && $this->authorizedModeValue) {
+                $this->addHiddenFilter($this->authorizedModeField.':'.$this->authorizedModeValue);
+            }
+            else if ($this->authorizedModeRemoveDefaultFilter) {
+                $removeDefaultFilters[] = $this->authorizedModeRemoveDefaultFilter;
+            }
         }
 
         // Define Filter Query
@@ -1153,10 +1162,9 @@ class SearchObject_Solr extends SearchObject_Base
             $this->addFilter('showAll:true');
         }
 
-        $removeDefaultFilter = false;
         foreach ($this->filterList as $field => $filter) {
             if (in_array($field, $this->defFilterFields) === true) {
-                $removeDefaultFilter = true;
+                $removeDefaultFilters[] = array_search($field, $this->defFilterFields);
                 continue;
             }
             foreach ($filter as $value) {
@@ -1180,11 +1188,13 @@ class SearchObject_Solr extends SearchObject_Base
                 }
             }
         }
-        if ($removeDefaultFilter === true) {
+        if (count($removeDefaultFilters) > 0) {
             foreach ($this->defaultFilter as $defKey => $defValue) {
-                $key = array_search($defValue, $filterQuery);
-                if ($key !== false) {
-                    $new = array_splice($filterQuery, $key, 1);
+                if (in_array($defKey, $removeDefaultFilters)) {
+                    $key = array_search($defValue, $filterQuery);
+                    if ($key !== false) {
+                        $new = array_splice($filterQuery, $key, 1);
+                    }
                 }
             }
         }
