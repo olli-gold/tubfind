@@ -26,4 +26,7 @@ function checkImage(currentId) {
                 }
             }
         }
+        else {
+            $('#sfxmenu'+currentId).removeClass('hidden');
+        }
 }
