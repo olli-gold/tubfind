@@ -113,16 +113,16 @@
   <span class="Z3988" title="{$openURL|escape}"></span>
 </div>
 
-{if !$primoRecord}
 <div class="span-5 last">
     <div class="sidegroup" id="othereditions">
     </div>
+{if !$primoRecord}
     <div class="sidegroup" id="similarrecs">
         <h4>{translate text="Similar Items"}</h4>
         <span class="ajax_availability" id="similarWait">{translate text='Loading'}...</span>
     </div>
-</div>
 {/if}
+</div>
 <!--<div class="span-5 last">
   {if is_array($similarRecords)}
     <div class="sidegroup">

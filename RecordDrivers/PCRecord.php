@@ -454,7 +454,61 @@ class PCRecord extends IndexRecord
         }*/
         return $authors;
     }
-                                                                                                                            
+
+    public function getEditions() {
+        $frbrid = isset($this->fields['frbrid']) ? $this->fields['frbrid'][0] : null;
+        $id = isset($this->fields['id']) ? $this->fields['id'] : null;
+        $frbrRecords = $this->getFrbrRecords($id, $frbrid);
+        return $frbrRecords;
+    }
+
+    protected function getFrbrRecords($id, $frbrid) {
+        // cannot work without frbr-ID
+        if ($frbrid === null) return null;
+        // Read in preferred boolean/range behavior:
+        $searchSettings = getExtraConfigArray('searches_primocentral');
+        // Cannot work without configuration settings in searches_primocentral.ini
+        if (isset($searchSettings['Index']['host'])) $host = $searchSettings['Index']['host'];
+        else return null;
+        if (isset($searchSettings['Index']['institution'])) $institution = $searchSettings['Index']['institution'];
+        else return null;
+        $oncampus = 'false';
+        if (isset($searchSettings['AuthorizedMode']['enabled'])) {
+            if (substr($_SERVER['REMOTE_ADDR'], 0, strlen($this->authorizedIPRange)) == $this->authorizedIPRange && $searchSettings['AuthorizedMode']['enabled'] != false) {
+                $oncampus = 'true';
+            }
+        }
+        $pc = new DomDocument();
+        $pc->load($host.'/PrimoWebServices/xservice/search/brief?institution='.$institution.'&onCampus='.$oncampus.'&loc=adaptor,primo_central_multiple_fe&query=facet_frbrgroupid,exact,'.$frbrid);
+
+        $documentlist = $pc->getElementsByTagName('record');
+        $items = array();
+        for ($b = 0; $documentlist->item($b) !== null; $b++) {
+            $idblock = $documentlist->item($b)->getElementsByTagName('control');
+            $pcid = $this->__convertAPIID2PCID($idblock->item(0)->getElementsByTagName('recordid')->item(0)->nodeValue);
+            // Skip the current record
+            if ($pcid == $id) continue;
+            $items[$b] = array();
+            $items[$b]['id'] = $pcid;
+
+            $displayblock = $documentlist->item($b)->getElementsByTagName('display');
+            $items[$b]['format'] = $displayblock->item(0)->getElementsByTagName('type')->item(0)->nodeValue;
+            $items[$b]['title'] = array($displayblock->item(0)->getElementsByTagName('title')->item(0)->nodeValue);
+            //$items[$b]['journal'] = array($idblock->item(0)->getElementsByTagName('recordid')->item(0)->nodeValue);
+            $searchblock = $documentlist->item($b)->getElementsByTagName('search');
+            $items[$b]['publishDate'] = array($searchblock->item(0)->getElementsByTagName('creationdate')->item(0)->nodeValue);
+            $facetblock = $documentlist->item($b)->getElementsByTagName('facets');
+            $items[$b]['volume'] = '(via '.$facetblock->item(0)->getElementsByTagName('collection')->item(0)->nodeValue.')';
+        }
+        return $items;
+    }
+
+    private function __convertAPIID2PCID($id) {
+        $id = str_replace('TN_', 'PC', $id);
+        $id = str_replace('.', '__D__', $id);
+        $id = str_replace('/', '__S__', $id);
+        return ($id);
+    }
 }
 
 ?>
