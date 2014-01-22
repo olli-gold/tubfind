@@ -1,3 +1,4 @@
+{assign var=summId value=$id|escape}
 {if !empty($holdingURLs) || $holdingsOpenURL}
   <h3>{translate text="Internet"}</h3>
   {if !empty($holdingURLs)}
@@ -12,6 +13,5 @@
   {/if}
 {/if}
 {if $sfxmenu && $sfxbutton}
-  {assign var=summId value=$id|escape}
   <span class="hidden" id="sfxmenu{$id|escape}"><a href="{$sfxmenu}"><img src="{$sfxbutton}" alt="SFX" /></a></span>
 {/if}
