@@ -38,6 +38,7 @@
     {* Load VuFind specific stylesheets *}
     {css media="screen, projection" filename="styles.css"}
     {css media="screen" filename="print.css"}
+    {css media="screen" filename="tub.css"}
     <!--[if lt IE 8]><link rel="stylesheet" href="{$url}/interface/themes/blueprint/css/ie.css" type="text/css" media="screen, projection"><![endif]-->
 
 	{* Load jQuery framework and plugins *}
