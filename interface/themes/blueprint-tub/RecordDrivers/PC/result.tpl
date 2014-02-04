@@ -51,7 +51,7 @@
       {/if}
     </div>
 
-    <div class="span-14 last">
+    <div class="span-13">
         Score: {$score}
     </div>
 
