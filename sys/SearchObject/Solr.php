@@ -118,7 +118,9 @@ class SearchObject_Solr extends SearchObject_Base
         $this->indexEngine = ConnectionManager::connectToIndex();
 
         // Get default facet settings
-        $this->allFacetSettings = getExtraConfigArray('facets');
+        $facetsIniName = 'facets';
+        if (in_array('Primo Central', $_SESSION['shards']) === true || in_array('GBV Primo Bridged', $_SESSION['shards']) === true) $facetsIniName = 'facets_primocentral';
+        $this->allFacetSettings = getExtraConfigArray($facetsIniName);
         $this->facetConfig = array();
         $facetLimit = $this->getFacetSetting('Results_Settings', 'facet_limit');
         $this->multiSelectFacets = explode(',', $this->getFacetSetting(
@@ -452,6 +454,29 @@ class SearchObject_Solr extends SearchObject_Base
         );
 
         return true;
+    }
+
+    /**
+     * Get information on the current state of the boolean checkbox facets.
+     *
+     * @return array
+     * @access public
+     */
+    public function getCheckboxFacets()
+    {
+        // Grab checkbox facet details using the standard method:
+        $facets = parent::getCheckboxFacets();
+        // Make always visible facets configurable via facets.ini
+        $alwaysVisible = $this->getFacetSetting('AlwaysVisible');
+
+        foreach ($facets as $k => $f) {
+            if (in_array($f['filter'], $alwaysVisible) === true) {
+                $facets[$k]['alwaysVisible'] = true;
+            }
+        }
+
+        // Return modified list:
+        return $facets;
     }
 
     /**
