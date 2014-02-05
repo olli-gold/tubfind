@@ -1,4 +1,5 @@
 <div class="searchform">
+  <div id="searchFormContainer" style="float:left">
   {if $searchType == 'advanced'}
     <a href="{$path}/Search/Advanced?edit={$searchId}" class="small">{translate text="Edit this Advanced Search"}</a> |
     <a href="{$path}/Search/Advanced" class="small">{translate text="Start a new Advanced Search"}</a> |
@@ -63,4 +64,8 @@
     </form>
     <script type="text/javascript">$("#searchForm_lookfor").focus()</script>
   {/if}
+  </div>
+  <div style="float:right;width:auto;margin-right:20px;">
+    {include file="pwmenu.tpl"}
+  </div>
 </div>

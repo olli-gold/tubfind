@@ -102,9 +102,6 @@
           {/if}
         {/if}
 	  </div>
-          <div style="float:right;width:auto;margin-right:20px;margin-top:-100px;">
-            {include file="pwmenu.tpl"}
-          </div>
           <div class="clear"></div>
 	  {/if}
 
