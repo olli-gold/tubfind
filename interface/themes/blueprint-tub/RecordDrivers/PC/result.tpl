@@ -31,7 +31,7 @@
         </a>
       {/foreach}
       {if $multiaut > 1}
-        {translate text='and others'}
+        {translate text='and others'}{if $summDate.0};{/if}
       {/if}
       {/if}
 
