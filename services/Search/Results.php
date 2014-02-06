@@ -209,7 +209,7 @@ class Results extends Action
             $interface->assign('recordSet', $searchObject->getResultRecordHTML());
 
             // Setup Display
-            
+
             //Get view & load template
             $currentView  = $searchObject->getView();
             $interface->assign('subpage', 'Search/list-' . $currentView .'.tpl');
@@ -217,6 +217,7 @@ class Results extends Action
 
             // Process Paging
             $link = $searchObject->renderLinkPageTemplate();
+            if ($summary['resultTotal'] > 200 && in_array('Primo Central', $_SESSION['shards']) === true) $summary['resultTotal'] = 200;
             $options = array('totalItems' => $summary['resultTotal'],
                              'fileName'   => $link,
                              'perPage'    => $summary['perPage']);
