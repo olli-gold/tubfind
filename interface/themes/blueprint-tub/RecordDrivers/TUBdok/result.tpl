@@ -42,7 +42,7 @@
 
     <div class="span-14 last">
         {translate text='Source'}: <span>{translate text='TUBdok'}</span><br/>
-        <a href="{$summFileUrl}" target="_blank">{translate text="Fulltext"}</a>
+        <a href="{$summFileUrl}" target="_blank">{$summFileName}</a>
     </div>
 
   </div>

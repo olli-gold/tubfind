@@ -37,6 +37,7 @@ class TubdokRecord extends IndexRecord
         $interface->assign('summDocId', $this->getDocumentID());
         $interface->assign('summFileUrl', $this->getFileUrl());
         $interface->assign('summDocUrl', $this->getDocUrl());
+        $interface->assign('summFileName', $this->getFileName());
         $interface->assign('summTeaser', $this->getTeaser());
         $interface->assign('summDate', $this->getPublicationDates());
         return 'RecordDrivers/TUBdok/result.tpl';
@@ -64,6 +65,18 @@ class TubdokRecord extends IndexRecord
     {
         return isset($this->fields['docurl']) ?
             $this->fields['docurl'] : '';
+    }
+
+    /**
+     * Get the name for the records file.
+     *
+     * @access  protected
+     * @return  string
+     */
+    protected function getFileName()
+    {
+        return isset($this->fields['docurl']) ?
+            basename($this->fields['docurl']) : '';
     }
 
     /** 
