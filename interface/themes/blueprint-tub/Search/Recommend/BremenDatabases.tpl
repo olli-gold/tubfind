@@ -1,7 +1,7 @@
 {if !empty($dbRecommendations)}
 <div class="sidegroup">
   <h4>{translate text="Databases"}</h4>
-<div class="authorbox">
+<div>
   <p>{translate text='database_recommendations'}</p>
   {foreach from=$dbRecommendations item='databases' key='group'}
     <p style="font-weight:bold">{$group}</p>
