@@ -1513,10 +1513,11 @@ div.debug code {
 #toptab ul li {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
-    background: #F1F2EC;
+/*    background: #F1F2EC; */
     float: left;
     margin: 0 2px 0 0;
     padding-left: 10px;
+    padding-bottom:0px;
 }
 
 #toptab ul li a {
@@ -1529,13 +1530,13 @@ div.debug code {
 }
 
 #toptab ul li.active {
-    background-color: #1E3287;
+/*    background-color: #1E3287; */
     background-position: 0 -60px;
 }
 
 #toptab ul li.active a {
     background-position: 100% -60px;
-    color: #FFFFFF;
+/*    color: #FFFFFF; */
     font-weight: bold;
 }
 

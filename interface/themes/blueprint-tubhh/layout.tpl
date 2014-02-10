@@ -129,8 +129,8 @@
             <li{if $tab == "nogbvall"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=localbiblio&shard[]=TUBdok&shard[]=wwwtub&tab=nogbvall">{translate text="Alles ohne GBV Discovery"}</a></li>
             <li{if $tab == "tuhh"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=TUHH Test&tab=tuhh">{translate text="Test: TUHH Webseiten"}</a></li>
 -->
-            <li{if $tab == "all"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=GBV Central&shard[]=TUBdok&shard[]=wwwtub&tab=all">{translate text="Books and more"}</a></li>
-            <li{if $tab == "primo"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=Primo Central&tab=primo">{translate text="Articles and more"}</a></li>
+            <li class="books {if $tab == "all"}active{/if}"><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=GBV Central&shard[]=TUBdok&shard[]=wwwtub&tab=all">{translate text="Books and more"}</a></li>
+            <li class="articles {if $tab == "primo"}active{/if}"><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=Primo Central&tab=primo">{translate text="Articles and more"}</a></li>
             {/if}
             {if $useSolr}
             <li{if $module != "WorldCat" && $module != "Summon"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}">{translate text="University Library"}</a></li>

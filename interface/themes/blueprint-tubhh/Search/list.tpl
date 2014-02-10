@@ -1,5 +1,5 @@
 {* Main Listing *}
-<div class="span-18">
+<div class="{if $tab == "all"}resultsetBooks{else}{if $tab == "primo"}resultsetArticles{else}span-18{/if}{/if}">
     {if $topRecommendations}
     {foreach from=$topRecommendations item="recommendations"}
       {include file=$recommendations}
