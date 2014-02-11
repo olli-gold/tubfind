@@ -50,7 +50,7 @@ class SearchObject_Solr extends SearchObject_Base
     protected $facetLimit = 30;
     protected $facetOffset = null;
     protected $facetPrefix = null;
-    protected $facetSort = null;
+    protected $facetSort = 'index';
     protected $sortedByIndex = null;
 
     // Parameter added by Frank Morgner
