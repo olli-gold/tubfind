@@ -676,10 +676,10 @@ function toggleFacet(elemId) {
         $(elemId).css('cursor','pointer');
         $(elemId).find('#fplus').removeClass('hidden');
         $(elemId).find('#fminus').addClass('hidden');
-        $(elemId).parents().contents('dd').eq(0).slideUp(200, function () { $(this).parents().contents('dd').addClass('offscreen'); });             
+        $(elemId).parents().contents('dd').eq(0).slideUp(200, function () { $(this).parents().contents('dd').addClass('offscreen'); });
         var facet_length = ($(elemId).parents().contents('dd').length -1) < 5 ? $(elemId).parents().contents('dd').length -1 : 5;
         var facet = $(elemId).parents().contents('dd').eq(facet_length).attr('id').substring(4);
-        lessFacets(facet);               
+        lessFacets(facet);
    }
 }
 
@@ -690,6 +690,6 @@ function moreFacets(name) {
 
 function lessFacets(name) {
     $("#more"+name).show();
-    $("#narrowGroupHidden_"+name).slideUp('fast', function () { $("#narrowGroupHidden_"+name).addClass("offscreen"); });    
+    $("#narrowGroupHidden_"+name).slideUp('fast', function () { $("#narrowGroupHidden_"+name).addClass("offscreen"); });
 }
 
