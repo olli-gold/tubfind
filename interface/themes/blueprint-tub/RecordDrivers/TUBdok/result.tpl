@@ -42,7 +42,10 @@
 
     <div class="span-14 last">
         {translate text='Source'}: <span>{translate text='TUBdok'}</span><br/>
-        <a href="{$summFileUrl}" target="_blank">{$summFileName}</a>
+        <strong>{translate text='Files'}:</strong><br/>
+        {foreach from=$summFiles item=fileUrl key=fileName}
+          <a href="$fileUrl">{$fileName|escape}</a><br/>
+        {/foreach}
     </div>
 
   </div>
