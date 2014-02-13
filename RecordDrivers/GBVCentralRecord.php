@@ -490,48 +490,48 @@ class GBVCentralRecord extends MarcRecord
                     $params['rft.language'] = $langs[0];
                 }
                 break;
-            }
-            /**.
-            http://sfx.gbv.de:9004/sfx_tuhh?.
-            ctx_enc=info%3Aofi%2Fenc%3AUTF-8&.
-            ctx_id=10_1&.
-            ctx_tim=2011-03-28T15%3A10%3A47CEST&.
-            ctx_ver=Z39.88-2004&.
-            rfr_id=info%3Asid%2Fsfxit.com%3Acitation&.
-            rft.atitle=When+Johnny+comes+marching+home&.
-            rft.epage=136&.
-            rft.genre=article&.
-            rft.issn=0028-0836&.
-            rft.issue=7200&.
-            rft.jtitle=Nature&.
-            rft.spage=136&.
-            rft.volume=454&.
-            rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Aarticle&.
-            sfx.title_search=exact&.
-            url_ctx_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Actx&.
-            url_ver=Z39.88-2004.
-
-            GBV Central:
-            953 <--><------><------>|d 332  |j 2011  |e 6035  |b 10  |c 6  |h 1256-1259  |g 3..
-            d = Volume
-            j = Jahr
-            e = issue
-            h = Seitenangabe Von Bis
-            */
-
-            // Assemble the URL:
-            $parts = array();
-            foreach ($params as $key => $value) {
-                if (is_array($value) === true) {
-                    $parts[] = $key . '=' . urlencode($value[0]);
-                }
-                else {
-                    $parts[] = $key . '=' . urlencode($value);
-                }
-            }
-
-            return implode('&', $parts);
         }
+        /**.
+        http://sfx.gbv.de:9004/sfx_tuhh?.
+        ctx_enc=info%3Aofi%2Fenc%3AUTF-8&.
+        ctx_id=10_1&.
+        ctx_tim=2011-03-28T15%3A10%3A47CEST&.
+        ctx_ver=Z39.88-2004&.
+        rfr_id=info%3Asid%2Fsfxit.com%3Acitation&.
+        rft.atitle=When+Johnny+comes+marching+home&.
+        rft.epage=136&.
+        rft.genre=article&.
+        rft.issn=0028-0836&.
+        rft.issue=7200&.
+        rft.jtitle=Nature&.
+        rft.spage=136&.
+        rft.volume=454&.
+        rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Aarticle&.
+        sfx.title_search=exact&.
+        url_ctx_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Actx&.
+        url_ver=Z39.88-2004.
+
+        GBV Central:
+        953 <--><------><------>|d 332  |j 2011  |e 6035  |b 10  |c 6  |h 1256-1259  |g 3..
+        d = Volume
+        j = Jahr
+        e = issue
+        h = Seitenangabe Von Bis
+        */
+
+        // Assemble the URL:
+        $parts = array();
+        foreach ($params as $key => $value) {
+            if (is_array($value) === true) {
+                $parts[] = $key . '=' . urlencode($value[0]);
+            }
+            else {
+                $parts[] = $key . '=' . urlencode($value);
+            }
+        }
+
+        return implode('&', $parts);
+    }
 
     /**
      * TUBHH Enhancement
