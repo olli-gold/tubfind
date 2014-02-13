@@ -260,10 +260,10 @@ class PCRecord extends IndexRecord
                 foreach ($params as $key => $value) {
                     if ($key == 'svc.fulltext') continue;
                     if (is_array($value) === true) {
-                        $parts[] = $key . '=' . urlencode($value[0]);
+                        $parts[] = $key . '=' . $value[0];
                     }
                     else {
-                        $parts[] = $key . '=' . urlencode($value);
+                        $parts[] = $key . '=' . $value;
                     }
                 }
                 return implode('&', $parts);
