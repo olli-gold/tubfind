@@ -39,7 +39,7 @@
 
       {if $doi}<br/><a href="http://dx.doi.org/{$doi}" target="_new">http://dx.doi.org/{$doi}</a>{/if}
 
-      {if !empty($pcURLs)}
+      {if !empty($pcURLs) && empty($doi)}
         {foreach from=$pcURLs item=pcurl}
           <br/><a href="{$pcurl|escape}" class="fulltext" target="new">{$pcurl|escape}</a>
         {/foreach}
@@ -76,7 +76,9 @@
           {include file="Search/openurl.tpl" openUrl=$summOpenUrl}
       {/if}
 
-      <span class="hidden" id="sfxmenu{$summId|escape}"><a href="{$sfxmenu}"><img src="{$sfxbutton}" alt="SFX" /></a></span>
+      {if empty($pcURLs) && empty($doi)}
+          <span class="hidden" id="sfxmenu{$summId|escape}"><a href="{$sfxmenu}"><img src="{$sfxbutton}" alt="SFX" /></a></span>
+      {/if}
 
 
 
