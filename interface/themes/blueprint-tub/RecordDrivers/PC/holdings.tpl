@@ -11,6 +11,7 @@
 
   <br/>
 
+  {*
   {if !empty($holdingURLs)}
     {foreach from=$holdingURLs item=desc key=url name=loop}
       {if $desc != "C"}
@@ -18,6 +19,7 @@
       {/if}
     {/foreach}
   {/if}
+  *}
   {if $holdingsOpenURL}
     {include file="Search/openurl.tpl" openUrl=$holdingsOpenURL}
   {/if}
