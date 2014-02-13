@@ -8,6 +8,7 @@
   </div>
   <div class="span-9">
     <div class="resultItemLine1">
+      <b class="listtitle">
       <a href="{$summDocUrl}" class="title">
       {if !$summTitle}
           {translate text='Title not available'}
@@ -19,6 +20,7 @@
           {/if}
       {/if}
       </a>
+      </b>
     </div>
 
     <div>
@@ -45,6 +47,11 @@
         <strong>{translate text='Files'}:</strong><br/>
         {foreach from=$summFiles item=fileUrl key=fileName}
           <a href="{$fileUrl}">{$fileName|escape}</a><br/>
+        {/foreach}
+
+        <br/>
+        {foreach from=$summFormats item=format}
+            <span class="iconlabel {$format|lower|regex_replace:"/[^a-z0-9]/":""}">{translate text=$format}</span>
         {/foreach}
     </div>
 
