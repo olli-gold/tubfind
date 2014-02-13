@@ -47,10 +47,6 @@ class PCRecord extends IndexRecord
         global $interface;
         parent::getCoreMetadata();
         $interface->assign('primoRecord', true);
-        $interface->assign('doi', $this->getDoi());
-        $interface->assign('sfxmenu', $this->getSfxMenu());
-        $interface->assign('sfxbutton', $this->getSfxMenuButton());
-        $interface->assign('pcURLs', $this->getURLs());
         /*
         $interface->assign('articleChildren', $this->getArticleChildren());
         $interface->assign('coreSubseries', $this->getSubseries());
@@ -66,7 +62,95 @@ class PCRecord extends IndexRecord
 
         parent::getHoldings();
 
+        $interface->assign('doi', $this->getDoi());
+        $interface->assign('sfxmenu', $this->getSfxMenu());
+        $interface->assign('sfxbutton', $this->getSfxMenuButton());
+        $interface->assign('pcURLs', $this->getURLs());
+        $interface->assign('gbvppn', $this->getGbvPpn());
+        $interface->assign('gbvholdings', $this->getRealTimeHoldings());
+        $interface->assign('isMultipartChildren', $this->isMultipartChildren());
+
         return 'RecordDrivers/PC/holdings.tpl';
+    }
+
+    /**
+     * Get an array of information about record holdings, obtained in real-time
+     * from the ILS.
+     *
+     * @return array
+     * @access protected
+     */
+    protected function getRealTimeHoldings()
+    {
+        // Get Holdings Data
+        $id = $this->getGbvPpn();
+        $catalog = ConnectionManager::connectToCatalog();
+
+        if ($catalog && $catalog->status) {
+            $result = $catalog->getHolding($id);
+            if (PEAR::isError($result)) {
+                PEAR::raiseError($result);
+            }
+            $holdings = array();
+            if (count($result)) {
+                // Jedes Exemplar aus dem DAIA-Output soll in die Exemplarliste
+                foreach ($result as $copy) {
+                    if ($linkname != false) $copy['linkname'] = $linkname;
+                    $itemId = $copy['itemid'];
+                    $epnArray = explode(':epn:', $itemId);
+                    $epn = $epnArray[1];
+                    // Eventuelle Anreicherungen ergänzen...
+                    if ($this->remarks[$epn]) $copy = array_merge($copy, $this->remarks[$epn]);
+                    $holdings[$copy['location']][] = $copy;
+                }
+            }
+            return $holdings;
+        }
+        return array();
+    }
+
+    public function isMultipartChildren()
+    {
+        if ($this->isGbvRecord() === true) {
+            $id = $this->getGbvPpn();
+
+            unset($_SESSION['shards']);
+            $_SESSION['shards'] = array();
+            $_SESSION['shards'][] = 'GBV Central';
+            $_SESSION['shards'][] = 'TUBdok';
+            $_SESSION['shards'][] = 'wwwtub';
+
+            $index = $this->getIndexEngine();
+            // Assemble the query parts and filter out current record:
+            $query = '(ppnlink:'.$id.' AND NOT (format:Article OR format:"electronic Article"';
+            //if ($this->isNLZ() === false) $query .= ' OR id:"NLZ*"';
+            $query .= '))';
+
+            // Perform the search and return either results or an error:
+            $this->setHiddenFilters();
+
+            $result = $index->search($query, null, $this->hiddenFilters, 0, 1, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
+
+            unset($_SESSION['shards']);
+            $_SESSION['shards'] = array();
+            $_SESSION['shards'][] = 'Primo Central';
+
+            return ($result['response']['numFound'] > 0) ? true : false;
+        }
+        return false;
+    }
+
+    public function getGbvPpn() {
+        $ppn = null;
+        if (substr($this->fields['id'], 0, 5) == 'PCgbv') {
+            $ppn = substr($this->fields['id'], 5);
+        }
+        return $ppn;
+    }
+
+    public function isGbvRecord() {
+        if ($this->getGbvPpn() !== null) return true;
+        return false;
     }
 
     /**
@@ -383,52 +467,52 @@ class PCRecord extends IndexRecord
                     $params['rft.language'] = $langs[0];
                 }
                 break;
-            }
-            /**.
-            http://sfx.gbv.de:9004/sfx_tuhh?.
-            ctx_enc=info%3Aofi%2Fenc%3AUTF-8&.
-            ctx_id=10_1&.
-            ctx_tim=2011-03-28T15%3A10%3A47CEST&.
-            ctx_ver=Z39.88-2004&.
-            rfr_id=info%3Asid%2Fsfxit.com%3Acitation&.
-            rft.atitle=When+Johnny+comes+marching+home&.
-            rft.epage=136&.
-            rft.genre=article&.
-            rft.issn=0028-0836&.
-            rft.issue=7200&.
-            rft.jtitle=Nature&.
-            rft.spage=136&.
-            rft.volume=454&.
-            rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Aarticle&.
-            sfx.title_search=exact&.
-            url_ctx_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Actx&.
-            url_ver=Z39.88-2004.
-
-            GBV Central:
-            953 <--><------><------>|d 332  |j 2011  |e 6035  |b 10  |c 6  |h 1256-1259  |g 3..
-            d = Volume
-            j = Jahr
-            e = issue
-            h = Seitenangabe Von Bis
-            */
-
-            if ($menu == true) {
-                $params['disable_directlink'] = "true";
-                $params['sfx.directlink'] = "off";
-            }
-
-            // Assemble the URL:
-            $parts = array();
-            foreach ($params as $key => $value) {
-                if (is_array($value) === true) {
-                    $parts[] = $key . '=' . urlencode($value[0]);
-                }
-                else {
-                    $parts[] = $key . '=' . urlencode($value);
-                }
-            }
-            return implode('&', $parts);
         }
+        /**.
+        http://sfx.gbv.de:9004/sfx_tuhh?.
+        ctx_enc=info%3Aofi%2Fenc%3AUTF-8&.
+        ctx_id=10_1&.
+        ctx_tim=2011-03-28T15%3A10%3A47CEST&.
+        ctx_ver=Z39.88-2004&.
+        rfr_id=info%3Asid%2Fsfxit.com%3Acitation&.
+        rft.atitle=When+Johnny+comes+marching+home&.
+        rft.epage=136&.
+        rft.genre=article&.
+        rft.issn=0028-0836&.
+        rft.issue=7200&.
+        rft.jtitle=Nature&.
+        rft.spage=136&.
+        rft.volume=454&.
+        rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Aarticle&.
+        sfx.title_search=exact&.
+        url_ctx_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Actx&.
+        url_ver=Z39.88-2004.
+
+        GBV Central:
+        953 <--><------><------>|d 332  |j 2011  |e 6035  |b 10  |c 6  |h 1256-1259  |g 3..
+        d = Volume
+        j = Jahr
+        e = issue
+        h = Seitenangabe Von Bis
+        */
+
+        if ($menu == true) {
+            $params['disable_directlink'] = "true";
+            $params['sfx.directlink'] = "off";
+        }
+
+        // Assemble the URL:
+        $parts = array();
+        foreach ($params as $key => $value) {
+            if (is_array($value) === true) {
+                $parts[] = $key . '=' . urlencode($value[0]);
+            }
+            else {
+                $parts[] = $key . '=' . urlencode($value);
+            }
+        }
+        return implode('&', $parts);
+    }
 
     protected function getAuthorsCount() {
         $authors = array();
@@ -508,6 +592,34 @@ class PCRecord extends IndexRecord
         $id = str_replace('.', '__D__', $id);
         $id = str_replace('/', '__S__', $id);
         return ($id);
+    }
+
+    protected $hiddenFilters = array();
+
+    protected function setHiddenFilters()
+    {
+        $searchSettings = getExtraConfigArray('searches');
+        
+        if (isset($searchSettings['HiddenFilters'])) {
+            foreach ($searchSettings['HiddenFilters'] as $field => $subfields) {
+                $this->addHiddenFilter($field.':'.'"'.$subfields.'"');
+            }
+        }
+        if (isset($searchSettings['RawHiddenFilters'])) {
+            foreach ($searchSettings['RawHiddenFilters'] as $rawFilter) {
+                $this->addHiddenFilter($rawFilter);
+            }
+        }
+        if (isset($searchSettings['DefaultFilters'])) {
+            foreach ($searchSettings['DefaultFilters'] as $defFilter) {
+                $this->addHiddenFilter($defFilter);
+            }
+        }
+    }
+    
+    public function addHiddenFilter($fq)
+    {
+        $this->hiddenFilters[] = $fq;
     }
 }
 
