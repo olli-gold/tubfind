@@ -44,7 +44,7 @@
         {translate text='Source'}: <span>{translate text='TUBdok'}</span><br/>
         <strong>{translate text='Files'}:</strong><br/>
         {foreach from=$summFiles item=fileUrl key=fileName}
-          <a href="$fileUrl">{$fileName|escape}</a><br/>
+          <a href="{$fileUrl}">{$fileName|escape}</a><br/>
         {/foreach}
     </div>
 
