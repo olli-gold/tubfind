@@ -282,6 +282,8 @@ class GBVCentralRecord extends MarcRecord
         if (count($vs) > 0) {
             $refs = array();
             foreach($vs as $v) {
+                $journalRef = null;
+                $articleRef = null;
                 $inRefField = $v->getSubfields('i');
                 if (count($inRefField) > 0) {
                     $inRef = $inRefField[0]->getData();
