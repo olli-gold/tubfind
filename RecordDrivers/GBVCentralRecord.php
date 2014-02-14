@@ -1094,6 +1094,8 @@ class GBVCentralRecord extends MarcRecord
             }
             if (count($parentIds) === 0) {
                 $vs = $this->marcRecord->getFields('830');
+                $eighthundred = $this->marcRecord->getFields('800');
+                $eighthundredten = $this->marcRecord->getFields('810');
                 if ($vs) {
                     foreach($vs as $v) {
                         $a_names = $v->getSubfields('w');
@@ -1109,21 +1111,33 @@ class GBVCentralRecord extends MarcRecord
                         }
                     }
                 }
-                else {
-                    $vs = $this->marcRecord->getFields('800');
-                    if ($vs) {
-                        foreach($vs as $v) {
-                            $a_names = $v->getSubfields('w');
-                            if (count($a_names) > 0) {
-                                $idArr = explode(')', $a_names[0]->getData());
-                                if ($idArr[0] === '(DE-601') {
-                                    $parentIds[] = $idArr[1];
-                                }
+                else if ($eighthundred) {
+                    foreach($eighthundred as $v) {
+                        $a_names = $v->getSubfields('w');
+                        if (count($a_names) > 0) {
+                            $idArr = explode(')', $a_names[0]->getData());
+                            if ($idArr[0] === '(DE-601') {
+                                $parentIds[] = $idArr[1];
                             }
-                            $v_names = $v->getSubfields('v');
-                            if (count($v_names) > 0) {
-                                $volNumber[$idArr[1]] = $v_names[0]->getData();
+                        }
+                        $v_names = $v->getSubfields('v');
+                        if (count($v_names) > 0) {
+                            $volNumber[$idArr[1]] = $v_names[0]->getData();
+                        }
+                    }
+                }
+                else if ($eighthundredten) {
+                    foreach($eighthundredten as $v) {
+                        $a_names = $v->getSubfields('w');
+                        if (count($a_names) > 0) {
+                            $idArr = explode(')', $a_names[0]->getData());
+                            if ($idArr[0] === '(DE-601') {
+                                $parentIds[] = $idArr[1];
                             }
+                        }
+                        $v_names = $v->getSubfields('v');
+                        if (count($v_names) > 0) {
+                            $volNumber[$idArr[1]] = $v_names[0]->getData();
                         }
                     }
                 }
