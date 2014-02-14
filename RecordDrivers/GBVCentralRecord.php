@@ -80,6 +80,7 @@ class GBVCentralRecord extends MarcRecord
         }
         //$interface->assign('multipartParent', $this->getMultipartParent());
         $interface->assign('isMultipartChildren', $this->isMultipartChildren());
+        $interface->assign('frbritems', $this->searchFRBRitems());
         $interface->assign('hasArticles', $this->hasArticles());
         $this->getSeriesLink();
         $linkNames = $this->getLinkNames();
@@ -963,6 +964,34 @@ class GBVCentralRecord extends MarcRecord
 
         $result = $index->search($query, null, $this->hiddenFilters, 0, 1, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
+        return ($result['response']['numFound'] > 0) ? true : false;
+    }
+
+    public function searchFRBRitems()
+    {
+        $rid=$this->fields['id'];
+        if(strlen($rid)<2) {
+            return array();
+        }
+        $rid=str_replace(":","\:",$rid);
+        $index = $this->getIndexEngine();
+
+        // Assemble the query parts and filter out current record:
+        $query = '(ppnlink:'.$this->stripNLZ($rid).' AND NOT (format:Article OR format:"electronic Article")';
+        if ($this->fields['remote_bool'] == '1') {
+            $query .= ' AND remote_bool=0';
+        }
+        else {
+            $query .= ' AND remote_bool=1';
+        }
+        //if ($this->isNLZ() === false) $query .= ' OR id:"NLZ*"';
+        $query .= ')';
+
+        // Perform the search and return either results or an error:
+        $this->setHiddenFilters();
+                
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
+         
         return ($result['response']['numFound'] > 0) ? true : false;
     }
 
