@@ -19,7 +19,6 @@
  */
 
 require_once 'RecordDrivers/IndexRecord.php';
-require_once 'RecordDrivers/MarcRecord.php';
 
 /**
  * PrimoCentral Record Driver
@@ -40,6 +39,7 @@ class PCRecord extends IndexRecord
         $interface->assign('sfxbutton', $this->getSfxMenuButton());
         $interface->assign('pcURLs', $this->getURLs());
         $interface->assign('multiaut', $this->getAuthorsCount());
+        $interface->assign('gbvppn', $this->getGbvPpn());
         return 'RecordDrivers/PC/result.tpl';
     }
 

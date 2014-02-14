@@ -12,7 +12,11 @@
   </div>
   <div class="span-9">
     <div class="resultItemLine1">
-      <a href="{$url}/Record/{$summId|escape:"url"}" class="title">
+      {if $gbvppn}
+        <a href="{$url}/Record/{$gbvppn|escape:"url"}?shard[]=GBV Central&shard[]=wwwtub&shard[]=tubdok&refer=pc" class="title">
+      {else}
+        <a href="{$url}/Record/{$summId|escape:"url"}" class="title">
+      {/if}
       <b class="listtitle">
       {if !empty($summHighlightedTitle)}{$summHighlightedTitle|addEllipsis:$summShortTitle|highlight}
       {elseif !$summShortTitle}{translate text='Title not available'}

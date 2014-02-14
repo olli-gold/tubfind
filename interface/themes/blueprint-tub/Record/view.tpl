@@ -68,12 +68,12 @@
       </li>
       {if $isMultipartChildren == 1}
         <li{if $tab == 'Multipart'} class="active"{/if}>
-            <a href="{$url}/Record/{if $gbvppn}{$gbvppn|escape:"url"}{else}{$id|escape:"url"}{/if}/Multipart?shard[]=GBV Central&shard[]=wwwtub&shard[]=tubdok">{translate text='Tomes'}</a>
+            <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='Tomes'}</a>
         </li>
       {/if}
       {if $hasArticles == 1}
         <li{if $tab == 'Articles'} class="active"{/if}>
-            <a href="{$url}/Record/{if $gbvppn}{$gbvppn|escape:"url"}{else}{$id|escape:"url"}{/if}/Articles?shard[]=GBV Central&shard[]=wwwtub&shard[]=tubdok">{translate text='Articles'}</a>
+            <a href="{$url}/Record/{$id|escape:"url"}/Articles#tabnav">{translate text='Articles'}</a>
         </li>
       {/if}
       <li{if $tab == 'Description'} class="active"{/if}>

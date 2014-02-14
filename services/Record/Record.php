@@ -66,7 +66,9 @@ class Record extends Action
 
         $interface->caching = 0;
         $this->action = (isset($_GET['action'])) ? $_GET['action'] : null;
-        
+
+        $interface->assign('refer', $_REQUEST['refer']);
+
         // Define Default Tab
         $defaultTab = isset($configArray['Site']['defaultRecordTab']) ?
             $configArray['Site']['defaultRecordTab'] : 'Holdings';
