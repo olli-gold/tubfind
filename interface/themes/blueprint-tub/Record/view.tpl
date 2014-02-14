@@ -21,7 +21,7 @@
       <li><a href="{$url}/Record/{$id|escape:"url"}/Email" class="mailRecord mail" id="mailRecord{$id|escape}" title="{translate text="Email this"}">{translate text="Email this"}</a></li>
       {if is_array($exportFormats) && count($exportFormats) > 0}
       <li>
-        <a href="{$url}/Record/{$id|escape:"url"}/Export?style={$exportFormats.0|escape:"url"}" class="export exportMenu">{translate text="Export Record"}</a>
+        <a href="{$url}/Record/{$id|escape:"url"}/Export?style={$exportFormats.0|escape:"url"}" class="export exportMenu">{translate text="Reference Management"}</a>
         <ul class="menu offscreen" id="exportMenu">
         {foreach from=$exportFormats item=exportFormat}
           {assign var="exportFormatString" value="$exportFormat"}
