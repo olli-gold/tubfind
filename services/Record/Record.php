@@ -211,7 +211,8 @@ class Record extends Action
         // Send down legal export formats (if any):
         $interface->assign('exportFormats', $this->recordDriver->getExportFormats());
 
-        $interface->assign('qr', $this->recordDriver->getQRString());
+        // we do not offer qr codes anymore
+        //$interface->assign('qr', $this->recordDriver->getQRString());
 
         // Set AddThis User
         $interface->assign(

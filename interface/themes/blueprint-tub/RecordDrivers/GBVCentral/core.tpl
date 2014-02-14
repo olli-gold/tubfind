@@ -390,7 +390,7 @@
       </td>
     </tr>
     {/if}
-
+{*
     <tr valign="top">
       <th>{translate text='Tags'}: </th>
       <td>
@@ -409,7 +409,7 @@
       </td>
     </tr>
 
-    <tr valign=”top”>
+    <tr valign="top">
       <th>{translate text='QR-Code'}: </th>
       <td>
         <span class="showqr">
@@ -421,6 +421,7 @@
         </div>
       </td>
     </tr>
+*}
     <tr valign="top">
     <th></th>
     <td><a href="https://katalog.b.tu-harburg.de/DB=1/CMD?ACT=SRCHA&IKT=1016&SRT=YOP&TRM=ppn+{$id}" target="_blank"><font color="#ffffff">{translate text='classic_catalog'}</font></a>

@@ -236,6 +236,7 @@
     </tr>
     {/if}
 -->
+{*
     <tr valign="top">
       <th>{translate text='Tags'}: </th>
       <td>
@@ -254,7 +255,7 @@
       </td>
     </tr>
 
-    <tr valign=”top”>
+    <tr valign="top">
       <th>{translate text='QR-Code'}: </th>
       <td>
         <span class="showqr">
@@ -266,6 +267,7 @@
         </div>
       </td>
     </tr>
+*}
   </table>
   {* End Main Details *}
 </div>
