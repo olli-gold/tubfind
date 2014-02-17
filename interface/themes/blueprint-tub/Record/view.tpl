@@ -88,9 +88,11 @@
         <a href="{$url}/Record/{$id|escape:"url"}/TOC#tabnav">{translate text='Table of Contents'}</a>
       </li>
       {/if}
+<!--
       <li{if $tab == 'UserComments'} class="active"{/if}>
         <a href="{$url}/Record/{$id|escape:"url"}/UserComments#tabnav">{translate text='Comments'}</a>
       </li>
+-->
       {if $hasReviews}
       <li{if $tab == 'Reviews'} class="active"{/if}>
         <a href="{$url}/Record/{$id|escape:"url"}/Reviews#tabnav">{translate text='Reviews'}</a>
