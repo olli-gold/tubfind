@@ -364,7 +364,7 @@ class DAIA implements DriverInterface
                                 if ($availableElements->item($n)->attributes->getNamedItem('delay') !== null) {
                                     $result['interloan.delay'] = $availableElements->item($n)->attributes->getNamedItem('delay')->nodeValue;
                                 }
-                                $result['availability'] = '1';
+                                //$result['availability'] = '1';
                             } elseif ($service === 'openaccess') {
                                 $result['openaccess.availability'] = '1';
                                 if ($availableElements->item($n)->attributes->getNamedItem('delay') !== null) {
