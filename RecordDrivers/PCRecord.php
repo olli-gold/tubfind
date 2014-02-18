@@ -73,6 +73,10 @@ class PCRecord extends IndexRecord
         return 'RecordDrivers/PC/holdings.tpl';
     }
 
+    public function isPrimoRecord() {
+        return true;
+    }
+
     /**
      * Get an array of information about record holdings, obtained in real-time
      * from the ILS.
@@ -180,7 +184,7 @@ class PCRecord extends IndexRecord
      * @access  protected
      * @return  array
      */
-    protected function getDoi() {
+    public function getDoi() {
         if (isset($this->fields['doi'])) {
             if (is_array($this->fields['doi'])) {
                 $return = implode(',', $this->fields['doi']);
