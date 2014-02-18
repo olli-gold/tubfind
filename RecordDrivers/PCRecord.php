@@ -584,6 +584,7 @@ class PCRecord extends IndexRecord
             $facetblock = $documentlist->item($b)->getElementsByTagName('facets');
             $items[$b]['volume'] = '(via '.$facetblock->item(0)->getElementsByTagName('collection')->item(0)->nodeValue.')';
         }
+        if (count($items) == 0) return null;
         return $items;
     }
 
