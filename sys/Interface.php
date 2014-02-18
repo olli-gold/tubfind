@@ -71,6 +71,13 @@ class UInterface extends Smarty
             // If we're mobile, override the standard theme with the mobile one:
             if ($_COOKIE['ui'] == 'mobile') {
                 $this->_vufindTheme = $configArray['Site']['mobile_theme'];
+                unset($_SESSION['shards']);
+                unset($_REQUEST['shard']);
+                $_REQUEST['shard'] = array();
+                $_SESSION['shards'] = array();
+                $_REQUEST['shard'][] = 'GBV Primo Bridged';
+                $_REQUEST['tab'] = 'primo';
+                $_SESSION['shards'][] = 'GBV Primo Bridged';
             }
         }
 
