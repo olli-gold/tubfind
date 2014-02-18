@@ -445,18 +445,21 @@ class DAIA implements DriverInterface
             $labelElements = $itemlist->item($c)->getElementsByTagName('label');
             if ($labelElements->item(0) !== null) $label = $labelElements->item(0)->nodeValue;
             if ($availableElements->item(0) !== null) {
-                $availability = 1;
-                $status = 'Available';
-                if ($availableElements->item(0)->attributes->getNamedItem('href') !== null) {
-                    $earliest_href = $availableElements->item(0)->attributes->getNamedItem('href')->nodeValue;
-                }
-                for ($n = 0; $availableElements->item($n) !== null; $n++) {
-                    // If only one element from the available elements is available for loan, presenceOnly should not be set
-                    // it means: there are only available elements, which are not for loan
-                    if ($availableElements->item($n)->getAttribute('service') === 'loan') {
-                        $presenceOnly = '0';
+                // ignore interloan availability
+                if ($availableElements->item(0)->getAttribute('service') !== 'interloan') {
+                    $availability = 1;
+                    $status = 'Available';
+                    if ($availableElements->item(0)->attributes->getNamedItem('href') !== null) {
+                        $earliest_href = $availableElements->item(0)->attributes->getNamedItem('href')->nodeValue;
                     }
-                    #    $status .= ' ' . $availableElements->item($n)->getAttribute('service');
+                    for ($n = 0; $availableElements->item($n) !== null; $n++) {
+                        // If only one element from the available elements is available for loan, presenceOnly should not be set
+                        // it means: there are only available elements, which are not for loan
+                        if ($availableElements->item($n)->getAttribute('service') === 'loan') {
+                            $presenceOnly = '0';
+                        }
+                        #    $status .= ' ' . $availableElements->item($n)->getAttribute('service');
+                    }
                 }
             }
             // if there are NO available items, do the else block
