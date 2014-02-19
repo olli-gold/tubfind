@@ -40,6 +40,10 @@ class PCRecord extends IndexRecord
         $interface->assign('pcURLs', $this->getURLs());
         $interface->assign('multiaut', $this->getAuthorsCount());
         $interface->assign('gbvppn', $this->getGbvPpn());
+        $printed = $this->getPrintedSample();
+        $interface->assign('printed', $printed);
+        $interface->assign('summCallNo', $printed['signature']);
+        $interface->assign('summAjaxStatus', false);
         return 'RecordDrivers/PC/result.tpl';
     }
 
@@ -69,6 +73,7 @@ class PCRecord extends IndexRecord
         $interface->assign('gbvppn', $this->getGbvPpn());
         $interface->assign('gbvholdings', $this->getRealTimeHoldings());
         $interface->assign('isMultipartChildren', $this->isMultipartChildren());
+        $interface->assign('printed', $this->getPrintedSample());
 
         return 'RecordDrivers/PC/holdings.tpl';
     }
@@ -264,6 +269,96 @@ class PCRecord extends IndexRecord
         if ($articleRef !== null) {
             return $inRef." ".$journalRef." ".$articleRef;
         }*/
+        return null;
+    }
+
+    /**
+     * Get information on how to get a printed version of this record
+     *
+     * @access  public
+     * @return  array
+     */
+    public function getPrintedSample() {
+        $printed = $this->_getPrintedInformationFromEZB();
+        return $printed;
+    }
+
+    private function _getPrintedInformationFromEZB() {
+        $isil = 'DE-830';
+        $zdbFullUrl = 'http://services.d-nb.de/fize-service/gvr/full.xml?';
+        $item = null;
+        /* we need a new query per ISSN */
+        foreach ($this->fields['issn'] as $issn) {
+            $openurl = null;
+            $params = null;
+            $params = array('pid' => 'isil='.$isil.'&print=1');
+            $parts = null;
+            $parts = array();
+            if (strlen($issn) == 9 && strpos($issn, '-') == 4) {
+                $params['issn'] = $issn;
+
+                $formats = $this->fields['format'];
+                // If we have multiple formats, Article and Journal are most important...
+                if (in_array('Article', $formats)) {
+                    $format = 'Article';
+                }
+                else if (in_array('Journal', $formats)) {
+                    $format = 'Journal';
+                } else {
+                    $format = $formats[0];
+                }
+                switch($format) {
+                    case 'Journal':
+                        $params['genre'] = 'journal';
+                        break;
+                    case 'Article':
+                        $params['genre'] = 'article';
+                        break;
+                    default:
+                        return null;
+                }
+                $params['date'] = $this->fields['publishDate'][0];
+                $params['title'] = $this->fields['series'][0];
+                $params['atitle'] = $this->fields['title'];
+                $params['volume'] = $this->fields['jvol'][0];
+                $params['issue'] = $this->fields['jissue'][0];
+                $params['spage'] = $this->fields['jspage'][0];
+                $params['epage'] = $this->fields['jepage'][0];
+
+                foreach ($params as $key => $value) {
+                    if (is_array($value) === true) {
+                        $parts[] = $key . '=' . urlencode($value[0]);
+                    }
+                    else {
+                        $parts[] = $key . '=' . urlencode($value);
+                    }
+                }
+                $openurl = implode('&', $parts);
+
+                $ezb = new DomDocument();
+                $ezb->load($zdbFullUrl.$openurl);
+                $documentlist = $ezb->getElementsByTagName('ResultList');
+                if ($documentlist->item(0)) {
+                    $docs = $documentlist->item(0)->getElementsByTagName('Result');
+
+                    for ($b = 0; $docs->item($b) !== null; $b++) {
+                        $status = $docs->item($b)->getAttribute('state');
+                        // if this state is not usable, try the next one
+                        if ($status != '2' && $status != '3') continue;
+                        // if the state is usable, collect the data
+                        $item = array();
+                        $item['jtitle'] = $docs->item($b)->getElementsByTagName('Title')->item(0)->nodeValue;
+                        $item['location'] = $docs->item($b)->getElementsByTagName('Location')->item(0)->nodeValue;
+                        $item['signature'] = $docs->item($b)->getElementsByTagName('Signature')->item(0)->nodeValue;
+                        $item['period'] = $docs->item($b)->getElementsByTagName('Period')->item(0)->nodeValue;
+                        $item['status'] = $status;
+                    }
+                }
+            }
+            // if we have got a usable result, return now
+            if ($item !== null) return $item;
+        }
+        // Unfortunately we did not find a usable record
         return null;
     }
 

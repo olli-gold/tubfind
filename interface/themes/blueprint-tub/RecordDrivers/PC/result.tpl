@@ -71,7 +71,10 @@
         <span id="callnumber{$summId|escape}label">{translate text='Call Number'}:</span> <span class="ajax_availability hide" id="callnumber{$summId|escape}">{translate text='Loading'}...</span><br/>
         <span id="location{$summId|escape}label">{translate text='Located'}:</span> <span class="ajax_availability hide" id="location{$summId|escape}">{translate text='Loading'}...</span>
       {elseif !empty($summCallNo)}
-        <span id="callnumber{$summId|escape}label">{translate text='Call Number'}: {$summCallNo|escape}</span>
+        <span id="signatur{$summId|escape}label">{translate text='Call Number'}: {$summCallNo|escape}</span>
+      {/if}
+      {if $printed.location}
+        <br/><span id="locationtub{$summId|escape}label">{translate text='Located'}: {$printed.location}</span>
       {/if}
     {/if}
 
@@ -83,7 +86,12 @@
       {if empty($pcURLs) && empty($doi)}
           <span class="hidden" id="sfxmenu{$summId|escape}"><a href="{$sfxmenu}"><img src="{$sfxbutton}" alt="SFX" /></a></span>
       {/if}
-
+      {if $printed.status == "2"}
+          <span id="printed{$summId|escape}">{translate text='Also available printed'}</span>
+      {/if}
+      {if $printed.status == "3"}
+          <span id="printed{$summId|escape}">{translate text='Maybe also available printed'}</span>
+      {/if}
 
 
       <br/>

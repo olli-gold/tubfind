@@ -11,6 +11,19 @@
 
   <br/>
 
+  {if $printed.status == "2"}
+      <span id="printed{$summId|escape}">{translate text='Also available printed'}</span>
+  {/if}
+  {if $printed.status == "3"}
+      <span id="printed{$summId|escape}">{translate text='Maybe also available printed'}</span>
+  {/if}
+  {if !empty($printed.signature)}
+    <br/><span id="signatur{$summId|escape}label">{translate text='Call Number'}: {$printed.signature|escape}</span>
+  {/if}
+  {if $printed.location}
+    <br/><span id="locationtub{$summId|escape}label">{translate text='Located'}: {$printed.location}</span>
+  {/if}
+
   {*
   {if !empty($holdingURLs)}
     {foreach from=$holdingURLs item=desc key=url name=loop}
