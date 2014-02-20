@@ -71,8 +71,6 @@ class PCRecord extends IndexRecord
         $interface->assign('sfxbutton', $this->getSfxMenuButton());
         $interface->assign('pcURLs', $this->getURLs());
         $interface->assign('gbvppn', $this->getGbvPpn());
-/*        $interface->assign('gbvholdings', $this->getRealTimeHoldings());*/
-/*        $interface->assign('isMultipartChildren', $this->isMultipartChildren());*/
         $interface->assign('printed', $this->getPrintedSample());
 
         return 'RecordDrivers/PC/holdings.tpl';
@@ -80,73 +78,6 @@ class PCRecord extends IndexRecord
 
     public function isPrimoRecord() {
         return true;
-    }
-
-    /**
-     * Get an array of information about record holdings, obtained in real-time
-     * from the ILS.
-     *
-     * @return array
-     * @access protected
-     */
-    protected function getRealTimeHoldings()
-    {
-        // Get Holdings Data
-        $id = $this->getGbvPpn();
-        $catalog = ConnectionManager::connectToCatalog();
-
-        if ($catalog && $catalog->status) {
-            $result = $catalog->getHolding($id);
-            if (PEAR::isError($result)) {
-                PEAR::raiseError($result);
-            }
-            $holdings = array();
-            if (count($result)) {
-                // Jedes Exemplar aus dem DAIA-Output soll in die Exemplarliste
-                foreach ($result as $copy) {
-                    if ($linkname != false) $copy['linkname'] = $linkname;
-                    $itemId = $copy['itemid'];
-                    $epnArray = explode(':epn:', $itemId);
-                    $epn = $epnArray[1];
-                    // Eventuelle Anreicherungen ergänzen...
-                    if ($this->remarks[$epn]) $copy = array_merge($copy, $this->remarks[$epn]);
-                    $holdings[$copy['location']][] = $copy;
-                }
-            }
-            return $holdings;
-        }
-        return array();
-    }
-
-    public function isMultipartChildren()
-    {
-        if ($this->isGbvRecord() === true) {
-            $id = $this->getGbvPpn();
-
-            unset($_SESSION['shards']);
-            $_SESSION['shards'] = array();
-            $_SESSION['shards'][] = 'GBV Central';
-            $_SESSION['shards'][] = 'TUBdok';
-            $_SESSION['shards'][] = 'wwwtub';
-
-            $index = $this->getIndexEngine();
-            // Assemble the query parts and filter out current record:
-            $query = '(ppnlink:'.$id.' AND NOT (format:Article OR format:"electronic Article"';
-            //if ($this->isNLZ() === false) $query .= ' OR id:"NLZ*"';
-            $query .= '))';
-
-            // Perform the search and return either results or an error:
-            $this->setHiddenFilters();
-
-            $result = $index->search($query, null, $this->hiddenFilters, 0, 1, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
-
-            unset($_SESSION['shards']);
-            $_SESSION['shards'] = array();
-            $_SESSION['shards'][] = 'Primo Central';
-
-            return ($result['response']['numFound'] > 0) ? true : false;
-        }
-        return false;
     }
 
     public function getGbvPpn() {
@@ -371,7 +302,7 @@ class PCRecord extends IndexRecord
     protected function getCleanISSN()
     {
         $issn = parent::getCleanISSN();
-/*        if ($issn === false) {
+        /*if ($issn === false) {
             $issn = $this->_getFirstFieldValue('773', array('x'));
         }*/
         return $issn;
@@ -694,33 +625,6 @@ class PCRecord extends IndexRecord
         return ($id);
     }
 
-    protected $hiddenFilters = array();
-
-    protected function setHiddenFilters()
-    {
-        $searchSettings = getExtraConfigArray('searches');
-        
-        if (isset($searchSettings['HiddenFilters'])) {
-            foreach ($searchSettings['HiddenFilters'] as $field => $subfields) {
-                $this->addHiddenFilter($field.':'.'"'.$subfields.'"');
-            }
-        }
-        if (isset($searchSettings['RawHiddenFilters'])) {
-            foreach ($searchSettings['RawHiddenFilters'] as $rawFilter) {
-                $this->addHiddenFilter($rawFilter);
-            }
-        }
-        if (isset($searchSettings['DefaultFilters'])) {
-            foreach ($searchSettings['DefaultFilters'] as $defFilter) {
-                $this->addHiddenFilter($defFilter);
-            }
-        }
-    }
-    
-    public function addHiddenFilter($fq)
-    {
-        $this->hiddenFilters[] = $fq;
-    }
 }
 
 ?>
