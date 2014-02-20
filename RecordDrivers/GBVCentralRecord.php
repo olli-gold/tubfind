@@ -74,8 +74,8 @@ class GBVCentralRecord extends MarcRecord
         $interface->assign('coreArticleHRef', $artHref);
         $interface->assign('artFieldedRef', $this->getArticleFieldedReference());
         $artFieldedRef = $this->getArticleFieldedReference();
-        if ($artHref['hrefId']) {
-            $articleVol = $this->searchArticleVolume($artHref['hrefId'], $artFieldedRef);
+        if ($artHref[0]['hrefId']) {
+            $articleVol = $this->searchArticleVolume($artHref[0]['hrefId'], $artFieldedRef);
             $interface->assign('articleVol', $articleVol);
         }
         //$interface->assign('multipartParent', $this->getMultipartParent());
