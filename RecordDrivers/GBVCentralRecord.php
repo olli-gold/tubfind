@@ -978,12 +978,10 @@ class GBVCentralRecord extends MarcRecord
 
         // return false if this result has only frbr results
         $frbrResults = $this->searchFRBRitems();
-echo $result['response']['numFound'];
-echo count($frbrResults['docs']);
         $diff = ($result['response']['numFound']-count($frbrResults['docs']));
-echo $diff;
 
-        return ($result['response']['numFound'] > 0) ? true : false;
+        return ($diff > 0) ? true : false;
+        //return ($result['response']['numFound'] > 0) ? true : false;
     }
 
     public function searchFRBRitems()
