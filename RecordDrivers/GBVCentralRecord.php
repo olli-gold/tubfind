@@ -831,7 +831,17 @@ class GBVCentralRecord extends MarcRecord
 
         $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
-        return ($result['response'] > 0) ? $result['response'] : false;
+        /*
+        $frbrResults = $this->searchFRBRitems();
+        $newResult = array_diff($result['response']['docs'], $frbrResults['docs']);
+        $resultArray = array();
+        $resultArray['response'] = array();
+        $resultArray['response']['docs'] = array();
+        $resultArray['response']['docs'] = $newResult;
+        $resultArray['response']['numFound'] = count($newResult);
+        //return (count($newResult) > 0) ? $resultArray['response'] : false;
+        */
+        return ($result['response']['numFound']) ? $result['response'] : false;
     }
 
     /**
@@ -966,6 +976,13 @@ class GBVCentralRecord extends MarcRecord
 
         $result = $index->search($query, null, $this->hiddenFilters, 0, 1, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
+        // return false if this result has only frbr results
+        $frbrResults = $this->searchFRBRitems();
+echo $result['response']['numFound'];
+echo count($frbrResults['docs']);
+        $diff = ($result['response']['numFound']-count($frbrResults['docs']));
+echo $diff;
+
         return ($result['response']['numFound'] > 0) ? true : false;
     }
 
@@ -981,20 +998,30 @@ class GBVCentralRecord extends MarcRecord
         // Assemble the query parts and filter out current record:
         $query = '(ppnlink:'.$this->stripNLZ($rid).' AND NOT (format:Article OR format:"electronic Article")';
         if ($this->fields['remote_bool'] == '1') {
-            $query .= ' AND remote_bool=0';
+            $query .= ' AND remote_bool:0';
         }
         else {
-            $query .= ' AND remote_bool=1';
+            $query .= ' AND remote_bool:1';
         }
         //if ($this->isNLZ() === false) $query .= ' OR id:"NLZ*"';
         $query .= ')';
 
         // Perform the search and return either results or an error:
         $this->setHiddenFilters();
-                
-        $result = $index->search($query, null, $this->hiddenFilters, 0, 1, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
-         
-        return ($result['response']['numFound'] > 0) ? true : false;
+
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST , false, false, false);
+
+        // Check if the PPNs are from the same origin (either both should have an NLZ-prefix or both should not have it)
+        $resultArray = array();
+        $resultArray['response'] = array();
+        $resultArray['response']['docs'] = array();
+        foreach ($result['response']['docs'] as $resp) {
+            if (($this->_isNLZ($resp['id']) && $this->_isNLZ($rid)) || (!$this->_isNLZ($resp['id']) && !$this->_isNLZ($rid))) {
+                $resultArray['response']['docs'][] = $resp;
+            }
+        }
+
+        return (count($resultArray['response']['docs']) > 0) ? $resultArray['response'] : false;
     }
 
     public function searchMultipartChildren()
