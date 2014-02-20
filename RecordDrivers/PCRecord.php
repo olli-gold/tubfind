@@ -77,6 +77,10 @@ class PCRecord extends IndexRecord
         $articleVol = $this->searchArticleVolume($artFieldedRef);
         $interface->assign('articleVol', $articleVol);
 
+        $bookFieldedRef = $this->getEbookFieldedReference();
+        $printedEbook = $this->searchPrintedEbook($bookFieldedRef);
+        $interface->assign('printedEbook', $printedEbook);
+
         return 'RecordDrivers/PC/holdings.tpl';
     }
 
@@ -325,6 +329,54 @@ class PCRecord extends IndexRecord
         if ($fieldsToSearch) {
             $queryparts[] = $fieldsToSearch;
         }
+        $queryparts[] = '(format:Book OR format:"Serial Volume")';
+        // Assemble the query parts and filter out current record:
+        $query = implode(" AND ", $queryparts);
+        $query = '('.$query.')';
+        //$query = '(ppnlink:'.$rid.' AND '.$fieldref.')';
+
+        // Perform the search and return either results or an error:
+        $this->setHiddenFilters();
+
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST, false, false, false);
+
+        unset($_SESSION['shards']);
+        $_SESSION['shards'] = array();
+        $_SESSION['shards'][] = 'Primo Central';
+
+        return ($result['response'] > 0) ? $result['response'] : false;
+    }
+
+    /**
+     * Check if at least one article for this item exists.
+     * Method to keep performance lean in core.tpl.
+     *
+     * @return bool
+     * @access protected
+     */
+    public function searchPrintedEbook($fieldref)
+    {
+        unset($_SESSION['shards']);
+        $_SESSION['shards'] = array();
+        $_SESSION['shards'][] = 'GBV Central';
+        $_SESSION['shards'][] = 'TUBdok';
+        $_SESSION['shards'][] = 'wwwtub';
+
+        $index = $this->getIndexEngine();
+
+        $queryparts = array();
+        $queryparts[] = $fieldref['title'];
+        /*
+        if ($fieldref['date']) {
+            $fieldsToSearch .= 'publishDate:'.$fieldref['date'];
+        }
+        */
+        if (count($fieldref['isbn']) > 0) {
+            $queryparts[] = 'isbn:('.implode(' OR ', $fieldref['isbn']).')';
+        }
+        /*if ($fieldsToSearch) {
+            $queryparts[] = $fieldsToSearch;
+        }*/
         $queryparts[] = '(format:Book OR format:"Serial Volume")';
         // Assemble the query parts and filter out current record:
         $query = implode(" AND ", $queryparts);
@@ -692,6 +744,23 @@ class PCRecord extends IndexRecord
         $retVal['epage'] = $this->fields['jepage'][0];
         $retVal['date'] = $this->fields['publishDate'][0];
         $retVal['title'] = $this->fields['jtitle'][0];
+        return $retVal;
+    }
+
+    /**
+     * TUBHH Enhancement for GBV Discovery
+     * Return the reference of an eBook
+     * An array will be returned with keys=volume, issue, startpage [spage], endpage [epage] and publication year [date].
+     *
+     * @access  public
+     * @return  array
+     */
+    public function getEbookFieldedReference()
+    {
+        $retVal = array();
+        $retVal['title'] = $this->fields['title'];
+        $retVal['date'] = $this->fields['publishDate'][0];
+        $retVal['isbn'] = $this->fields['isbn'];
         return $retVal;
     }
 
