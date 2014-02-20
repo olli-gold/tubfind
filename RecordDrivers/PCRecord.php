@@ -319,7 +319,12 @@ class PCRecord extends IndexRecord
         $index = $this->getIndexEngine();
 
         $queryparts = array();
-        $queryparts[] = $fieldref['title'];
+        if (count($fieldref['issn']) > 0) {
+            $queryparts[] = 'issn:('.implode(' OR ', $fieldref['issn']).')';
+        }
+        else {
+            $queryparts[] = $fieldref['title'];
+        }
         if ($fieldref['volume']) {
             $fieldsToSearch .= $fieldref['volume'].'.';
         }
@@ -744,6 +749,7 @@ class PCRecord extends IndexRecord
         $retVal['epage'] = $this->fields['jepage'][0];
         $retVal['date'] = $this->fields['publishDate'][0];
         $retVal['title'] = $this->fields['jtitle'][0];
+        $retVal['issn'] = $this->fields['issn'];
         return $retVal;
     }
 
