@@ -73,6 +73,10 @@ class PCRecord extends IndexRecord
         $interface->assign('gbvppn', $this->getGbvPpn());
         $interface->assign('printed', $this->getPrintedSample());
 
+        $artFieldedRef = $this->getArticleFieldedReference();
+        $articleVol = $this->searchArticleVolume($artFieldedRef);
+        $interface->assign('articleVol', $articleVol);
+
         return 'RecordDrivers/PC/holdings.tpl';
     }
 
@@ -291,6 +295,52 @@ class PCRecord extends IndexRecord
         }
         // Unfortunately we did not find a usable record
         return null;
+    }
+
+    /**
+     * Check if at least one article for this item exists.
+     * Method to keep performance lean in core.tpl.
+     *
+     * @return bool
+     * @access protected
+     */
+    public function searchArticleVolume($fieldref)
+    {
+        unset($_SESSION['shards']);
+        $_SESSION['shards'] = array();
+        $_SESSION['shards'][] = 'GBV Central';
+        $_SESSION['shards'][] = 'TUBdok';
+        $_SESSION['shards'][] = 'wwwtub';
+
+        $index = $this->getIndexEngine();
+
+        $queryparts = array();
+        $queryparts[] = $fieldref['title'];
+        if ($fieldref['volume']) {
+            $fieldsToSearch .= $fieldref['volume'].'.';
+        }
+        if ($fieldref['date']) {
+            $fieldsToSearch .= $fieldref['date'];
+        }
+        if ($fieldsToSearch) {
+            $queryparts[] = $fieldsToSearch;
+        }
+        $queryparts[] = '(format:Book OR format:"Serial Volume")';
+        // Assemble the query parts and filter out current record:
+        $query = implode(" AND ", $queryparts);
+        $query = '('.$query.')';
+        //$query = '(ppnlink:'.$rid.' AND '.$fieldref.')';
+
+        // Perform the search and return either results or an error:
+        $this->setHiddenFilters();
+
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST, false, false, false);
+
+        unset($_SESSION['shards']);
+        $_SESSION['shards'] = array();
+        $_SESSION['shards'][] = 'Primo Central';
+
+        return ($result['response'] > 0) ? $result['response'] : false;
     }
 
     /**
@@ -625,6 +675,53 @@ class PCRecord extends IndexRecord
         return ($id);
     }
 
+    /**
+     * TUBHH Enhancement for GBV Discovery
+     * Return the reference of one article
+     * An array will be returned with keys=volume, issue, startpage [spage], endpage [epage] and publication year [date].
+     *
+     * @access  public
+     * @return  array
+     */
+    public function getArticleFieldedReference()
+    {
+        $retVal = array();
+        $retVal['volume'] = $this->fields['jvol'][0];
+        $retVal['issue'] = $this->fields['jissue'][0];
+        $retVal['spage'] = $this->fields['jspage'][0];
+        $retVal['epage'] = $this->fields['jepage'][0];
+        $retVal['date'] = $this->fields['publishDate'][0];
+        $retVal['title'] = $this->fields['jtitle'][0];
+        return $retVal;
+    }
+
+    protected $hiddenFilters = array();
+
+    protected function setHiddenFilters()
+    {
+        $searchSettings = getExtraConfigArray('searches');
+
+        if (isset($searchSettings['HiddenFilters'])) {
+            foreach ($searchSettings['HiddenFilters'] as $field => $subfields) {
+                $this->addHiddenFilter($field.':'.'"'.$subfields.'"');
+            }
+        }
+        if (isset($searchSettings['RawHiddenFilters'])) {
+            foreach ($searchSettings['RawHiddenFilters'] as $rawFilter) {
+                $this->addHiddenFilter($rawFilter);
+            }
+        }
+        if (isset($searchSettings['DefaultFilters'])) {
+            foreach ($searchSettings['DefaultFilters'] as $defFilter) {
+                $this->addHiddenFilter($defFilter);
+            }
+        }
+    }
+
+    public function addHiddenFilter($fq)
+    {
+        $this->hiddenFilters[] = $fq;
+    }
 }
 
 ?>

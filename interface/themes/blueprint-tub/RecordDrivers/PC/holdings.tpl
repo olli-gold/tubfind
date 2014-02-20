@@ -40,3 +40,6 @@
 {if $sfxmenu && $sfxbutton && empty($pcURLs) && empty($doi)}
   <span class="hidden" id="sfxmenu{$id|escape}"><a href="{$sfxmenu}"><img src="{$sfxbutton}" alt="SFX" /></a></span>
 {/if}
+{foreach from=$articleVol.docs item=artvol}
+    {translate text="This article is printed in volume"}: <a href="{$url}/Record/{$artvol.id}">{$artvol.series2.0}</a><br/>
+{/foreach}
