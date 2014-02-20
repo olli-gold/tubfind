@@ -71,8 +71,8 @@ class PCRecord extends IndexRecord
         $interface->assign('sfxbutton', $this->getSfxMenuButton());
         $interface->assign('pcURLs', $this->getURLs());
         $interface->assign('gbvppn', $this->getGbvPpn());
-        $interface->assign('gbvholdings', $this->getRealTimeHoldings());
-        $interface->assign('isMultipartChildren', $this->isMultipartChildren());
+/*        $interface->assign('gbvholdings', $this->getRealTimeHoldings());*/
+/*        $interface->assign('isMultipartChildren', $this->isMultipartChildren());*/
         $interface->assign('printed', $this->getPrintedSample());
 
         return 'RecordDrivers/PC/holdings.tpl';

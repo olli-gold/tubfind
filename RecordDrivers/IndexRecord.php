@@ -463,7 +463,7 @@ class IndexRecord implements RecordInterface
         // an ISSN.  We may eventually want to make this rule more flexible,
         // but for now the ISSN restriction is designed to be consistent with
         // the way we display items on the search results list.
-        $hasOpenURL = ($this->openURLActive('holdings') && $this->getCleanISSN());
+        $hasOpenURL = ($this->openURLActive('holdings'));
         if ($hasOpenURL) {
             $interface->assign('holdingsOpenURL', $this->getOpenURL());
         }
