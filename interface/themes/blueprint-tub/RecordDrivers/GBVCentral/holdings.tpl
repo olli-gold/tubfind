@@ -60,7 +60,7 @@
             {translate text=$location}
         </a>
     {else}
-        {if $location == "s. zugehörige Publikationen"}
+        {if $location == "s. zugehörige Publikationen" && $isMultipartChildren == 1}
             {assign var="nothingShown" value="1"}
             <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">
         {/if}
