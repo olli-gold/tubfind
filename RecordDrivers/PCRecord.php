@@ -365,43 +365,46 @@ class PCRecord extends IndexRecord
      */
     public function searchPrintedEbook($fieldref)
     {
-        unset($_SESSION['shards']);
-        $_SESSION['shards'] = array();
-        $_SESSION['shards'][] = 'GBV Central';
-        $_SESSION['shards'][] = 'TUBdok';
-        $_SESSION['shards'][] = 'wwwtub';
+        if (in_array('Article', $this->getFormats()) === false && in_array('Journal', $this->getFormats()) === false) {
+            unset($_SESSION['shards']);
+            $_SESSION['shards'] = array();
+            $_SESSION['shards'][] = 'GBV Central';
+            $_SESSION['shards'][] = 'TUBdok';
+            $_SESSION['shards'][] = 'wwwtub';
 
-        $index = $this->getIndexEngine();
+            $index = $this->getIndexEngine();
 
-        $queryparts = array();
-        $queryparts[] = $fieldref['title'];
-        /*
-        if ($fieldref['date']) {
-            $fieldsToSearch .= 'publishDate:'.$fieldref['date'];
+            $queryparts = array();
+            $queryparts[] = $fieldref['title'];
+            /*
+            if ($fieldref['date']) {
+                $fieldsToSearch .= 'publishDate:'.$fieldref['date'];
+            }
+            */
+            if (count($fieldref['isbn']) > 0) {
+                $queryparts[] = 'isbn:('.implode(' OR ', $fieldref['isbn']).')';
+            }
+            /*if ($fieldsToSearch) {
+                $queryparts[] = $fieldsToSearch;
+            }*/
+            $queryparts[] = '(format:Book OR format:"Serial Volume")';
+            // Assemble the query parts and filter out current record:
+            $query = implode(" AND ", $queryparts);
+            $query = '('.$query.')';
+            //$query = '(ppnlink:'.$rid.' AND '.$fieldref.')';
+
+            // Perform the search and return either results or an error:
+            $this->setHiddenFilters();
+
+            $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST, false, false, false);
+
+            unset($_SESSION['shards']);
+            $_SESSION['shards'] = array();
+            $_SESSION['shards'][] = 'Primo Central';
+
+            return ($result['response'] > 0) ? $result['response'] : false;
         }
-        */
-        if (count($fieldref['isbn']) > 0) {
-            $queryparts[] = 'isbn:('.implode(' OR ', $fieldref['isbn']).')';
-        }
-        /*if ($fieldsToSearch) {
-            $queryparts[] = $fieldsToSearch;
-        }*/
-        $queryparts[] = '(format:Book OR format:"Serial Volume")';
-        // Assemble the query parts and filter out current record:
-        $query = implode(" AND ", $queryparts);
-        $query = '('.$query.')';
-        //$query = '(ppnlink:'.$rid.' AND '.$fieldref.')';
-
-        // Perform the search and return either results or an error:
-        $this->setHiddenFilters();
-
-        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST, false, false, false);
-
-        unset($_SESSION['shards']);
-        $_SESSION['shards'] = array();
-        $_SESSION['shards'][] = 'Primo Central';
-
-        return ($result['response'] > 0) ? $result['response'] : false;
+        return false;
     }
 
     /**
@@ -688,7 +691,7 @@ class PCRecord extends IndexRecord
      */
     protected function getShortTitle()
     {
-        if (isset($this->fields['title_series'])) {
+        if ($this->fields['title_series']) {
             return $this->fields['title_series'];
         }
         return isset($this->fields['title']) ?
