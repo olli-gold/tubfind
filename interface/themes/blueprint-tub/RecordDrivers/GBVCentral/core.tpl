@@ -300,7 +300,7 @@
     <tr valign="top">
       <th>{translate text='Series'}: </th>
       <td>
-        {if $parentRecord && $showAssociated == 3}
+        {if $parentRecord}
             {foreach from=$parentRecord item=paRec name=pR}
             {if $paRec.id!=$id}
                 {if $paRec.record_url}

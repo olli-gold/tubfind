@@ -277,38 +277,40 @@ class GBVCentralRecord extends MarcRecord
      */
     protected function getArticleHReference()
     {
-        $vs = null;
-        $vs = $this->marcRecord->getFields('773');
-        if (count($vs) > 0) {
-            $refs = array();
-            foreach($vs as $v) {
-                $journalRef = null;
-                $articleRef = null;
-                $inRefField = $v->getSubfields('i');
-                if (count($inRefField) > 0) {
-                    $inRef = $inRefField[0]->getData();
+        if (in_array('Article', $this->getFormats()) === true) {
+            $vs = null;
+            $vs = $this->marcRecord->getFields('773');
+            if (count($vs) > 0) {
+                $refs = array();
+                foreach($vs as $v) {
+                    $journalRef = null;
+                    $articleRef = null;
+                    $inRefField = $v->getSubfields('i');
+                    if (count($inRefField) > 0) {
+                        $inRef = $inRefField[0]->getData();
+                    }
+                    else {
+                        $inRef = "in:";
+                    }
+                    $journalRefField = $v->getSubfields('t');
+                    if (count($journalRefField) > 0) {
+                        $journalRef = $journalRefField[0]->getData();
+                    }
+                    $articleRefField = $v->getSubfields('g');
+                    if (count($articleRefField) > 0) {
+                        $articleRef = $articleRefField[0]->getData();
+                    }
+                    $a_names = $v->getSubfields('w');
+                    if (count($a_names) > 0) {
+                        $idArr = explode(')', $a_names[0]->getData());
+                        $hrefId = $this->addNLZ($idArr[1]);
+                    }
+                    if ($journalRef || $articleRef) {
+                        $refs[] = array('inref' => $inRef, 'jref' => $journalRef, 'aref' => $articleRef, 'hrefId' => $hrefId);
+                    }
                 }
-                else {
-                    $inRef = "in:";
-                }
-                $journalRefField = $v->getSubfields('t');
-                if (count($journalRefField) > 0) {
-                    $journalRef = $journalRefField[0]->getData();
-                }
-                $articleRefField = $v->getSubfields('g');
-                if (count($articleRefField) > 0) {
-                    $articleRef = $articleRefField[0]->getData();
-                }
-                $a_names = $v->getSubfields('w');
-                if (count($a_names) > 0) {
-                    $idArr = explode(')', $a_names[0]->getData());
-                    $hrefId = $this->addNLZ($idArr[1]);
-                }
-                if ($journalRef || $articleRef) {
-                    $refs[] = array('inref' => $inRef, 'jref' => $journalRef, 'aref' => $articleRef, 'hrefId' => $hrefId);
-                }
+                return $refs;
             }
-            return $refs;
         }
         return null;
     }
