@@ -40,10 +40,12 @@ class PCRecord extends IndexRecord
         $interface->assign('pcURLs', $this->getURLs());
         $interface->assign('multiaut', $this->getAuthorsCount());
         $interface->assign('gbvppn', $this->getGbvPpn());
-        $printed = $this->getPrintedSample();
-        $interface->assign('printed', $printed);
-        $interface->assign('summCallNo', $printed['signature']);
-        $interface->assign('summAjaxStatus', false);
+        if ($this->isGbvRecord() === false) {
+            $printed = $this->getPrintedSample();
+            $interface->assign('printed', $printed);
+            $interface->assign('summCallNo', $printed['signature']);
+            $interface->assign('summAjaxStatus', false);
+        }
         return 'RecordDrivers/PC/result.tpl';
     }
 
@@ -73,13 +75,15 @@ class PCRecord extends IndexRecord
         $interface->assign('gbvppn', $this->getGbvPpn());
         $interface->assign('printed', $this->getPrintedSample());
 
-        $artFieldedRef = $this->getArticleFieldedReference();
-        $articleVol = $this->searchArticleVolume($artFieldedRef);
-        $interface->assign('articleVol', $articleVol);
+        if ($this->isGbvRecord() === false) {
+            $artFieldedRef = $this->getArticleFieldedReference();
+            $articleVol = $this->searchArticleVolume($artFieldedRef);
+            $interface->assign('articleVol', $articleVol);
 
-        $bookFieldedRef = $this->getEbookFieldedReference();
-        $printedEbook = $this->searchPrintedEbook($bookFieldedRef);
-        $interface->assign('printedEbook', $printedEbook);
+            $bookFieldedRef = $this->getEbookFieldedReference();
+            $printedEbook = $this->searchPrintedEbook($bookFieldedRef);
+            $interface->assign('printedEbook', $printedEbook);
+        }
 
         return 'RecordDrivers/PC/holdings.tpl';
     }
@@ -674,6 +678,21 @@ class PCRecord extends IndexRecord
             $authors[] = urlencode($aut_n);
         }*/
         return $authors;
+    }
+
+    /**
+     * Get the full title of the record.
+     *
+     * @return string
+     * @access protected
+     */
+    protected function getShortTitle()
+    {
+        if (isset($this->fields['title_series'])) {
+            return $this->fields['title_series'];
+        }
+        return isset($this->fields['title']) ?
+            $this->fields['title'] : '';
     }
 
     public function getEditions() {

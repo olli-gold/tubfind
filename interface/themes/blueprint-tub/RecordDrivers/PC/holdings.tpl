@@ -38,8 +38,12 @@
   {/if}
 {*/if*}
 {if $sfxmenu && $sfxbutton && empty($pcURLs) && empty($doi)}
-  <span class="hidden" id="sfxmenu{$id|escape}"><a href="{$sfxmenu}"><img src="{$sfxbutton}" alt="SFX" /></a></span>
+  <br/><span class="hidden" id="sfxmenu{$id|escape}"><a href="{$sfxmenu}"><img src="{$sfxbutton}" alt="SFX" /></a></span><br/>
 {/if}
+
+{if $gbvppn}
+    <a href="{$url}/Record/{$gbvppn|escape:"url"}?shard[]=GBV Central&shard[]=wwwtub&shard[]=tubdok&refer=pc" class="title">{translate text="This record at TUHH"}</a>
+{else}
 <br/>
 {foreach from=$articleVol.docs item=artvol}
     {translate text="This article is printed in volume"}: <a href="{$url}/Record/{$artvol.id}">{$artvol.series2.0}</a><br/>
@@ -47,3 +51,4 @@
 {foreach from=$printedEbook.docs item=printbook}
     {translate text="This eBook is also available printed"}: <a href="{$url}/Record/{$printbook.id}">{$printbook.title.0}</a><br/>
 {/foreach}
+{/if}

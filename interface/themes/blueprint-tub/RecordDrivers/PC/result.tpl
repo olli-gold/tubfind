@@ -12,11 +12,7 @@
   </div>
   <div class="span-9">
     <div class="resultItemLine1">
-      {if $gbvppn}
-        <a href="{$url}/Record/{$gbvppn|escape:"url"}?shard[]=GBV Central&shard[]=wwwtub&shard[]=tubdok&refer=pc" class="title">
-      {else}
-        <a href="{$url}/Record/{$summId|escape:"url"}" class="title">
-      {/if}
+      <a href="{$url}/Record/{$summId|escape:"url"}" class="title">
       <b class="listtitle">
       {if !empty($summHighlightedTitle)}{$summHighlightedTitle|addEllipsis:$summShortTitle|highlight}
       {elseif !$summShortTitle}{translate text='Title not available'}
@@ -91,6 +87,9 @@
 
       {if empty($pcURLs) && empty($doi)}
           <span class="hidden" id="sfxmenu{$summId|escape}"><a href="{$sfxmenu}"><img src="{$sfxbutton}" alt="SFX" /></a></span>
+      {/if}
+      {if $gbvppn}
+        <br/><a href="{$url}/Record/{$gbvppn|escape:"url"}?shard[]=GBV Central&shard[]=wwwtub&shard[]=tubdok&refer=pc" class="title">{translate text='This record at TUHH'}</a>
       {/if}
 
 
