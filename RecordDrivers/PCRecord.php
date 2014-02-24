@@ -320,9 +320,12 @@ class PCRecord extends IndexRecord
         $_SESSION['shards'][] = 'TUBdok';
         $_SESSION['shards'][] = 'wwwtub';
 
+        $f1info = false;
+        $f2info = false;
         $index = $this->getIndexEngine();
 
         $queryparts = array();
+
         if (count($fieldref['issn']) > 0) {
             $queryparts[] = 'issn:('.implode(' OR ', $fieldref['issn']).')';
         }
@@ -330,15 +333,17 @@ class PCRecord extends IndexRecord
             $queryparts[] = $fieldref['title'];
         }
         if ($fieldref['volume']) {
+            $f1info = true;
             $fieldsToSearch .= $fieldref['volume'].'.';
         }
         if ($fieldref['date']) {
+            $f2info = true;
             $fieldsToSearch .= $fieldref['date'];
         }
         if ($fieldsToSearch) {
             $queryparts[] = $fieldsToSearch;
         }
-        $queryparts[] = '(format:Book OR format:"Serial Volume")';
+        $queryparts[] = 'format:(Book OR "Serial Volume")';
         // Assemble the query parts and filter out current record:
         $query = implode(" AND ", $queryparts);
         $query = '('.$query.')';
@@ -349,11 +354,23 @@ class PCRecord extends IndexRecord
 
         $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST, false, false, false);
 
+        // If we got no results, do another query with the title instead of ISSN - but only if we have volume information
+        if ($result['response']['numFound'] == 0 && $f2info == true && $f1info == true) {
+            $altqueryparts = array();
+            $altqueryparts[] = $fieldref['title'];
+            $altqueryparts[] = $fieldsToSearch;
+            $altqueryparts[] = 'format:(Book OR "Serial Volume")';
+            // Assemble the query parts and filter out current record:
+            $altquery = implode(" AND ", $altqueryparts);
+            $altquery = '('.$altquery.')';
+            $result = $index->search($altquery, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST, false, false, false);
+        }
+
         unset($_SESSION['shards']);
         $_SESSION['shards'] = array();
         $_SESSION['shards'][] = 'Primo Central';
 
-        return ($result['response'] > 0) ? $result['response'] : false;
+        return ($result['response']['numFound'] > 0) ? $result['response'] : false;
     }
 
     /**
