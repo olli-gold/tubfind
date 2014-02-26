@@ -63,6 +63,7 @@
 
     {if $bookBag}
       <script type="text/javascript">
+      var url = "{$url}";
       var vufindString = Array();
       vufindString.bulk_noitems_advice = "{translate text="bulk_noitems_advice"}";
       vufindString.confirmEmpty = "{translate text="bookbag_confirm_empty"}";
@@ -74,6 +75,9 @@
       vufindString.bookbagMax = "{$bookBag->getMaxSize()}";
       vufindString.bookbagFull = "{translate text="bookbag_full_msg"}";
       vufindString.bookbagStatusFull = "{translate text="bookbag_full"}";
+      vufindString.alsoPrinted = "{translate text="Also available printed"}";
+      vufindString.maybeAlsoPrinted = "{translate text="Maybe also available printed"}";
+      vufindString.ebookAlsoPrinted = "{translate text="This eBook is also available printed"}";
       </script>
 
       {js filename="cart.js"}

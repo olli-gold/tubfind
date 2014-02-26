@@ -6,6 +6,9 @@
 {assign var="jsFileName" value="check_item_statuses_de.js"}
 {/if}
 {js filename=$jsFileName}
+{if $showPrinted}
+    {js filename="check_printed.js"}
+{/if}
 {js filename="check_save_statuses.js"}
 {if $showContext}
 {js filename="search_hierarchyTree.js}

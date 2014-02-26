@@ -62,23 +62,12 @@
                 {assign var="showAvail" value="false"}
             {/if}
         {/foreach}
-    {if $showAvail=="true" && $summInterlibraryLoan=="0"}
-      {if $printed.status == "2"}
-          <span id="printed{$summId|escape}">{translate text='Also available printed'}</span>
-      {/if}
-      {if $printed.status == "3"}
-          <span id="printed{$summId|escape}">{translate text='Maybe also available printed'}</span>
-      {/if}
-      {if $summAjaxStatus}
-        <span id="callnumber{$summId|escape}label">{translate text='Call Number'}:</span> <span class="ajax_availability hide" id="callnumber{$summId|escape}">{translate text='Loading'}...</span><br/>
-        <span id="location{$summId|escape}label">{translate text='Located'}:</span> <span class="ajax_availability hide" id="location{$summId|escape}">{translate text='Loading'}...</span>
-      {elseif !empty($summCallNo)}
-        <span id="signatur{$summId|escape}label">{translate text='Call Number'}: {$summCallNo|escape}</span>
-      {/if}
-      {if $printed.location}
-        <br/><span id="locationtub{$summId|escape}label">{translate text='Located'}: {$printed.location}</span>
-      {/if}
-    {/if}
+        <div class="ajax_printed hide" id="printed{$summId|escape}">
+            <span id="printed{$summId|escape}-availability" class="hide"></span><br/>
+            <span id="printed{$summId|escape}-volume" class="hide"></span><br/>
+            <span id="callnumber{$summId|escape}label" class="hide">{translate text='Call Number'}:</span> <span class="hide" id="callnumber{$summId|escape}"></span><br/>
+            <span id="location{$summId|escape}label" class="hide">{translate text='Located'}:</span> <span class="hide" id="location{$summId|escape}"></span>
+        </div>
 
       {if $summOpenUrl}
           <br/>

@@ -40,12 +40,8 @@ class PCRecord extends IndexRecord
         $interface->assign('pcURLs', $this->getURLs());
         $interface->assign('multiaut', $this->getAuthorsCount());
         $interface->assign('gbvppn', $this->getGbvPpn());
-        if ($this->isGbvRecord() === false) {
-            $printed = $this->getPrintedSample();
-            $interface->assign('printed', $printed);
-            $interface->assign('summCallNo', $printed['signature']);
-            $interface->assign('summAjaxStatus', false);
-        }
+        $interface->assign('showPrinted', $this->showPrinted());
+
         return 'RecordDrivers/PC/result.tpl';
     }
 
@@ -73,6 +69,7 @@ class PCRecord extends IndexRecord
         $interface->assign('sfxbutton', $this->getSfxMenuButton());
         $interface->assign('pcURLs', $this->getURLs());
         $interface->assign('gbvppn', $this->getGbvPpn());
+
         $interface->assign('printed', $this->getPrintedSample());
 
         if ($this->isGbvRecord() === false) {
@@ -382,7 +379,8 @@ class PCRecord extends IndexRecord
      */
     public function searchPrintedEbook($fieldref)
     {
-        if (in_array('Article', $this->getFormats()) === false && in_array('Journal', $this->getFormats()) === false) {
+        if (in_array('Book', $this->getFormats()) === true || in_array('book_chapter', $this->getFormats()) === true) {
+            $isbnsearch = false;
             unset($_SESSION['shards']);
             $_SESSION['shards'] = array();
             $_SESSION['shards'][] = 'GBV Central';
@@ -392,18 +390,21 @@ class PCRecord extends IndexRecord
             $index = $this->getIndexEngine();
 
             $queryparts = array();
-            $queryparts[] = $fieldref['title'];
-            /*
-            if ($fieldref['date']) {
-                $fieldsToSearch .= 'publishDate:'.$fieldref['date'];
-            }
-            */
+            $queryparts[] = trim(addslashes($fieldref['title']));
             if (count($fieldref['isbn']) > 0) {
+                $isbnsearch = true;
                 $queryparts[] = 'isbn:('.implode(' OR ', $fieldref['isbn']).')';
             }
-            /*if ($fieldsToSearch) {
-                $queryparts[] = $fieldsToSearch;
-            }*/
+            if ($isbnsearch === false) {
+                $queryparts[] = trim(addslashes($fieldref['title']));
+
+                if ($fieldref['date']) {
+                    $queryparts[] = 'publishDate:'.$fieldref['date'];
+                }
+                if ($fieldref['author']) {
+                    $queryparts[] = 'author:"'.addslashes($fieldref['author']).'"';
+                }
+            }
             $queryparts[] = '(format:Book OR format:"Serial Volume")';
             // Assemble the query parts and filter out current record:
             $query = implode(" AND ", $queryparts);
@@ -438,6 +439,15 @@ class PCRecord extends IndexRecord
         }*/
         return $issn;
     }
+
+    public function showPrinted() {
+        global $configArray;
+        $printed = isset($configArray['Printed']['enabled']) ?
+            $configArray['Printed']['enabled'] :
+            null;
+        return $printed;
+    }
+
 
     public function getSfxMenuButton() {
         global $configArray;
@@ -789,6 +799,7 @@ class PCRecord extends IndexRecord
         $retVal['date'] = $this->fields['publishDate'][0];
         $retVal['title'] = $this->fields['jtitle'][0];
         $retVal['issn'] = $this->fields['issn'];
+        $retVal['edition'] = $this->fields['edition'];
         return $retVal;
     }
 
@@ -806,6 +817,7 @@ class PCRecord extends IndexRecord
         $retVal['title'] = $this->fields['title'];
         $retVal['date'] = $this->fields['publishDate'][0];
         $retVal['isbn'] = $this->fields['isbn'];
+        $retVal['author'] = $this->fields['author'];
         return $retVal;
     }
 
