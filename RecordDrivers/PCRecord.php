@@ -72,15 +72,13 @@ class PCRecord extends IndexRecord
 
         $interface->assign('printed', $this->getPrintedSample());
 
-        if ($this->isGbvRecord() === false) {
-            $artFieldedRef = $this->getArticleFieldedReference();
-            $articleVol = $this->searchArticleVolume($artFieldedRef);
-            $interface->assign('articleVol', $articleVol);
+        $artFieldedRef = $this->getArticleFieldedReference();
+        $articleVol = $this->searchArticleVolume($artFieldedRef);
+        $interface->assign('articleVol', $articleVol);
 
-            $bookFieldedRef = $this->getEbookFieldedReference();
-            $printedEbook = $this->searchPrintedEbook($bookFieldedRef);
-            $interface->assign('printedEbook', $printedEbook);
-        }
+        $bookFieldedRef = $this->getEbookFieldedReference();
+        $printedEbook = $this->searchPrintedEbook($bookFieldedRef);
+        $interface->assign('printedEbook', $printedEbook);
 
         return 'RecordDrivers/PC/holdings.tpl';
     }

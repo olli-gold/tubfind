@@ -26,21 +26,34 @@
 {if $printed.status == "3"}
     <span id="printed{$summId|escape}">{translate text='Maybe also available printed'}</span>
 {/if}
+{*
 {if !empty($printed.signature)}
     <br/><span id="signatur{$summId|escape}label">{translate text='Call Number'}: {$printed.signature|escape}</span>
 {/if}
 {if $printed.location}
     <br/><span id="locationtub{$summId|escape}label">{translate text='Located'}: {$printed.location}</span>
 {/if}
+*}
+<br/>
 
+{foreach from=$articleVol.docs item=artvol}
+    {translate text="This article is printed in volume"}: <a href="{$url}/Record/{$artvol.id}">
+    {if $coreEdition}
+        {$coreEdition}
+    {else}
+        {$artvol.series2}
+    {/if}
+    </a><br/>
+{/foreach}
+{foreach from=$printedEbook.docs item=printbook}
+    {translate text="This eBook is also available printed"}: <a href="{$url}/Record/{$printbook.id}">
+    {if $printbook.title.0}
+        {$printbook.title.0} {$printbook.publishDate.0}
+    {else}
+        {translate text="Title not found"}
+    {/if}
+    </a><br/>
+{/foreach}
 {if $gbvppn}
-    <a href="{$url}/Record/{$gbvppn|escape:"url"}?shard[]=GBV Central&shard[]=wwwtub&shard[]=tubdok&refer=pc" class="title">{translate text="This record at TUHH/GBV"}</a>
-{else}
-    <br/>
-    {foreach from=$articleVol.docs item=artvol}
-        {translate text="This article is printed in volume"}: <a href="{$url}/Record/{$artvol.id}">{$artvol.series2.0}</a><br/>
-    {/foreach}
-    {foreach from=$printedEbook.docs item=printbook}
-        {translate text="This eBook is also available printed"}: <a href="{$url}/Record/{$printbook.id}">{$printbook.title.0}</a><br/>
-    {/foreach}
+    <br/><a href="{$url}/Record/{$gbvppn|escape:"url"}?shard[]=GBV Central&shard[]=wwwtub&shard[]=tubdok&refer=pc" class="title">{translate text="This record at TUHH/GBV"}</a>
 {/if}
