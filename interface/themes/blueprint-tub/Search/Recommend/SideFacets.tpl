@@ -1,5 +1,5 @@
 <div class="sidegroup">
-  {if $recordCount > 0}<h4> </h4>{/if}
+  {*Keine Überschrift anzeigen {if $recordCount > 0}<h4> </h4>{/if}*}
   {if isset($checkboxFilters) && count($checkboxFilters) > 0}
       {foreach from=$checkboxFilters item=current}
         {* Die Eingrenzung auf lokale Medien soll nur eingeblendet werden, wenn GBV Central genutzt wurde *}
