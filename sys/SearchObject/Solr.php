@@ -1187,8 +1187,6 @@ class SearchObject_Solr extends SearchObject_Base
             $this->addFilter('showAll:true');
         }
 
- 
-
         foreach ($this->filterList as $field => $filter) {
             if (in_array($field, $this->defFilterFields) === true) {
                 $removeDefaultFilters[] = array_search($field, $this->defFilterFields);
@@ -1202,16 +1200,7 @@ class SearchObject_Solr extends SearchObject_Base
                     //$filterQuery[] = "$field:$value";
                     if (in_array($field, $this->multiSelectFacets)) {
                         $orFilterQuery[$field][] = "$field:$value";
-                    }
-                    else if ($range = VuFindSolrUtils::parseRange($value)) {
-                        // Special case -- range query (translate [x TO y] syntax):
-                        $from = $range['from'];
-                        $to = $range['to'];
-                        // modify range query for PrimoCentral results
-                        if (in_array('Primo Central', $_SESSION['shards']) === true || in_array('GBV Primo Bridged', $_SESSION['shards']) === true) $filterQuery[] = "$field:[$from-YEAR TO $to-YEAR]";
-                        else $filterQuery[] = "$field:$value";
-                    }
-                    else {
+                    } else {
                         $filterQuery[] = "$field:$value";
                     }
                 } else {
