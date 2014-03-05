@@ -3410,5 +3410,65 @@ class GBVCentralRecord extends MarcRecord
         return $return;
     }
     */
+
+    /**
+     * Assign necessary Smarty variables and return a template name to.
+     * load in order to export the record in the requested format.  For.
+     * legal values, see getExportFormats().  Returns null if format is.
+     * not supported.
+     *
+     * @param string $format Export format to display.
+     *
+     * @return string        Name of Smarty template file to display.
+     * @access public
+     */
+    public function getExport($format)
+    {
+        global $interface;
+
+        switch(strtolower($format)) {
+        case 'endnote':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: application/x-endnote-refer');
+            $interface->assign('marc', $this->marcRecord);
+            return 'RecordDrivers/GBVCentral/export-endnote.tpl';
+        case 'marc':
+            $interface->assign('rawMarc', $this->marcRecord->toRaw());
+            return 'RecordDrivers/Marc/export-marc.tpl';
+        case 'marcxml':
+            header("Content-type: application/rdf+xml");
+            $interface->assign('rawMarc', $this->marcRecord->toXml());
+            return 'RecordDrivers/Marc/export-marc.tpl';
+        case 'rdf':
+            header("Content-type: application/rdf+xml");
+            $interface->assign('rdf', $this->getRDFXML());
+            return 'RecordDrivers/Marc/export-rdf.tpl';
+        case 'refworks':
+            // To export to RefWorks, we actually have to redirect to
+            // another page.  We'll do that here when the user requests a
+            // RefWorks export, then we'll call back to this module from
+            // inside RefWorks using the "refworks_data" special export format
+            // to get the actual data.
+            $this->redirectToRefWorks();
+            break;
+        case 'refworks_data':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: text/plain; charset=utf-8');
+            $interface->assign('marc', $this->marcRecord);
+            return 'RecordDrivers/GBVCentral/export-refworks.tpl';
+            break;
+        case 'bibtex':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: text/plain; charset=utf-8');
+            $interface->assign('marc', $this->marcRecord);
+            return 'RecordDrivers/GBVCentral/export-bibtex.tpl';
+            break;
+        default:
+            return null;
+        }
+    }
 }
 ?>
