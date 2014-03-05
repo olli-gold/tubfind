@@ -2,20 +2,7 @@
 {assign var=id value=$pcfields.id}
 {/if}
 {assign var=isphdThesis value=false}
-{assign var=$recordFormat value=$pcfields.format}
-{if is_array($recordFormat)}
-{foreach from=$recordFormat item=displayFormat name=loop}
 TY {$displayFormat}
-{/foreach}
-{if in_array('dissertation', $recordFormat)}
-{assign var=isphdThesis value=true}
-{/if}
-{else}
-TY {$recordFormat}
-{if $recordFormat == 'dissertation'}
-{assign var=isphdThesis value=true}
-{/if}
-{/if}
 ID {$id}
 T1 {$pcfields.title}
 {assign var=marcField440 value=$pcfields.series}

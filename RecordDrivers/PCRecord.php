@@ -891,6 +891,14 @@ class PCRecord extends IndexRecord
             $interface->assign('pcfields', $this->fields);
             return 'RecordDrivers/PC/export-bibtex.tpl';
             break;
+        case 'ris':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: text/plain; charset=utf-8');
+            $interface->assign('displayFormat', $this->getRISType());
+            $interface->assign('pcfields', $this->fields);
+            return 'RecordDrivers/PC/export-ris.tpl';
+            break;
         default:
             return null;
         }
@@ -914,7 +922,7 @@ class PCRecord extends IndexRecord
 
         // These are the formats we can possibly support if they are turned on in
         // config.ini:
-        $possible = array('RefWorks', 'EndNote', 'MARC', 'RDF', 'MARCXML', 'BibTeX');
+        $possible = array('RefWorks', 'EndNote', 'MARC', 'RDF', 'MARCXML', 'BibTeX', 'RIS');
 
         // Check which formats are currently active:
         $formats = array();
@@ -927,6 +935,61 @@ class PCRecord extends IndexRecord
         // Send back the results:
         return $formats;
     }
+
+    public function getRISType() {
+    /* possible return values
+    ABST (abstract reference)
+    ADVS (audiovisual material)
+    ART (art work)
+    BILL (bill/resolution)
+    BOOK (whole book reference)
+    CASE (case)
+    CHAP (book chapter reference)
+    COMP (computer program)
+    CONF (conference proceeding)
+    CTLG (catalog)
+    DATA (data file)
+    ELEC (electronic citation)
+    GEN (generic)
+    HEAR (hearing)
+    ICOMM (internet communication)
+    INPR (in press reference)
+    JFULL (journal/periodical - full)
+    JOUR (journal/periodical reference)
+    MAP (map)
+    MGZN (magazine article)
+    MPCT (motion picture)
+    MUSIC (music score)
+    NEWS (newspaper)
+    PAMP (pamphlet)
+    PAT (patent)
+    PCOMM (personal communication)
+    RPRT (report)
+    SER (serial - book, monograph)
+    SLIDE (slide)
+    SOUND (sound recording)
+    STAT (statute)
+    THES (thesis/dissertation)
+    UNBILL (unenacted bill/resolution)
+    UNPB (unpublished work reference)
+    VIDEO (video recording)
+    */
+        if (is_array($this->fields['format'])) {
+            if (in_array('book', $this->fields['format']) || in_array('ebook', $this->fields['format'])) return 'BOOK';
+            if (in_array('Article', $this->fields['format'])) return 'MGZN';
+            if (in_array('Journal', $this->fields['format'])) return 'JOUR';
+            if (in_array('dissertation', $this->fields['format'])) return 'THES';
+            return 'GEN';
+        }
+        else {
+            if ($this->fields['format'] == 'book' || $this->fields['format'] == 'ebook') return 'BOOK';
+            if ($this->fields['format'] == 'Article') return 'MGZN';
+            if ($this->fields['format'] == 'Journal') return 'JOUR';
+            if ($this->fields['format'] == 'dissertation') return 'THES';
+            return 'GEN';
+        }
+    }
+
 }
 
 ?>

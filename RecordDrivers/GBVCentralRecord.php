@@ -3466,9 +3466,62 @@ class GBVCentralRecord extends MarcRecord
             $interface->assign('marc', $this->marcRecord);
             return 'RecordDrivers/GBVCentral/export-bibtex.tpl';
             break;
+        case 'ris':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: text/plain; charset=utf-8');
+            $interface->assign('displayFormat', $this->getRISType());
+            $interface->assign('marc', $this->marcRecord);
+            return 'RecordDrivers/GBVCentral/export-ris.tpl';
+            break;
         default:
             return null;
         }
+    }
+
+    public function getRISType() {
+    /* possible return values
+    ABST (abstract reference)
+    ADVS (audiovisual material)
+    ART (art work)
+    BILL (bill/resolution)
+    BOOK (whole book reference)
+    CASE (case)
+    CHAP (book chapter reference)
+    COMP (computer program)
+    CONF (conference proceeding)
+    CTLG (catalog)
+    DATA (data file)
+    ELEC (electronic citation)
+    GEN (generic)
+    HEAR (hearing)
+    ICOMM (internet communication)
+    INPR (in press reference)
+    JFULL (journal/periodical - full)
+    JOUR (journal/periodical reference)
+    MAP (map)
+    MGZN (magazine article)
+    MPCT (motion picture)
+    MUSIC (music score)
+    NEWS (newspaper)
+    PAMP (pamphlet)
+    PAT (patent)
+    PCOMM (personal communication)
+    RPRT (report)
+    SER (serial - book, monograph)
+    SLIDE (slide)
+    SOUND (sound recording)
+    STAT (statute)
+    THES (thesis/dissertation)
+    UNBILL (unenacted bill/resolution)
+    UNPB (unpublished work reference)
+    VIDEO (video recording)
+    */
+        if (in_array('Book', $this->getFormats()) || in_array('eBook', $this->getFormats())) return 'BOOK';
+        if (in_array('Article', $this->getFormats())) return 'MGZN';
+        if (in_array('Journal', $this->getFormats())) return 'JOUR';
+        if (in_array('dissertation', $this->getFormats())) return 'THES';
+        return 'GEN';
     }
 }
 ?>

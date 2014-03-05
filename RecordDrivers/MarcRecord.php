@@ -155,6 +155,13 @@ class MarcRecord extends IndexRecord
             $interface->assign('marc', $this->marcRecord);
             return 'RecordDrivers/Marc/export-bibtex.tpl';
             break;
+        case 'ris':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: text/plain; charset=utf-8');
+            $interface->assign('marc', $this->marcRecord);
+            return 'RecordDrivers/Marc/export-ris.tpl';
+            break;
         default:
             return null;
         }
@@ -178,7 +185,7 @@ class MarcRecord extends IndexRecord
 
         // These are the formats we can possibly support if they are turned on in
         // config.ini:
-        $possible = array('RefWorks', 'EndNote', 'MARC', 'RDF', 'MARCXML', 'BibTeX');
+        $possible = array('RefWorks', 'EndNote', 'MARC', 'RDF', 'MARCXML', 'BibTeX', 'RIS');
 
         // Check which formats are currently active:
         $formats = array();
