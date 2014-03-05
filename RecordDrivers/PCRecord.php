@@ -976,6 +976,7 @@ class PCRecord extends IndexRecord
     */
         if (is_array($this->fields['format'])) {
             if (in_array('book', $this->fields['format']) || in_array('ebook', $this->fields['format'])) return 'BOOK';
+            if (in_array('book_chapter', $this->fields['format'])) return 'CHAP';
             if (in_array('Article', $this->fields['format'])) return 'MGZN';
             if (in_array('Journal', $this->fields['format'])) return 'JOUR';
             if (in_array('dissertation', $this->fields['format'])) return 'THES';
