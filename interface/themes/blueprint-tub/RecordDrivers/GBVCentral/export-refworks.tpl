@@ -95,7 +95,6 @@ CN {$marcField|getvalue:'a'}
 {assign var=marcField value=$marc->getField('050')}
 {if $marcField}
 CN {foreach from=$marcField->getSubfields() item=subfield name=subloop}{$subfield->getData()}{/foreach}
-
 {/if}
 {/if}
 {assign var=marcField value=$marc->getField('020')}
@@ -106,13 +105,11 @@ SN {$marcField|getvalue:'a'}
 {if $marcField}
 {foreach from=$marcField item=field name=loop}
 K1 {foreach from=$field->getSubfields() item=subfield name=subloop}{if !$smarty.foreach.subloop.first} : {/if}{assign var=subfield value=$subfield->getData()}{$subfield}{/foreach}
-
 {/foreach}{/if}
-
 {assign var=marcField value=$marc->getField('773')}
 {if $marcField}
 {if $marcField|getvalue:'t'}
-T2 {$marcField|getvalue:'t'}
+JT {$marcField|getvalue:'t'}
 {/if}
 {if $marcField|getvalue:'x'}
 SN {$marcField|getvalue:'x'}
@@ -121,10 +118,10 @@ SN {$marcField|getvalue:'x'}
 {assign var=marcField value=$marc->getField('952')}
 {if $marcField}
 {if $marcField|getvalue:'d'}
-VL {$marcField|getvalue:'d'}
+VO {$marcField|getvalue:'d'}
 {/if}
 {if $marcField|getvalue:'j'}
-PY {$marcField|getvalue:'j'}
+YR {$marcField|getvalue:'j'}
 {/if}
 {if $marcField|getvalue:'e'}
 IS {$marcField|getvalue:'e'}
@@ -133,7 +130,7 @@ IS {$marcField|getvalue:'e'}
 {assign var=hField value=$marcField|getvalue:'h'}
 {assign var=pages value='-'|explode:$hField}
 SP {$pages.0}
-EP {$pages.1}
+OP {$pages.1}
 {/if}
 {/if}
 
