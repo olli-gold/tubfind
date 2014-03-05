@@ -846,6 +846,87 @@ class PCRecord extends IndexRecord
     {
         $this->hiddenFilters[] = $fq;
     }
+
+    /**
+     * Assign necessary Smarty variables and return a template name to.
+     * load in order to export the record in the requested format.  For.
+     * legal values, see getExportFormats().  Returns null if format is.
+     * not supported.
+     *
+     * @param string $format Export format to display.
+     *
+     * @return string        Name of Smarty template file to display.
+     * @access public
+     */
+    public function getExport($format)
+    {
+        global $interface;
+
+        switch(strtolower($format)) {
+        case 'endnote':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: application/x-endnote-refer');
+            $interface->assign('pcfields', $this->fields);
+            return 'RecordDrivers/PC/export-endnote.tpl';
+        case 'refworks':
+            // To export to RefWorks, we actually have to redirect to
+            // another page.  We'll do that here when the user requests a
+            // RefWorks export, then we'll call back to this module from
+            // inside RefWorks using the "refworks_data" special export format
+            // to get the actual data.
+            $this->redirectToRefWorks();
+            break;
+        case 'refworks_data':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: text/plain; charset=utf-8');
+            $interface->assign('pcfields', $this->fields);
+            return 'RecordDrivers/PC/export-refworks.tpl';
+            break;
+        case 'bibtex':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: text/plain; charset=utf-8');
+            $interface->assign('pcfields', $this->fields);
+            return 'RecordDrivers/PC/export-bibtex.tpl';
+            break;
+        default:
+            return null;
+        }
+    }
+
+    /**
+     * Get an array of strings representing formats in which this record's.
+     * data may be exported (empty if none).  Legal values: "RefWorks",.
+     * "EndNote", "MARC", "RDF".
+     *
+     * @return array Strings representing export formats.
+     * @access public
+     */
+    public function getExportFormats()
+    {
+        // Get an array of legal export formats (from config array, or use defaults
+        // if nothing in config array).
+        global $configArray;
+        $active = isset($configArray['Export']) ?
+            $configArray['Export'] : array('RefWorks' => true, 'EndNote' => true);
+
+        // These are the formats we can possibly support if they are turned on in
+        // config.ini:
+        $possible = array('RefWorks', 'EndNote', 'MARC', 'RDF', 'MARCXML', 'BibTeX');
+
+        // Check which formats are currently active:
+        $formats = array();
+        foreach ($possible as $current) {
+            if ($active[$current]) {
+                $formats[] = $current;
+            }
+        }
+
+        // Send back the results:
+        return $formats;
+    }
 }
 
 ?>
