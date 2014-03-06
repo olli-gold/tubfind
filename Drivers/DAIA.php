@@ -216,7 +216,10 @@ class DAIA implements DriverInterface
                         $result['itemid'] = $itemlist->item($c)->attributes->getNamedItem('id')->nodeValue;
                     }
                     if ($itemlist->item($c)->attributes->getNamedItem('href') !== null) {
-                        $result['recallhref'] = $itemlist->item($c)->attributes->getNamedItem('href')->nodeValue;
+                        if ($this->language == 'en') $lang_code = 'EN';
+                        else $lang_code = 'DU';
+                        $recalllink = str_replace('LNG=EN', 'LNG='.$lang_code, $itemlist->item($c)->attributes->getNamedItem('href')->nodeValue);
+                        $result['recallhref'] = $recalllink;
                     }
                     $departmentElements = $itemlist->item($c)->getElementsByTagName('department');
                     if($departmentElements->length > 0) {
@@ -450,7 +453,10 @@ class DAIA implements DriverInterface
                     $availability = 1;
                     $status = 'Available';
                     if ($availableElements->item(0)->attributes->getNamedItem('href') !== null) {
-                        $earliest_href = $availableElements->item(0)->attributes->getNamedItem('href')->nodeValue;
+                        if ($this->language == 'en') $lang_code = 'EN';
+                        else $lang_code = 'DU';
+                        $recalllink = str_replace('LNG=EN', 'LNG='.$lang_code, $availableElements->item(0)->attributes->getNamedItem('href')->nodeValue);
+                        $earliest_href = $recalllink;
                     }
                     for ($n = 0; $availableElements->item($n) !== null; $n++) {
                         // If only one element from the available elements is available for loan, presenceOnly should not be set
@@ -473,7 +479,10 @@ class DAIA implements DriverInterface
                             $presenceOnly = '0';
                         }
                         if ($unavailableElements->item($n)->attributes->getNamedItem('href') !== null) {
-                            $hrefs['item'.$n] = $unavailableElements->item($n)->attributes->getNamedItem('href')->nodeValue;
+                            if ($this->language == 'en') $lang_code = 'EN';
+                            else $lang_code = 'DU';
+                            $recalllink = str_replace('LNG=EN', 'LNG='.$lang_code, $unavailableElements->item($n)->attributes->getNamedItem('href')->nodeValue);
+                            $hrefs['item'.$n] = $recalllink;
                         }
                         if ($unavailableElements->item($n)->attributes->getNamedItem('expected') !== null) {
                             //$duedate = $unavailableElements->item($n)->attributes->getNamedItem('expected')->nodeValue;
