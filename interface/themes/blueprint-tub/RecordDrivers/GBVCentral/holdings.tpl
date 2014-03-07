@@ -239,7 +239,7 @@
                                 {/if}
                                 {if $nothingShown == "0" && $isMultipartChildren == 1}
                                     {assign var="nothingShown" value="1"}
-                                    <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
+                                    <span class="volLink"><a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a></span>
                                 {/if}
                             {/if}
                         {/if}
@@ -255,7 +255,7 @@
                             {/if}
                             {if $nothingShown == "0" && $isMultipartChildren == 1}
                                 {assign var="nothingShown" value="1"}
-                                <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
+                                <span class="volLink"><a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a></span>
                             {/if}
                         {/if}
                     {/if}
@@ -280,7 +280,7 @@
         {/if}
         {if $nothingShown == "0" && $isMultipartChildren == 1}
             {assign var="nothingShown" value="1"}
-            <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
+            <span class="volLink"><a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a></span>
         {/if}
                 </td>
             </tr>

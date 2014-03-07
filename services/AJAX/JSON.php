@@ -1170,6 +1170,7 @@ class JSON extends Action
 
         $url = null;
         $core = null;
+        $printedSample = array();
         if (array_key_exists('id', $_REQUEST)) {
             if (substr($_REQUEST['id'], 0, 2) == 'PC') {
                 $url = isset($configArray['IndexShards']['Primo Central']) ? 'http://'.$configArray['IndexShards']['Primo Central'] : null;
@@ -1237,8 +1238,10 @@ class JSON extends Action
 
         if ($articleVol) {
             $gbvid = array('id' => $articleVol['docs'][0]['id']);
+            // if getPrintedInformation() returns null, array_merge will fail (never merge arrays with null!)
+            // so if its not set, build an empty array now.
+            if (!$printedSample) $printedSample = array();
             $articleVolRef = array_merge($gbvid, $originalId, $printedSample, $artFieldedRef);
-            //print_r($articleVolRef);
             return $this->output(array($articleVolRef), JSON::STATUS_OK);
         }
         if ($printedEbook) {
