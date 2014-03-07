@@ -55,5 +55,5 @@
     </a><br/>
 {/foreach}
 {if $gbvppn}
-    <br/><a href="{$url}/Record/{$gbvppn|escape:"url"}?shard[]=GBV Central&shard[]=wwwtub&shard[]=tubdok&refer=pc" class="title">{translate text="This record at TUHH/GBV"}</a>
+    <br/><a href="{$url}/Record/{$gbvppn|escape:"url"}?shard[]=GBV Central&shard[]=wwwtub&shard[]=tubdok&refer=pc" class="title">{if $locally}{translate text="This record at TUHH"}{else}{translate text="This record in the GBV"}{/if}</a>
 {/if}

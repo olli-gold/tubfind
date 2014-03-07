@@ -39,8 +39,14 @@ class PCRecord extends IndexRecord
         $interface->assign('sfxbutton', $this->getSfxMenuButton());
         $interface->assign('pcURLs', $this->getURLs());
         $interface->assign('multiaut', $this->getAuthorsCount());
+        if ($this->isGbvRecord() === true) {
+            $interface->assign('gbvppn', $this->getGbvPpn());
+            $gbvRecord = $this->searchGBVPPN($this->getGbvPpn());
+            $local = false;
+            if (in_array('GBV_ILN_23', $gbvRecord['docs'][0]['collection_details'])) $local = true;
+            $interface->assign('locally', $local);
+        }
         $interface->assign('gbvppn', $this->getGbvPpn());
-        $interface->assign('showPrinted', $this->showPrinted());
 
         return 'RecordDrivers/PC/result.tpl';
     }
@@ -68,7 +74,14 @@ class PCRecord extends IndexRecord
         $interface->assign('sfxmenu', $this->getSfxMenu());
         $interface->assign('sfxbutton', $this->getSfxMenuButton());
         $interface->assign('pcURLs', $this->getURLs());
-        $interface->assign('gbvppn', $this->getGbvPpn());
+
+        if ($this->isGbvRecord() === true) {
+            $interface->assign('gbvppn', $this->getGbvPpn());
+            $gbvRecord = $this->searchGBVPPN($this->getGbvPpn());
+            $local = false;
+            if (in_array('GBV_ILN_23', $gbvRecord['docs'][0]['collection_details'])) $local = true;
+            $interface->assign('locally', $local);
+        }
 
         $interface->assign('printed', $this->getPrintedSample());
 
@@ -426,6 +439,33 @@ class PCRecord extends IndexRecord
         return false;
     }
 
+    /**
+     * Check if at least one article for this item exists.
+     * Method to keep performance lean in core.tpl.
+     *
+     * @return bool
+     * @access protected
+     */
+    public function searchGBVPPN($ppn)
+    {
+        unset($_SESSION['shards']);
+        $_SESSION['shards'] = array();
+        $_SESSION['shards'][] = 'GBV Central';
+        $_SESSION['shards'][] = 'TUBdok';
+        $_SESSION['shards'][] = 'wwwtub';
+
+        $index = $this->getIndexEngine();
+
+        $query = 'id:'.$ppn;
+
+        $result = $index->search($query, null, null, 0, 1, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST, false, false, false);
+
+        unset($_SESSION['shards']);
+        $_SESSION['shards'] = array();
+        $_SESSION['shards'][] = 'Primo Central';
+
+        return ($result['response'] > 0) ? $result['response'] : false;
+    }
     /**
      * Get just the base portion of the first listed ISSN (or false if no ISSNs).
      *
