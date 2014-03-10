@@ -39,6 +39,7 @@ class PCRecord extends IndexRecord
         $interface->assign('sfxbutton', $this->getSfxMenuButton());
         $interface->assign('pcURLs', $this->getURLs());
         $interface->assign('multiaut', $this->getAuthorsCount());
+        $interface->assign('showPrinted', $this->showPrinted());
         if ($this->isGbvRecord() === true) {
             $interface->assign('gbvppn', $this->getGbvPpn());
             $gbvRecord = $this->searchGBVPPN($this->getGbvPpn());
