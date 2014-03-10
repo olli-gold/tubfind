@@ -40,6 +40,7 @@ class PCRecord extends IndexRecord
         $interface->assign('pcURLs', $this->getURLs());
         $interface->assign('multiaut', $this->getAuthorsCount());
         $interface->assign('showPrinted', $this->showPrinted());
+        $interface->assign('titleSeries', $this->getTitleSeries());
         if ($this->isGbvRecord() === true) {
             $interface->assign('gbvppn', $this->getGbvPpn());
             $gbvRecord = $this->searchGBVPPN($this->getGbvPpn());
@@ -760,11 +761,14 @@ class PCRecord extends IndexRecord
      */
     protected function getShortTitle()
     {
+        return isset($this->fields['title']) ?
+            $this->fields['title'] : '';
+    }
+
+    protected function getTitleSeries() {
         if ($this->fields['title_series']) {
             return $this->fields['title_series'];
         }
-        return isset($this->fields['title']) ?
-            $this->fields['title'] : '';
     }
 
     public function getEditions() {

@@ -19,6 +19,9 @@
       {elseif is_array($summShortTitle)}{$summShortTitle.0|truncate:90:"...":true:true|escape}
       {else}{$summShortTitle|truncate:90:"...":true:true|escape}{/if}
       </b>
+      {if $titleSeries}
+          ({$titleSeries})
+      {/if}
       </a>
     </div>
 
