@@ -1115,8 +1115,7 @@ p.citationText {
 }
 
 /* New advanced search screen stuff */
-.adv
-SearchContent {
+.adv SearchContent {
     /* Needed for IE7 compatibility: */
     width: 96%;
 }

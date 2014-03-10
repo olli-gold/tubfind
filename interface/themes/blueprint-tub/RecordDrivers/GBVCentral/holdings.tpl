@@ -181,9 +181,9 @@
             {if $location != "Internet"}
                 {if $row.callnumber != "Einzelsign."}
                     {if $row.availability > 0}
-                        <span class="available">{translate text="Available"}</span> | 
+                        <span class="available">{translate text="Available"}</span> 
                         {if $row.loan_availability == "0"}
-                            <strong>{translate text="Only for presence use"}</strong>
+                            {translate text="Only for presence use"}
                         {/if}
                         {if !$row.recallhref}
                         {* if $location != "Magazin" *}
