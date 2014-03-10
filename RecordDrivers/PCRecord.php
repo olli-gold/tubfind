@@ -767,7 +767,7 @@ class PCRecord extends IndexRecord
 
     protected function getTitleSeries() {
         if ($this->fields['title_series']) {
-            return $this->fields['title_series'];
+            return $this->fields['title_series'][0];
         }
     }
 
