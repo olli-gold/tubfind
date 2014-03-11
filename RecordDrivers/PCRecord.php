@@ -354,7 +354,13 @@ class PCRecord extends IndexRecord
             if ($fieldsToSearch) {
                 $queryparts[] = $fieldsToSearch;
             }
-            $queryparts[] = 'format:(Book OR "Serial Volume")';
+            if ($f1info && $f2info) {
+                $queryparts[] = 'format:(Book OR "Serial Volume")';
+            }
+            else {
+                // not sure what to search since the volume and year reference are missing, so just search the main journal record
+                $queryparts[] = 'format:Journal';
+            }
             // Assemble the query parts and filter out current record:
             $query = implode(" AND ", $queryparts);
             $query = '('.$query.')';
