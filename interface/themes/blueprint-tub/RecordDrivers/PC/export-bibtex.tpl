@@ -104,16 +104,16 @@ note = {$bracket}{$marcField|getvalue:'a'}},
 url = {$pcfields.url.0},
 {/if}
 {if $pcfields.jtitle}
-journal = {$bracket}{$pcfields.jtitle}},
+journal = {$bracket}{if is_array($pcfields.jtitle)}{$pcfields.jtitle.0}{else}{$pcfields.jtitle}{/if}},
 {/if}
 {if $pcfields.jvol}
-volume = {$bracket}{$pcfields.jvol}},
+volume = {$bracket}{if is_array($pcfields.jvol)}{$pcfields.jvol.0}{else}{$pcfields.jvol}{/if}},
 {/if}
 {if $pcfields.jissue}
-number = {$bracket}{$pcfields.jissue}},
+number = {$bracket}{if is_array($pcfields.jissue)}{$pcfields.jissue.0}{else}{$pcfields.jissue}{/if}},
 {/if}
 {if $pcfields.jspage}
-pages = {$bracket}{$pcfields.jspage}{if $pcfields.jepage}-{$pcfields.jepage}{/if}},
+pages = {$bracket}{if is_array($pcfields.jspage)}{$pcfields.jspage.0}{else}{$pcfields.jspage}{/if}{if $pcfields.jepage}-{if is_array($pcfields.jepage)}{$pcfields.jepage.0}{else}{$pcfields.jepage}{/if}{/if}},
 {/if}
 crossref = {$url}/Record/{$id|escape:"url"}
 }
