@@ -1045,6 +1045,29 @@ class PCRecord extends IndexRecord
         }
     }
 
+    /**
+     * Redirect to the RefWorks site and then die -- support method for getExport().
+     *
+     * @return void
+     * @access protected
+     */
+    protected function redirectToRefWorks()
+    {
+        global $configArray;
+
+        // Build the URL to pass data to RefWorks:
+        $exportUrl = $configArray['Site']['url'] . '/Record/' .
+            urlencode($this->getUniqueID()) . '/Export?style=refworks_data';
+
+        // Build up the RefWorks URL:
+        $url = $configArray['RefWorks']['url'] . '/express/expressimport.asp';
+        $url .= '?vendor=' . urlencode($configArray['RefWorks']['vendor']);
+        $url .= '&filter=RefWorks%20Tagged%20Format&url=' . urlencode($exportUrl);
+
+        header("Location: {$url}");
+        die();
+    }
+
 }
 
 ?>
