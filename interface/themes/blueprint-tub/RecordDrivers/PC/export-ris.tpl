@@ -97,19 +97,19 @@ K1 {foreach from=$field->getSubfields() item=subfield name=subloop}{if !$smarty.
 {/foreach}{/if}
 *}
 {if $pcfields.jtitle}
-T2 {$pcfields.jtitle}
+T2 {if is_array($pcfields.jtitle)}{$pcfields.jtitle.0}{else}{$pcfields.jtitle}{/if}
 {/if}
 {if $pcfields.jvol}
-VL {$pcfields.jvol}
+VL {if is_array($pcfields.jvol)}{$pcfields.jvol.0}{else}{$pcfields.jvol}{/if}
 {/if}
 {if $pcfields.jissue}
-IS {$pcfields.jissue}
+IS {if is_array($pcfields.jissue)}{$pcfields.jissue.0}{else}{$pcfields.jissue}{/if}
 {/if}
 {if $pcfields.jspage}
-SP {$pcfields.jspage}
+SP {if is_array($pcfields.jspage)}{$pcfields.jspage.0}{else}{$pcfields.jspage}{/if}
 {/if}
 {if $pcfields.jepage}
-EP {$pcfields.jepage}
+EP {if is_array($pcfields.jepage)}{$pcfields.jepage.0}{else}{$pcfields.jepage}{/if}
 {/if}
 {if $pcfields.topic}
 {foreach from=$pcfields.topic item=field name=loop}
