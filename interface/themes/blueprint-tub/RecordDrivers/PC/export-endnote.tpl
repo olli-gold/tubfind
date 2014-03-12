@@ -64,16 +64,16 @@
 {/if}
 %T {$pcfields.title}
 {if $pcfields.jtitle}
-%J {$pcfields.jtitle}
+%J {if is_array($pcfields.jtitle)}{$pcfields.jtitle.0}{else}{$pcfields.jtitle}{/if}
 {/if}
 {if $pcfields.jvol}
-%V {$pcfields.jvol}
+%V {if is_array($pcfields.jvol)}{$pcfields.jvol.0}{else}{$pcfields.jvol}{/if}
 {/if}
 {if $pcfields.jissue}
-%N {$pcfields.jissue}
+%N {if is_array($pcfields.jissue)}{$pcfields.jissue.0}{else}{$pcfields.jissue}{/if}
 {/if}
 {if $pcfields.jspage}
-%P {$pcfields.jspage}{if $pcfields.jepage}-{$pcfields.jepage}{/if}},
+%P {if is_array($pcfields.jspage)}{$pcfields.jspage.0}{else}{$pcfields.jspage}{/if}{if $pcfields.jepage}-{if is_array($pcfields.jepage)}{$pcfields.jepage.0}{else}{$pcfields.jepage}{/if}{/if}
 {/if}
 {if $pcfields.url}
 {foreach from=$pcfields.url item=field name=loop}

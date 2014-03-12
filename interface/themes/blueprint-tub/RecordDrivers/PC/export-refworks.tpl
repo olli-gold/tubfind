@@ -109,18 +109,18 @@ K1 {foreach from=$field->getSubfields() item=subfield name=subloop}{if !$smarty.
 {/foreach}{/if}
 *}
 {if $pcfields.jtitle}
-JF {$pcfields.jtitle}
+JF {if is_array($pcfields.jtitle)}{$pcfields.jtitle.0}{else}{$pcfields.jtitle}{/if}
 {/if}
 {if $pcfields.jvol}
-VO {$pcfields.jvol}
+VO {if is_array($pcfields.jvol)}{$pcfields.jvol.0}{else}{$pcfields.jvol}{/if}
 {/if}
 {if $pcfields.jissue}
-IS {$pcfields.jissue}
+IS {if is_array($pcfields.jissue)}{$pcfields.jissue.0}{else}{$pcfields.jissue}{/if}
 {/if}
 {if $pcfields.jspage}
-SP {$pcfields.jspage}
+SP {if is_array($pcfields.jspage)}{$pcfields.jspage.0}{else}{$pcfields.jspage}{/if}
 {/if}
 {if $pcfields.jepage}
-OP {$pcfields.jepage}
+OP {if is_array($pcfields.jepage)}{$pcfields.jepage.0}{else}{$pcfields.jepage}{/if}
 {/if}
 SL TU Hamburg-Harburg
