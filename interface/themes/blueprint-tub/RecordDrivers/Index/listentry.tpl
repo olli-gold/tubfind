@@ -40,7 +40,7 @@
       {/foreach}
     </div>
 
-    <div class="span-14 last">
+    <div class="span-13 last">
         {assign var="electronicResource" value="0"}
         {assign  var="showAvail" value="true"}
         {assign var="showCallNumber" value="1"}
