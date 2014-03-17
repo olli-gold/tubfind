@@ -27,6 +27,7 @@
  */
 require_once 'services/MyResearch/lib/Resource.php';
 require_once 'sys/Pager.php';
+require_once 'RecordDrivers/IndexRecord.php';
 
 /**
  * FavoriteHandler Class

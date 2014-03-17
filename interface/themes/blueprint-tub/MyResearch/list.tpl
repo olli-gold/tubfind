@@ -64,6 +64,7 @@ vufindString.bookbagStatusFull = "{translate text="bookbag_full"}";
         {translate text='of'} <strong>{$recordCount}</strong>
       {/if}
       </div>
+{*
       <div class="floatright">
         <form action="{$path}/Search/SortResults" method="post">
           <label for="sort_options_1">{translate text='Sort'}</label>
@@ -75,6 +76,7 @@ vufindString.bookbagStatusFull = "{translate text="bookbag_full"}";
           <noscript><input type="submit" value="{translate text="Set"}" /></noscript>
         </form>
       </div>
+*}
       <div class="clear"></div>
     </div>
     <form method="post" name="bulkActionForm" action="{$url}/Cart/Home">
@@ -87,15 +89,17 @@ vufindString.bookbagStatusFull = "{translate text="bookbag_full"}";
       <input type="hidden" name="listName" value="{$list->title|escape}" />
     {/if}
     <div class="bulkActionButtons">
-      <input type="checkbox" class="selectAllCheckboxes floatleft" name="selectAll" id="addFormCheckboxSelectAll"/> <label class="floatleft" for="addFormCheckboxSelectAll">{translate text="select_page"}</label>
-      <span class="floatleft">|</span>
+      <input type="checkbox" class="selectAllCheckboxes floatleft" name="selectAll" id="addFormCheckboxSelectAll"/> <label for="addFormCheckboxSelectAll">{translate text="select_page"}</label>
+      <br/>
       <span class="floatleft"><strong>{translate text="with_selected"}: </strong></span>
+      {*
       {if $bookBag}
       <a id="updateCart" class="bookbagAdd offscreen" href="">{translate text='Add to Book Bag'}</a>
       <noscript>
         <input type="submit"  class="button floatleft bookbagAdd" name="add" value="{translate text='Add to Book Bag'}"/>
       </noscript>
       {/if}
+      *}
       <input type="submit" class="mail floatleft button" name="email" value="{translate text='Email'}" title="{translate text='email_selected'}"/>
       {if $listEditAllowed}<input id="delete_list_items_{if $list}{$list->id|escape}{/if}" type="submit" class="delete floatleft button" name="delete" value="{translate text='Delete'}" title="{translate text='delete_selected'}"/>{/if}
       {if is_array($exportOptions) && count($exportOptions) > 0}
@@ -114,15 +118,17 @@ vufindString.bookbagStatusFull = "{translate text="bookbag_full"}";
     {/foreach}
     </ul>
     <div class="bulkActionButtons">
-      <input type="checkbox" class="selectAllCheckboxes floatleft" name="selectAll" id="addFormCheckboxSelectAllBottom"/> <label class="floatleft" for="addFormCheckboxSelectAllBottom">{translate text="select_page"}</label>
-      <span class="floatleft">|</span>
+      <input type="checkbox" class="selectAllCheckboxes floatleft" name="selectAll" id="addFormCheckboxSelectAllBottom"/> <label for="addFormCheckboxSelectAllBottom">{translate text="select_page"}</label>
+      <br/>
       <span class="floatleft"><strong>{translate text="with_selected"}: </strong></span>
+      {*
       {if $bookBag}
       <a id="updateCartBottom" class="bookbagAdd offscreen" href="">{translate text='Add to Book Bag'}</a>
       <noscript>
         <input type="submit"  class="button floatleft bookbagAdd" name="add" value="{translate text='Add to Book Bag'}"/>
       </noscript>
       {/if}
+      *}
       <input type="submit" class="mail floatleft button" name="email" value="{translate text='Email'}" title="{translate text='email_selected'}"/>
       {if $listEditAllowed}<input id="bottom_delete_list_items_{if $list}{$list->id|escape}{/if}" type="submit" class="delete floatleft button" name="delete" value="{translate text='Delete'}" title="{translate text='delete_selected'}"/>{/if}
       {if is_array($exportOptions) && count($exportOptions) > 0}

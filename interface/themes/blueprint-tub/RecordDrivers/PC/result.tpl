@@ -66,9 +66,9 @@
             {/if}
         {/foreach}
         <div class="ajax_printed hide" id="printed{$summId|escape}">
-            <span id="printed{$summId|escape}-availability" class="hide"></span><br/>
-            <span id="printed{$summId|escape}-volume" class="hide"></span><br/>
-            <span id="callnumber{$summId|escape}label" class="hide">{translate text='Call Number'}:</span> <span class="hide" id="callnumber{$summId|escape}"></span><br/>
+            <span id="printed{$summId|escape}-availability" class="hide"></span>
+            <span id="printed{$summId|escape}-volume" class="hide"></span>
+            <span id="callnumber{$summId|escape}label" class="hide">{translate text='Call Number'}:</span> <span class="hide" id="callnumber{$summId|escape}"></span>
             <span id="location{$summId|escape}label" class="hide">{translate text='Located'}:</span> <span class="hide" id="location{$summId|escape}"></span>
         </div>
 
