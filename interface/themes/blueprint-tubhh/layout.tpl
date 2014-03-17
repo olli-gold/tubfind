@@ -1,8 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{$userLang}" xml:lang="en">
-
 {* We should hide the top search bar and breadcrumbs in some contexts: *}
-{if ($module=="Search" || $module=="Summon" || $module=="WorldCat" || $module=="Authority") && $pageTemplate=="home.tpl"}
+{if ($module=="Search" || $module=="Summon" || $module=="WorldCat" || $module=="Authority" || $action=="Advanced") && ($pageTemplate=="home.tpl" || $pageTemplate=="advanced.tpl")}
     {assign var="showTopSearchBox" value=0}
     {assign var="showBreadcrumbs" value=0}
 {else}
