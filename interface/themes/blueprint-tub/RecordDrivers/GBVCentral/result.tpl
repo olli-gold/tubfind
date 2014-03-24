@@ -207,7 +207,9 @@
 
   <div class="span-4 last">
     {if $user}
-        <a id="saveRecord{$summId|escape}" href="{$url}/Record/{$summId|escape:"url"}/Save" class="fav tool saveRecord" title="{translate text='Add to favorites'}">{translate text='Add to favorites'}</a>
+        <div id="saveRecordBox{$summId|escape}">
+            <a id="saveRecord{$summId|escape}" href="{$url}/Record/{$summId|escape:"url"}/Save" class="fav tool saveRecord" title="{translate text='Add to favorites'}">{translate text='Add to favorites'}</a>
+        </div>
     {/if}
     {* Display the lists that this record is saved to *}
     <div class="savedLists info hide" id="savedLists{$summId|escape}">

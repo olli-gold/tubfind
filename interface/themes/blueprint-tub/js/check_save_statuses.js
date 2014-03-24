@@ -31,6 +31,7 @@ function checkSaveStatuses() {
                                  + result.list_title + '</a></li>';
                         $ul.append(html);
                         $container.show();
+                        $('#saveRecordBox' + result.record_id).hide();
                     });
                 }
             }
