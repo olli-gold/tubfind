@@ -65,7 +65,7 @@
     <script type="text/javascript">$("#searchForm_lookfor").focus()</script>
   {/if}
   </div>
-  <div style="float:right;width:auto;margin-right:20px;">
+  <div class="pwmenu" style="float:right;width:auto;">
     {include file="pwmenu.tpl"}
   </div>
 </div>
