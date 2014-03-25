@@ -18,7 +18,9 @@
     {if is_array($exportOptions) && count($exportOptions) > 0}
     <input type="submit" class="export floatleft button" name="export" value="{translate text='bookbag_export_selected'}" title="{translate text='bookbag_export'}"/>
     {/if}
+    {* removes print button due to malfunctions
     <input type="submit" class="print floatleft button" name="print" value="{translate text='bookbag_print_selected'}" title="{translate text='print_selected'}"/>
+    *}
     <input type="submit" class="bookbagDelete floatleft button" name="delete" value="{translate text='bookbag_delete_selected'}" title="{translate text='bookbag_delete'}"/>
     <input type="submit" class="bookbagEmpty floatleft button" name="empty" value="{translate text='Empty Book Bag'}" title="{translate text='Empty Book Bag'}"/>
     <div class="clearer"></div>
