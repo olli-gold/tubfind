@@ -324,7 +324,7 @@ class PCRecord extends IndexRecord
      */
     public function searchArticleVolume($fieldref)
     {
-        if (in_array('Article', $this->getFormats()) === true) {
+        if (in_array('Article', $this->getFormats()) === true || $fieldref['service'] == 'external') {
             unset($_SESSION['shards']);
             $_SESSION['shards'] = array();
             $_SESSION['shards'][] = 'GBV Central';
@@ -401,7 +401,7 @@ class PCRecord extends IndexRecord
      */
     public function searchPrintedEbook($fieldref)
     {
-        if (in_array('Book', $this->getFormats()) === true || in_array('book_chapter', $this->getFormats()) === true) {
+        if (in_array('Book', $this->getFormats()) === true || in_array('book_chapter', $this->getFormats()) === true || $fieldref['service'] == 'external') {
             $isbnsearch = false;
             unset($_SESSION['shards']);
             $_SESSION['shards'] = array();

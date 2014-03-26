@@ -1198,6 +1198,7 @@ class JSON extends Action
             $printedEbook = $recordDriver->searchPrintedEbook($bookFieldedRef);
         }
         else {
+            $originalId = array('originalId' => null);
             $artFieldedRef = array();
             $bookFieldedRef = array();
             /* Parameterverarbeitung */
@@ -1205,12 +1206,15 @@ class JSON extends Action
             $bookFieldedRef['title'] = $_REQUEST['rft_btitle'];
             $bookFieldedRef['isbn'] = array();
             $bookFieldedRef['isbn'][] = $_REQUEST['rft_isbn'];
-            $bookFieldedRef['isbn'][] = $_REQUEST['rft_eisbn'];
+            if ($_REQUEST['rft_eisbn']) $bookFieldedRef['isbn'][] = $_REQUEST['rft_eisbn'];
             $artFieldedRef['issn'] = array();
             $artFieldedRef['issn'][] = $_REQUEST['rft_issn'];
-            $artFieldedRef['issn'][] = $_REQUEST['rft_eissn'];
+            if ($_REQUEST['rft_eissn']) $artFieldedRef['issn'][] = $_REQUEST['rft_eissn'];
             $artFieldedRef['volume'] = $_REQUEST['rft_volume'];
+            $artFieldedRef['issue'] = $_REQUEST['rft_issue'];
             $artFieldedRef['date'] = $_REQUEST['rft_date'];
+            $artFieldedRef['service'] = 'external';
+            $bookFieldedRef['service'] = 'external';
 
             $p = array();
             $p['issn'] = $_REQUEST['rft_issn'];
@@ -1233,7 +1237,6 @@ class JSON extends Action
             $articleVol = $recordDriver->searchArticleVolume($artFieldedRef);
             // Find printed ebook
             $printedEbook = $recordDriver->searchPrintedEbook($bookFieldedRef);
-
         }
 
         if ($articleVol) {
