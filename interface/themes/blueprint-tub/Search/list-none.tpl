@@ -24,6 +24,9 @@
         {if !$checkboxFilters.showAll.selected}
             <li>{translate text='nohit_tipp_expand'} - <a href="{$checkboxFilters.showAll.toggleUrl}">{translate text=$checkboxFilters.showAll.desc}</a></li>
         {/if}
+        {if $filterList || $hasCheckboxFilters}
+            <li>{translate text='filtersSet'} - <a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list">{translate text='search_nofilters'}</a></li>
+        {/if}
         {if $spellingSuggestions}
           <li class="correction">{translate text='nohit_spelling'}</li>
           {foreach from=$spellingSuggestions item=details key=term name=termLoop}
