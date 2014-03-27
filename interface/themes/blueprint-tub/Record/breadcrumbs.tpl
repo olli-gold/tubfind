@@ -1,5 +1,5 @@
 {if $lastsearch}
-<a href="{$lastsearch|escape}{if $refer=="pc"}&shard[]=Primo Central{/if}#record{if $refer=="pc"}PCgbv{/if}{$id|escape:"url"}">{translate text="Search"}</a> <span>&gt;</span>
+<a href="{$lastsearch|escape}{if $refer=="pc"}&shard[]=Primo Central{/if}#record{if $refer=="pc"}PCgbv{/if}{$id|escape:"url"}">{translate text="Result List"}</a> <span>&gt;</span>
 {/if}
 {if $breadcrumbText}
     {if is_array($breadcrumbText)}
