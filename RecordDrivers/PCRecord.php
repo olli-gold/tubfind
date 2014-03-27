@@ -350,6 +350,8 @@ class PCRecord extends IndexRecord
             if ($fieldref['date']) {
                 $f2info = true;
                 $fieldsToSearch .= $fieldref['date'];
+                // the given year should always match in publishDate
+                $queryparts[] = 'publishDate:'.$fieldref['date'];
             }
             if ($fieldsToSearch) {
                 $queryparts[] = $fieldsToSearch;
@@ -375,6 +377,8 @@ class PCRecord extends IndexRecord
             if ($result['response']['numFound'] == 0 && $f2info == true && $f1info == true) {
                 $altqueryparts = array();
                 $altqueryparts[] = $fieldref['title'];
+                // the given year should always match in publishDate
+                $altqueryparts[] = 'publishDate:'.$fieldref['date'];
                 $altqueryparts[] = $fieldsToSearch;
                 $altqueryparts[] = 'format:(Book OR "Serial Volume")';
                 // Assemble the query parts and filter out current record:

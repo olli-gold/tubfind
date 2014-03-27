@@ -37,17 +37,28 @@ function checkPrintStatuses() {
                                 $('#printed' + res.originalId + "-volume").empty().append('<a href="'+url+'/Record/'+res.id+'">'+res.title+' '+res.volume+'.'+res.date+'</a>');
                             }
                             $('#printed' + res.originalId + "-volume").show();
-/*
-                            $('#callnumber' + res.originalId).empty().append(res.signature);
-                            $('#callnumber' + res.originalId).show();
-                            $('#callnumber' + res.originalId + 'label').show();
+                        }
+                        // if the ID is null, set availability information from EZB, if possible
+                        else {
+                            if (res.signature) {
+                                $('#printed' + res.originalId + "-availability").empty().append(vufindString.alsoPrinted);
+                                $('#printed' + res.originalId + "-availability").show();
+                                if (res.edition) {
+                                    $('#printed' + res.originalId + "-volume").empty().append(res.edition);
+                                    $('#printed' + res.originalId + "-volume").show();
+                                }
+                                $('#callnumber' + res.originalId).empty().append(res.signature);
+                                $('#callnumber' + res.originalId).show();
+                                $('#callnumber' + res.originalId + 'label').show();
+                            }
+                            /*
                             $('#location' + res.originalId).empty().append(res.location);
                             $('#location' + res.originalId).show();
                             $('#location' + res.originalId + 'label').show();
-*/
-                            // show the whole box
-                            $('#printed' + res.originalId).show();
+                            */
                         }
+                        // show the whole box
+                        $('#printed' + res.originalId).show();
                     });
                 }
             }

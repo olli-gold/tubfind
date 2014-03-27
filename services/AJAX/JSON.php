@@ -1258,6 +1258,13 @@ class JSON extends Action
             //print_r($printedEbookRef);
             return $this->output(array($printedEbookRef), JSON::STATUS_OK);
         }
+        if ($printedSample) {
+            $gbvid = array('id' => null);
+            // if getPrintedInformation() returns null, array_merge will fail (never merge arrays with null!)
+            // so if its not set, build an empty array now.
+            $printedRef = array_merge($gbvid, $originalId, $printedSample, $artFieldedRef);
+            return $this->output(array($printedRef), JSON::STATUS_OK);
+        }
 
         return $this->output(
                 translate("No results found!"), JSON::STATUS_ERROR
