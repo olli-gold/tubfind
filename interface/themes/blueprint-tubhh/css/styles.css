@@ -1632,3 +1632,8 @@ div.debug code {
     padding:0 .5em .5em 20px;
     margin-right:1em;
 }
+
+.printedSample {
+    display: block;
+    clear: both;
+}
