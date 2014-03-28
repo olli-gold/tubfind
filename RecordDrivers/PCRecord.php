@@ -237,8 +237,16 @@ class PCRecord extends IndexRecord
     }
 
     private function _getPrintedInformationFromEZB() {
-        $isil = 'DE-830';
-        $zdbFullUrl = 'http://services.d-nb.de/fize-service/gvr/full.xml?';
+        global $configArray;
+
+        $isil = isset($configArray['EZB']['isil']) ?
+            $configArray['EZB']['isil'] :
+            null;
+        $zdbFullUrl = isset($configArray['EZB']['zdbFullUrl']) ?
+            $configArray['EZB']['zdbFullUrl'] :
+            'http://services.d-nb.de/fize-service/gvr/full.xml?';
+
+        if ($isil === null) return false;
         $item = null;
         /* we need a new query per ISSN */
         foreach ($this->fields['issn'] as $issn) {
