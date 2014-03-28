@@ -305,6 +305,33 @@ class PCRecord extends IndexRecord
                         $item['signature'] = $docs->item($b)->getElementsByTagName('Signature')->item(0)->nodeValue;
                         $item['period'] = $docs->item($b)->getElementsByTagName('Period')->item(0)->nodeValue;
                         $item['status'] = $status;
+
+                        // Try to fetch the PPN of the Journal
+                        unset($_SESSION['shards']);
+                        $_SESSION['shards'] = array();
+                        $_SESSION['shards'][] = 'GBV Central';
+                        $_SESSION['shards'][] = 'TUBdok';
+                        $_SESSION['shards'][] = 'wwwtub';
+
+                        $index = $this->getIndexEngine();
+
+                        $queryparts = array();
+
+                        $queryparts[] = 'issn:'.$params['issn'];
+                        $queryparts[] = 'format:Journal';
+                        // Assemble the query parts and filter out current record:
+                        $query = implode(" AND ", $queryparts);
+                        $query = '('.$query.')';
+
+                        // Perform the search and return either results or an error:
+                        $this->setHiddenFilters();
+
+                        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST, false, false, false);
+
+                        unset($_SESSION['shards']);
+                        $_SESSION['shards'] = array();
+                        $_SESSION['shards'][] = 'Primo Central';
+                        if ($result['response']['numFound'] > 0) $item['jid'] = $result['response']['docs'][0]['id'];
                     }
                 }
             }

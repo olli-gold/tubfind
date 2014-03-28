@@ -58,6 +58,9 @@
     {if $printed.status == "3"}
         <span id="printed{$summId|escape}">{translate text='Maybe also available printed'}</span>
     {/if}
+    {if !empty($printed.jid)}
+        <a href="{$url}/Record/{$printed.jid}">{$printed.jtitle}</a>
+    {/if}
     {if !empty($printed.signature)}
         <br/><span id="signatur{$summId|escape}label">{translate text='Call Number'}: {$printed.signature|escape}</span>
     {/if}

@@ -44,7 +44,12 @@ function checkPrintStatuses() {
                                 $('#printed' + res.originalId + "-availability").empty().append(vufindString.alsoPrinted);
                                 $('#printed' + res.originalId + "-availability").show();
                                 if (res.edition) {
-                                    $('#printed' + res.originalId + "-volume").empty().append(res.edition);
+                                    if (res.jid) {
+                                        $('#printed' + res.originalId + "-volume").empty().append('<a href="'+url+'/Record/'+res.jid+'">'+res.edition+'</a><br/>');
+                                    }
+                                    else {
+                                        $('#printed' + res.originalId + "-volume").empty().append(res.edition);
+                                    }
                                     $('#printed' + res.originalId + "-volume").show();
                                 }
                                 $('#callnumber' + res.originalId).empty().append(res.signature);
