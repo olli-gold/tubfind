@@ -1,5 +1,5 @@
 {* Main Listing *}
-<div class="span-18">
+<div class="{if $tab == "all"}resultsetBooks{else}{if $tab == "primo"}resultsetArticles{else}span-18{/if}{/if}">
     {if $topRecommendations}
     {foreach from=$topRecommendations item="recommendations"}
       {include file=$recommendations}
@@ -14,7 +14,7 @@
       <div class="correction">
         {translate text='spell_suggest'}:
         {foreach from=$spellingSuggestions item=details key=term name=termLoop}
-          <br/>{$term|escape} &raquo; {foreach from=$details.suggestions item=data key=word name=suggestLoop}<a href="{$data.replace_url|escape}">{$word|escape}</a>{if $data.expand_url} <a href="{$data.expand_url|escape}"><img src="{$path}/images/silk/expand.png" alt="{translate text='spell_expand_alt'}"/></a> {/if}{if !$smarty.foreach.suggestLoop.last}, {/if}{/foreach}
+          <br/><img src="{$path}/images/silk/expand.png" alt="{translate text='spell_expand_alt'}"/> {$term|escape} &raquo; {foreach from=$details.suggestions item=data key=word name=suggestLoop}<a href="{$data.replace_url|escape}">{$word|escape}</a>{if !$smarty.foreach.suggestLoop.last}, {/if}{/foreach}
         {/foreach}
       </div>
       {/if}

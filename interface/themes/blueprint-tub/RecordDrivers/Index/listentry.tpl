@@ -40,6 +40,77 @@
       {/foreach}
     </div>
 
+    <div class="span-13 last">
+        {assign var="electronicResource" value="0"}
+        {assign  var="showAvail" value="true"}
+        {assign var="showCallNumber" value="1"}
+        {assign var="listAjaxStatus" value="1"}
+        {foreach from=$listFormats item=format}  {*$format=="eBook" ||*}
+            {if $format=="Serial" || $format=="Journal" || $format=="Electronic" || $format=="Aufsätze" || $format=="eBook" || $format=="Elektronische Aufsätze"}
+                {*assign var="showAvail" value="false"*}
+            {/if}
+            {if $format=="Electronic" || $format=="eBook" || $format=="Elektronische Aufsätze" || $format=="Elektronische Ressource" || $format=="electronic Article" }
+                {assign var="summInterlibraryLoan" value="0"}
+                {assign var="electronicResource" value="1"}
+            {/if}
+            {if $format=="Elektronische Aufsätze"}
+                {assign var="showAvail" value="false"}
+                {assign var="showAllLinks" value="1"}
+            {/if}
+            {if $format=="Elektronische Ressource"}
+                {assign var="showCallNumber" value="0"}
+            {/if}
+            {if $format=="Book"}
+                {assign var="showAcqProp" value="1"}
+            {/if}
+        {/foreach}
+    {if $showAvail=="true" && $summInterlibraryLoan==0}
+      {if $listAjaxStatus}
+        {if $showCallNumber == "1"}
+            <span id="callnumber{$listId|escape}label">{translate text='Call Number'}:</span> <span class="ajax_availability hide" id="callnumber{$listId|escape}">{translate text='Loading'}...</span><br/>
+        {/if}
+        <span id="location{$listId|escape}label">{translate text='Located'}:</span> <span class="ajax_availability hide" id="location{$listId|escape}">{translate text='Loading'}...</span>
+      {elseif !empty($listCallNo)}
+        <span id="callnumber{$listId|escape}label">{translate text='Call Number'}: {$listCallNo|escape}</span>
+      {/if}
+    {/if}
+
+      {if $nlurls}
+          {*<br/>{translate text="Available via German National license."}*}
+          {foreach from=$nlurls key=recordurl item=urldesc}
+              <br/>{translate text="NL"}: <a href="{$recordurl}">{$urldesc}</a>
+          {/foreach}
+      {/if}
+      {if $summOpenUrl}
+          <br/>
+          {include file="Search/openurl.tpl" openUrl=$summOpenUrl}
+      {/if}
+
+      {if !empty($summURLs) && $electronicResource == "1" && $showAllLinks == "1" && !$nlurls && $showCallNumber == "1"}
+        {foreach from=$summURLs key=recordurl item=urldesc}
+          <br/><a href="{$recordurl|escape}" class="fulltext" target="new">
+          {*{if $recordurl == $urldesc}{translate text='Get full text'}{else}*}
+          {$urldesc|escape}
+          {*/if*}
+          </a>
+        {/foreach}
+      {/if}
+
+      {*if !$summOpenUrl && empty($summURLs)*}
+      {if $showAvail=="true" && $summInterlibraryLoan==0 && $electronicResource != "1"}
+          <span class="ajax_availability hide" id="status{$listId|escape}">{translate text='Loading'}...</span>
+      {/if}
+
+      {if $summInterlibraryLoan=="1"}
+          <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$listId}" target="_blank">{translate text="interlibrary loan"}</a></span>
+          {if $showAcqProp=="1"}
+              <span> | <a href="{translate text="Erwerbungsvorschlag_Url"}{$summOpenUrl|escape}&gvk_ppn={$summId}" target="_blank">{translate text="Erwerbungsvorschlag"}</a></span>
+          {/if}
+      {/if}
+
+    </div>
+
+
   {if $listEditAllowed}
     <div class="floatright">
       <a href="{$url}/MyResearch/Edit?id={$listId|escape:"url"}{if !is_null($listSelected)}&amp;list_id={$listSelected|escape:"url"}{/if}" class="edit tool">{translate text='Edit'}</a>

@@ -21,8 +21,10 @@
         <a {if $tab == 'Excerpt'} class="ui-btn-active"{/if} rel="external" href="{$path}/Record/{$id|escape:"url"}/Excerpt">{translate text='Excerpt'}</a>
       </li>
     {/if}
+<!--
     <li>
       <a {if $tab == 'UserComments'} class="ui-btn-active"{/if} rel="external" href="{$path}/Record/{$id|escape:"url"}/UserComments">{translate text='Comments'}</a>
-    </li>    
+    </li>
+-->
   </ul>    
 </div>

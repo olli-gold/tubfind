@@ -30,8 +30,8 @@
     {* Show the "Tag this" button only on Record/Home or Record/Holdings *} 
     {if $action == 'Home' || $action == 'Holdings'}
       <div data-role="controlgroup">
-        <a href="{$path}/Record/{$id}/Save" data-role="button" rel="external">{translate text="Add to favorites"}</a>
-        <a href="{$path}/Record/{$id}/AddTag" data-role="button" rel="external">{translate text="Add Tag"}</a>
+<!--        <a href="{$path}/Record/{$id}/Save" data-role="button" rel="external">{translate text="Add to favorites"}</a>-->
+<!--        <a href="{$path}/Record/{$id}/AddTag" data-role="button" rel="external">{translate text="Add Tag"}</a>-->
       </div>
     {/if}
   </div>    

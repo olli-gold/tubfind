@@ -1160,5 +1160,116 @@ class JSON extends Action
     {
         return str_replace('.', '', $_SERVER['REMOTE_ADDR']);
     }
+
+    public function getPrintedStatus()
+    {
+        require_once 'sys/EZB.php';
+        require_once 'RecordDrivers/PCRecord.php';
+        global $interface;
+        global $configArray;
+
+        $url = null;
+        $core = null;
+        $printedSample = array();
+        if (array_key_exists('id', $_REQUEST)) {
+            if (substr($_REQUEST['id'], 0, 2) == 'PC') {
+                $url = isset($configArray['IndexShards']['Primo Central']) ? 'http://'.$configArray['IndexShards']['Primo Central'] : null;
+                $url = str_replace('/biblio', '', $url);
+                $core = 'biblio';
+            }
+
+            // Setup Search Engine Connection
+            $db = ConnectionManager::connectToIndex(null, $core, $url);
+
+            // Retrieve the record from the index
+            if (!($record = $db->getRecord($_REQUEST['id']))) {
+                PEAR::raiseError(new PEAR_Error('Record Does Not Exist'));
+            }
+            $originalId = array('originalId' => $_REQUEST['id']);
+            $recordDriver = RecordDriverFactory::initRecordDriver($record);
+            $artFieldedRef = $recordDriver->getArticleFieldedReference();
+            $bookFieldedRef = $recordDriver->getEbookFieldedReference();
+
+            $printedSample = $recordDriver->getPrintedSample();
+
+            // Find printed articles
+            $articleVol = $recordDriver->searchArticleVolume($artFieldedRef);
+            // Find printed ebook
+            $printedEbook = $recordDriver->searchPrintedEbook($bookFieldedRef);
+        }
+        else {
+            $originalId = array('originalId' => null);
+            $artFieldedRef = array();
+            $bookFieldedRef = array();
+            /* Parameterverarbeitung */
+            $artFieldedRef['title'] = $_REQUEST['rft_jtitle'];
+            $bookFieldedRef['title'] = $_REQUEST['rft_btitle'];
+            $bookFieldedRef['isbn'] = array();
+            $bookFieldedRef['isbn'][] = $_REQUEST['rft_isbn'];
+            if ($_REQUEST['rft_eisbn']) $bookFieldedRef['isbn'][] = $_REQUEST['rft_eisbn'];
+            $artFieldedRef['issn'] = array();
+            $artFieldedRef['issn'][] = $_REQUEST['rft_issn'];
+            if ($_REQUEST['rft_eissn']) $artFieldedRef['issn'][] = $_REQUEST['rft_eissn'];
+            $artFieldedRef['volume'] = $_REQUEST['rft_volume'];
+            $artFieldedRef['issue'] = $_REQUEST['rft_issue'];
+            $artFieldedRef['date'] = $_REQUEST['rft_date'];
+            $artFieldedRef['service'] = 'external';
+            $bookFieldedRef['service'] = 'external';
+
+            $p = array();
+            $p['issn'] = $_REQUEST['rft_issn'];
+            $p['eissn'] = $_REQUEST['rft_eissn'];
+            $p['format'] = $_REQUEST['rft_genre'];
+            $p['date'] = $_REQUEST['rft_date'];
+            $p['jtitle'] = $_REQUEST['rft_jtitle'];
+            $p['atitle'] = $_REQUEST['rft_atitle'];
+            $p['volume'] = $_REQUEST['rft_volume'];
+            $p['issue'] = $_REQUEST['rft_issue'];
+            $p['spage'] = $_REQUEST['rft_spage'];
+            $p['epage'] = $_REQUEST['rft_epage'];
+
+            $ezb = new EZB($p);
+            $printedSample = $ezb->getPrintedInformation();
+
+            $recordDriver = new PCRecord();
+
+            // Find printed articles
+            $articleVol = $recordDriver->searchArticleVolume($artFieldedRef);
+            // Find printed ebook
+            $printedEbook = $recordDriver->searchPrintedEbook($bookFieldedRef);
+        }
+
+        if ($articleVol) {
+            $gbvid = array('id' => $articleVol['docs'][0]['id']);
+            // if getPrintedInformation() returns null, array_merge will fail (never merge arrays with null!)
+            // so if its not set, build an empty array now.
+            if (!$printedSample) $printedSample = array();
+            $articleVolRef = array_merge($gbvid, $originalId, $printedSample, $artFieldedRef);
+            return $this->output(array($articleVolRef), JSON::STATUS_OK);
+        }
+        if ($printedEbook) {
+            $gbvid = array('id' => $printedEbook['docs'][0]['id']);
+            if ($printedEbook['docs'][0]['id']) {
+                $gbvid['status'] = "5";
+                $gbvid['gbvtitle'] = $printedEbook['docs'][0]['title'][0];
+                $gbvid['gbvdate'] = $printedEbook['docs'][0]['publishDate'][0];
+            }
+            $printedEbookRef = array_merge($gbvid, $originalId, $bookFieldedRef);
+            //print_r($printedEbookRef);
+            return $this->output(array($printedEbookRef), JSON::STATUS_OK);
+        }
+        if ($printedSample) {
+            $gbvid = array('id' => null);
+            // if getPrintedInformation() returns null, array_merge will fail (never merge arrays with null!)
+            // so if its not set, build an empty array now.
+            $printedRef = array_merge($gbvid, $originalId, $printedSample, $artFieldedRef);
+            return $this->output(array($printedRef), JSON::STATUS_OK);
+        }
+
+        return $this->output(
+                translate("No results found!"), JSON::STATUS_ERROR
+            );
+    }
+
 }
 ?>

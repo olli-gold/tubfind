@@ -27,6 +27,7 @@
  */
 require_once 'services/MyResearch/lib/Resource.php';
 require_once 'sys/Pager.php';
+require_once 'RecordDrivers/IndexRecord.php';
 
 /**
  * FavoriteHandler Class
@@ -93,23 +94,70 @@ class FavoriteHandler
     {
         global $interface;
 
+        // Setup Search Engine Connection
+        $db = ConnectionManager::connectToIndex();
+
+
+        // Paging variables
+        $page = 1;
+        if ($_REQUEST['page']) $page = $_REQUEST['page'];
+        $perPage = 20;
+        $startRecord = (($page - 1) * $perPage) + 1;
+        $summary = array('startRecord' => $startRecord, 'perPage' => $perPage, 'page' => $page, 'resultTotal' => count($this->_ids['VuFind']));
+        // Last record needs more care
+        if ($summary['resultTotal'] < $perPage) {
+            // There are less records returned then one page, use total results
+            $summary['endRecord'] = $summary['resultTotal'];
+        } else if (($page * $perPage) > $summary['resultTotal']) {
+            // The end of the current page runs past the last record, use total
+            // results
+            $summary['endRecord'] = $summary['resultTotal'];
+        } else {
+            // Otherwise use the last record on this page
+            $summary['endRecord'] = $page * $perPage;
+        }
+
         // Initialise from the current search globals
         $searchObject = SearchObjectFactory::initSearchObject();
         $searchObject->init();
         $interface->assign('sortList', $searchObject->getSortList());
 
+        $html = array();
+
         // Retrieve records from index (currently, only Solr IDs supported):
         if (array_key_exists('VuFind', $this->_ids)
             && count($this->_ids['VuFind']) > 0
         ) {
+            $counter = $startRecord;
+#            foreach ($this->_ids['VuFind'] as $idx => $cid) {
+                while ($counter <= $summary['endRecord']) {
+                    if ($record = $db->getRecord($this->_ids['VuFind'][$counter])) {
+                        $rec = RecordDriverFactory::initRecordDriver($record);
+                        $html[] = $interface->fetch(
+                            $rec->getListEntry($this->_user, $this->_listId, $this->_allowEdit)
+                        );
+                    }
+                    else {
+                        $html[] = $interface->fetch(
+                            IndexRecord::getEmptyListEntry($this->_ids['VuFind'][$counter], $this->_user, $this->_listId, $this->_allowEdit)
+                        );
+                    }
+                    $counter++;
+                }
+#            }
+            $interface->assign('resourceList', $html);
+
+/*
             if (!$searchObject->setQueryIDs($this->_ids['VuFind'])) {
                 $this->infoMsg = 'too_many_favorites';
             }
             $result = $searchObject->processSearch();
+
             $resourceList = $searchObject->getResultListHTML(
                 $this->_user, $this->_listId, $this->_allowEdit
             );
             $interface->assign('resourceList', $resourceList);
+*/
         } else {
             // If no records are displayed, $allowListEdit will be missing;
             // make sure it gets assigned so the list can be edited:
@@ -117,7 +165,7 @@ class FavoriteHandler
         }
 
         // Set up paging of list contents:
-        $summary = $searchObject->getResultSummary();
+        //$summary = $searchObject->getResultSummary();
         $interface->assign('recordCount', $summary['resultTotal']);
         $interface->assign('recordStart', $summary['startRecord']);
         $interface->assign('recordEnd',   $summary['endRecord']);

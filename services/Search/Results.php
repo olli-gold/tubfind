@@ -65,6 +65,31 @@ class Results extends Action
             $interface->assign('proxy', $configArray['EZproxy']['host']);
         }
 
+        $old_shards = $_SESSION['shards'];
+        $old_shard = $_REQUEST['shard'];
+        unset($_SESSION['shards']);
+        unset($_REQUEST['shard']);
+        $_REQUEST['shard'][] = 'GBV Central';
+        $_REQUEST['shard'][] = 'TUBdok';
+        $_REQUEST['shard'][] = 'wwwtub';
+        $_SESSION['shards'][] = 'GBV Central';
+        $_SESSION['shards'][] = 'TUBdok';
+        $_SESSION['shards'][] = 'wwwtub';
+
+        // Initialise from the current search globals
+        $spellingObject = SearchObjectFactory::initSearchObject();
+        $spellingObject->init();
+        $spellingObject->processSearch(true, true);
+
+        $interface->assign(
+            'spellingSuggestions', $spellingObject->getSpellingSuggestions()
+        );
+
+        unset($_SESSION['shards']);
+        unset($_REQUEST['shard']);
+        $_SESSION['shards'] = $old_shards;
+        $_REQUEST['shard'] = $old_shard;
+
         // Initialise from the current search globals
         $searchObject = SearchObjectFactory::initSearchObject();
         $searchObject->init();
@@ -140,9 +165,7 @@ class Results extends Action
         //   Those we can construct AFTER the search is executed, but we need
         //   no matter whether there were any results
         $interface->assign('qtime', round($searchObject->getQuerySpeed(), 2));
-        $interface->assign(
-            'spellingSuggestions', $searchObject->getSpellingSuggestions()
-        );
+
         $interface->assign('lookfor', $displayQuery);
         $interface->assign('searchType', $searchObject->getSearchType());
         // Will assign null for an advanced search
@@ -209,7 +232,7 @@ class Results extends Action
             $interface->assign('recordSet', $searchObject->getResultRecordHTML());
 
             // Setup Display
-            
+
             //Get view & load template
             $currentView  = $searchObject->getView();
             $interface->assign('subpage', 'Search/list-' . $currentView .'.tpl');
@@ -217,6 +240,7 @@ class Results extends Action
 
             // Process Paging
             $link = $searchObject->renderLinkPageTemplate();
+            if ($summary['resultTotal'] > 200 && in_array('Primo Central', $_SESSION['shards']) === true) $summary['resultTotal'] = 200;
             $options = array('totalItems' => $summary['resultTotal'],
                              'fileName'   => $link,
                              'perPage'    => $summary['perPage']);

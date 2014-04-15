@@ -21,9 +21,9 @@
 require_once 'RecordDrivers/IndexRecord.php';
 
 /**
- * Website Record Driver
+ * TUBdok Record Driver
  *
- * This class is designed to handle Website records.  Much of its functionality
+ * This class is designed to handle TUBdok records.  Much of its functionality
  * is inherited from the default index-based driver.
  */
 class TubdokRecord extends IndexRecord
@@ -36,7 +36,9 @@ class TubdokRecord extends IndexRecord
 
         $interface->assign('summDocId', $this->getDocumentID());
         $interface->assign('summFileUrl', $this->getFileUrl());
+        $interface->assign('summFiles', $this->getFiles());
         $interface->assign('summDocUrl', $this->getDocUrl());
+        $interface->assign('summFileName', $this->getFileName());
         $interface->assign('summTeaser', $this->getTeaser());
         $interface->assign('summDate', $this->getPublicationDates());
         return 'RecordDrivers/TUBdok/result.tpl';
@@ -54,6 +56,15 @@ class TubdokRecord extends IndexRecord
             $this->fields['docid'] : '';
     }
 
+    protected function getFiles() {
+        $result = array();
+        $elements = $this->getFileUrl();
+        foreach ($elements as $url) {
+            $result[basename($url)] = $url;
+        }
+        return $result;
+    }
+
     /**
      * Get the URL for the records file.
      *
@@ -62,8 +73,23 @@ class TubdokRecord extends IndexRecord
      */
     protected function getFileUrl()
     {
-        return isset($this->fields['docurl']) ?
-            $this->fields['docurl'] : '';
+        return isset($this->fields['docurl_str_mv']) ?
+            $this->fields['docurl_str_mv'] : '';
+    }
+
+    /**
+     * Get the name for the records file.
+     *
+     * @access  protected
+     * @return  string
+     */
+    protected function getFileName()
+    {
+        $result = array();
+        foreach ($this->fields['docurl_str_mv'] as $file) {
+            $result[] = basename($file);
+        }
+        return $result;
     }
 
     /** 

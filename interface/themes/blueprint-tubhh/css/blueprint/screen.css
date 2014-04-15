@@ -265,3 +265,68 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 .clearfix:after, .container:after {content:"\0020";display:block;height:0;clear:both;visibility:hidden;overflow:hidden;}
 .clearfix, .container {display:block;}
 .clear {clear:both;}
+
+.facetTitleImg,
+.facetCheckbox {
+    display: block;	
+    border-radius: 3px;
+    border: 1px solid gray;
+}
+
+.facetTitleImg {
+    float: left;
+    background-color: white;
+    width: 9px;
+    height: 9px;
+    margin: 3px 4px 3px 3px;
+}
+/*
+.facet {
+    display: block;
+    border-left: 3px solid #fff;
+    border-bottom: 1px solid #e3e3e3;
+    overflow: hidden;
+    margin: 0px;
+    height: auto;
+}
+
+.facetHoverJS {
+}
+
+.facetHoverCSS {
+    max-height: 25px;
+    transition: max-height 0.6s ease-in;
+    -moz-transition: max-height 0.6s ease-in;
+    -webkit-transition: max-height 0.6s ease-in;
+    -o-transition: max-height 0.6s ease-in;
+}
+
+.facet:hover,
+.facet:active,
+.facet:focus {
+    border-left-color: #cdcdcd;
+    background-color: #f6f6f6 !important;
+}
+
+.facetHoverCSS:hover,
+.facetHoverCSS:active,
+.facetHoverCSS:focus {
+    max-height: 100px;
+}
+
+.facet dd { 
+    border-bottom: none;
+    min-height: 19px;
+    padding: 4px 0px 2px;
+}
+*/
+.hidden { 
+    display: none;
+}
+
+input.checkbox_ui {
+    float: right;
+    margin-top: 3em;
+    margin-left: -1em;
+    margin-right: .4em;
+}

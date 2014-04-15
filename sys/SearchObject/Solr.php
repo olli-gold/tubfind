@@ -50,7 +50,7 @@ class SearchObject_Solr extends SearchObject_Base
     protected $facetLimit = 30;
     protected $facetOffset = null;
     protected $facetPrefix = null;
-    protected $facetSort = null;
+    protected $facetSort = 'index';
     protected $sortedByIndex = null;
 
     // Parameter added by Frank Morgner
@@ -71,6 +71,12 @@ class SearchObject_Solr extends SearchObject_Base
     // OTHER VARIABLES
     // Index
     protected $indexEngine = null;
+    // Authorized Mode
+    protected $authorizedMode = false;
+    protected $authorizedModeField = null;
+    protected $authorizedModeValue = null;
+    protected $authorizedIPRange = null;
+    protected $authorizedModeRemoveDefaultFilter = null;
     // Facets information
     protected $allFacetSettings = array();    // loaded from facets.ini
     // Optional, used on author screen for example
@@ -78,6 +84,7 @@ class SearchObject_Solr extends SearchObject_Base
     // Used to pass hidden filter queries to Solr
     protected $hiddenFilters = array();
     protected $defaultFilter = array();
+    protected $defFilterFields = array();
     // Multiselect facets
     protected $multiSelectFacets = array();
 
@@ -111,7 +118,9 @@ class SearchObject_Solr extends SearchObject_Base
         $this->indexEngine = ConnectionManager::connectToIndex();
 
         // Get default facet settings
-        $this->allFacetSettings = getExtraConfigArray('facets');
+        $facetsIniName = 'facets';
+        if (in_array('Primo Central', $_SESSION['shards']) === true || in_array('GBV Primo Bridged', $_SESSION['shards']) === true) $facetsIniName = 'facets_primocentral';
+        $this->allFacetSettings = getExtraConfigArray($facetsIniName);
         $this->facetConfig = array();
         $facetLimit = $this->getFacetSetting('Results_Settings', 'facet_limit');
         $this->multiSelectFacets = explode(',', $this->getFacetSetting(
@@ -141,7 +150,9 @@ class SearchObject_Solr extends SearchObject_Base
         // End
 
         // Load search preferences:
-        $searchSettings = getExtraConfigArray('searches');
+        $iniName = 'searches';
+        if (in_array('Primo Central', $_SESSION['shards']) === true || in_array('GBV Primo Bridged', $_SESSION['shards']) === true) $iniName = 'searches_primocentral';
+        $searchSettings = getExtraConfigArray($iniName);
         if (isset($searchSettings['General']['default_handler'])) {
             $this->defaultIndex = $searchSettings['General']['default_handler'];
         }
@@ -158,10 +169,22 @@ class SearchObject_Solr extends SearchObject_Base
             $this->retainFiltersByDefault
                 = $searchSettings['General']['retain_filters_by_default'];
         }
+        if (isset($searchSettings['AuthorizedMode']['enabled'])) {
+            $this->authorizedMode = $searchSettings['AuthorizedMode']['enabled'];
+            $this->authorizedModeField = $searchSettings['AuthorizedMode']['field'];
+            $this->authorizedModeValue = $searchSettings['AuthorizedMode']['value'];
+            $this->authorizedIPRange = $searchSettings['AuthorizedMode']['ipRange'];
+            $this->authorizedModeRemoveDefaultFilter = $searchSettings['AuthorizedMode']['removeDefaultFilter'];
+        }
         if (isset($searchSettings['DefaultSortingByType'])
             && is_array($searchSettings['DefaultSortingByType'])
         ) {
             $this->defaultSortByType = $searchSettings['DefaultSortingByType'];
+        }
+        if (isset($searchSettings['DefaultFilters'])) {
+            foreach ($searchSettings['DefaultFilters'] as $defFilter) {
+                $this->defaultFilter[] = $defFilter;
+            }
         }
         if (isset($searchSettings['HiddenFilters'])) {
             foreach ($searchSettings['HiddenFilters'] as $field => $subfields) {
@@ -173,9 +196,9 @@ class SearchObject_Solr extends SearchObject_Base
                 $this->addHiddenFilter($rawFilter);
             }
         }
-        if (isset($searchSettings['DefaultFilters'])) {
-            foreach ($searchSettings['DefaultFilters'] as $rawFilter) {
-                $this->defaultFilter[] = $rawFilter;
+        if (isset($searchSettings['DefaultFilterFields'])) {
+            foreach ($searchSettings['DefaultFilterFields'] as $defFilterField) {
+                $this->defFilterFields[] = $defFilterField;
             }
         }
         if (isset($searchSettings['Basic_Searches'])) {
@@ -283,10 +306,8 @@ class SearchObject_Solr extends SearchObject_Base
         $this->initFilters();
         $this->initLimit();
 
-        if ($_SESSION['defaultFilters'] === 1) {
-            foreach ($this->defaultFilter as $rawFilter) {
-                $this->addFilter($rawFilter);
-            }
+        foreach ($this->defaultFilter as $rawFilter) {
+            $this->addHiddenFilter($rawFilter);
         }
         //********************
         // Basic Search logic
@@ -433,6 +454,29 @@ class SearchObject_Solr extends SearchObject_Base
         );
 
         return true;
+    }
+
+    /**
+     * Get information on the current state of the boolean checkbox facets.
+     *
+     * @return array
+     * @access public
+     */
+    public function getCheckboxFacets()
+    {
+        // Grab checkbox facet details using the standard method:
+        $facets = parent::getCheckboxFacets();
+        // Make always visible facets configurable via facets.ini
+        $alwaysVisible = $this->getFacetSetting('AlwaysVisible');
+
+        foreach ($facets as $k => $f) {
+            if (in_array($f['filter'], $alwaysVisible) === true) {
+                $facets[$k]['alwaysVisible'] = true;
+            }
+        }
+
+        // Return modified list:
+        return $facets;
     }
 
     /**
@@ -1119,10 +1163,35 @@ class SearchObject_Solr extends SearchObject_Base
         }
 
         if ($clean === true) {
+
+        $removeDefaultFilters = array();
+
+        $authorized = false;
+        if (substr($_SERVER['REMOTE_ADDR'], 0, strlen($this->authorizedIPRange)) == $this->authorizedIPRange && $this->authorizedMode != false && (($this->authorizedModeField && $this->authorizedModeValue) || $this->authorizedModeRemoveDefaultFilter)) {
+            $authorized = true;
+        }
+        if ($authorized === true) {
+            if ($this->authorizedModeField && $this->authorizedModeValue) {
+                $this->addHiddenFilter($this->authorizedModeField.':'.$this->authorizedModeValue);
+            }
+            else if ($this->authorizedModeRemoveDefaultFilter) {
+                $removeDefaultFilters[] = $this->authorizedModeRemoveDefaultFilter;
+            }
+        }
+
         // Define Filter Query
         $filterQuery = $this->hiddenFilters;
         $orFilterQuery = array();
+
+        if (array_key_exists('localonly', $_REQUEST) === true && $_REQUEST['localonly'] == "0") {
+            $this->addFilter('showAll:true');
+        }
+
         foreach ($this->filterList as $field => $filter) {
+            if (in_array($field, $this->defFilterFields) === true) {
+                $removeDefaultFilters[] = array_search($field, $this->defFilterFields);
+                continue;
+            }
             foreach ($filter as $value) {
                 // Special case -- allow trailing wildcards and ranges:
                 if (substr($value, -1) == '*'
@@ -1140,6 +1209,16 @@ class SearchObject_Solr extends SearchObject_Base
                         $orFilterQuery[$field][] = "$field:\"$value\"";
                     } else {
                         $filterQuery[] = "$field:\"$value\"";
+                    }
+                }
+            }
+        }
+        if (count($removeDefaultFilters) > 0) {
+            foreach ($this->defaultFilter as $defKey => $defValue) {
+                if (in_array($defKey, $removeDefaultFilters)) {
+                    $key = array_search($defValue, $filterQuery);
+                    if ($key !== false) {
+                        $new = array_splice($filterQuery, $key, 1);
                     }
                 }
             }

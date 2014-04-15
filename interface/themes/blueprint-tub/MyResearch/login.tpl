@@ -16,5 +16,6 @@
     {if $comment}<input type="hidden" name="comment" name="comment" value="{$comment|escape:"html"}"/>{/if}
     <div class="clear"></div>
   </form>
+  {translate text="pw_forgot"}
   {if $authMethod == 'DB'}<a class="new_account" href="{$url}/MyResearch/Account">{translate text='Create New Account'}</a>{/if}
 {/if}

@@ -12,28 +12,29 @@
         {/if}
     {/if}
 
-    <li><a href="{$path}/Cart/Home">{translate text="Book Bag"}</a></li>
+    <li><a href="{$path}/Cart/Home">{translate text="Book Bag"} <span id="cartSize"></span></a></li>
 
     {if !$user}
         {if $authMethod == 'Shibboleth'}
             | <a href="{$sessionInitiator}">{translate text="Institutional Login"}</a>
         {else}
-            <li><a href="{$path}/MyResearch/Home">{translate text="Favorites"}</a></li>
+            <li><a href="{$path}/MyResearch/Home">{translate text="Library Account"}</a></li>
         {/if}
     {else}
-        <li><a  href="{$path}/MyResearch/Home">{translate text="Favorites"}</a> </li>
+        <li><a  href="{$path}/MyResearch/Home">{translate text="Library Account"}</a> </li>
         <li><a  href="{$path}/MyResearch/Logout">{translate text="Log Out"}</a> </li>
     {/if}
 </ul>
 </div>
 
-
+{*
 <div style="float:right;">
     <ul class="linklist">
-	<li>{translate text="opc_login"}</li> 
+	<!-- OPC Login <li>{translate text="opc_login"}</li>-->
+        <!--<li><a  href="{$path}/MyResearch/Home">{translate text="Library Account"}</a></li>
 	<li>{translate text="pw_change"}</li>
-	<li>{translate text="pw_forgot"}</li>
+	<li>{translate text="pw_forgot"}</li>-->
     </ul>
 </div>
-
+*}
 

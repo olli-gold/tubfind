@@ -1,4 +1,5 @@
 <div class="searchform">
+  <div id="searchFormContainer" style="float:left">
   {if $searchType == 'advanced'}
     <a href="{$path}/Search/Advanced?edit={$searchId}" class="small">{translate text="Edit this Advanced Search"}</a> |
     <a href="{$path}/Search/Advanced" class="small">{translate text="Start a new Advanced Search"}</a> |
@@ -15,7 +16,9 @@
       {/foreach}
       </select>
       <input type="submit" name="submit" value="{translate text="Find"}"/><br/>
-      <a href="{$path}/Search/Advanced" class="small">{translate text="Advanced"}</a> | 
+      {if $tab != "primo"}
+        <a href="{$path}/Search/Advanced" class="small">{translate text="Advanced"}</a> | 
+      {/if}
       <a href="{$path}/Search/History"  class="small">{translate text='Search History'}</a>  
       
 	
@@ -61,4 +64,8 @@
     </form>
     <script type="text/javascript">$("#searchForm_lookfor").focus()</script>
   {/if}
+  </div>
+  <div class="pwmenu" style="float:right;width:auto;">
+    {include file="pwmenu.tpl"}
+  </div>
 </div>

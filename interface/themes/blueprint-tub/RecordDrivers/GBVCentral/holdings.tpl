@@ -60,7 +60,7 @@
             {translate text=$location}
         </a>
     {else}
-        {if $location == "s. zugehörige Publikationen"}
+        {if $location == "s. zugehörige Publikationen" && $isMultipartChildren == 1}
             {assign var="nothingShown" value="1"}
             <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">
         {/if}
@@ -181,29 +181,30 @@
             {if $location != "Internet"}
                 {if $row.callnumber != "Einzelsign."}
                     {if $row.availability > 0}
-                        <span class="available">{translate text="Available"}</span> | 
+                        <span class="available">{translate text="Available"}</span> 
                         {if $row.loan_availability == "0"}
-                            <strong>{translate text="Only for presence use"}</strong>
+                            {translate text="Only for presence use"}
                         {/if}
-                        {if $location != "Magazin" }
+                        {if !$row.recallhref}
+                        {* if $location != "Magazin" *}
                             {* Take holding from reading room *}
                             {translate text="Please pick up this holding from its position in the reading room"}
                         {else}
                             {* order holdings from closed stack if there is a reservation link *}
-                            {if $row.recallhref}
+                            {*if $row.recallhref*}
                                 <a href="{$row.recallhref}" target="_blank">{translate text="Place a Hold"}</a>
-                            {/if}
+                                {* reserve holding via vufind *}
+                                <form method="POST" action="{$url}/Record/{$id|escape:"url"}/Hold">
+                                    <input type="hidden" name="hashKey" value="2c69dc8fa7eded228820509bd80a3bb2" />
+                                    {if $row.barcode != "1"}
+                                        <input type="hidden" name="item_id" value="http://uri.gbv.de/document/opac-de-830:bar:830${$row.barcode|replace:'-':''}" />
+                                    {else}
+                                        <input type="hidden" name="item_id" value="http://uri.gbv.de/document/opac-de-830:bar:830${$row.callnumber|replace:'-':''}" />
+                                    {/if}
+                                    <input type="submit" name="placeHold" value="{translate text="Place a VuFind-Hold"}" />
+                                </form>
+                            {*/if*}
                         {/if}
-                        {* TODO: reserve holding via vufind *}
-                        <form method="POST" action="{$url}/Record/{$id|escape:"url"}/Hold">
-                        <input type="hidden" name="hashKey" value="2c69dc8fa7eded228820509bd80a3bb2" />
-                        {if $row.barcode != "1"}
-                        <input type="hidden" name="item_id" value="http://uri.gbv.de/document/opac-de-830:bar:830${$row.barcode|replace:'-':''}" />
-                        {else}
-                        <input type="hidden" name="item_id" value="http://uri.gbv.de/document/opac-de-830:bar:830${$row.callnumber|replace:'-':''}" />
-                        {/if}
-                        <input type="submit" name="placeHold" value="{translate text="Place a VuFind-Hold"}" />
-                        </form>
                     {elseif $row.availability == 0}
                         <span class="checkedout">{translate text=$row.status|escape}</span>
                         {if $row.queue}
@@ -215,9 +216,17 @@
                             {/if}
                             {if $row.recallhref}
                                 <a href="{$row.recallhref}" target="_blank">{translate text="Recall This"}</a>
+                                {* reserve holding via vufind *}
+                                <form method="POST" action="{$url}/Record/{$id|escape:"url"}/Hold">
+                                    <input type="hidden" name="hashKey" value="2c69dc8fa7eded228820509bd80a3bb2" />
+                                    {if $row.barcode != "1"}
+                                        <input type="hidden" name="item_id" value="http://uri.gbv.de/document/opac-de-830:bar:830${$row.barcode|replace:'-':''}" />
+                                    {else}
+                                        <input type="hidden" name="item_id" value="http://uri.gbv.de/document/opac-de-830:bar:830${$row.callnumber|replace:'-':''}" />
+                                    {/if}
+                                    <input type="submit" name="placeHold" value="{translate text="Recall this via VuFind"}" />
+                                </form>
                             {/if}
-                            {* TODO: reserve holding via vufind.
-                            <a href="{$url}/Record/{$id|escape:"url"}/Hold">{translate text="Recall This"}</a> *}
                         {else}
                             {if $interlibraryLoan=="1"}
                                 <span><a href="http://gso.gbv.de/request/FORM/LOAN?PPN={$id}" target="_blank">{translate text="interlibrary loan"}</a></span>
@@ -230,7 +239,7 @@
                                 {/if}
                                 {if $nothingShown == "0" && $isMultipartChildren == 1}
                                     {assign var="nothingShown" value="1"}
-                                    <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
+                                    <span class="volLink"><a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a></span>
                                 {/if}
                             {/if}
                         {/if}
@@ -246,7 +255,7 @@
                             {/if}
                             {if $nothingShown == "0" && $isMultipartChildren == 1}
                                 {assign var="nothingShown" value="1"}
-                                <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
+                                <span class="volLink"><a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a></span>
                             {/if}
                         {/if}
                     {/if}
@@ -271,7 +280,7 @@
         {/if}
         {if $nothingShown == "0" && $isMultipartChildren == 1}
             {assign var="nothingShown" value="1"}
-            <a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a>
+            <span class="volLink"><a href="{$url}/Record/{$id|escape:"url"}/Multipart#tabnav">{translate text='See Tomes'}</a></span>
         {/if}
                 </td>
             </tr>

@@ -1,8 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{$userLang}" xml:lang="en">
-
 {* We should hide the top search bar and breadcrumbs in some contexts: *}
-{if ($module=="Search" || $module=="Summon" || $module=="WorldCat" || $module=="Authority") && $pageTemplate=="home.tpl"}
+{if ($module=="Search" || $module=="Summon" || $module=="WorldCat" || $module=="Authority" || $action=="Advanced") && ($pageTemplate=="home.tpl" || $pageTemplate=="advanced.tpl")}
     {assign var="showTopSearchBox" value=0}
     {assign var="showBreadcrumbs" value=0}
 {else}
@@ -37,7 +36,8 @@
 
     {* Load VuFind specific stylesheets *}
     {css media="screen, projection" filename="styles.css"}
-    {css media="screen" filename="print.css"}
+    {css media="print" filename="print.css"}
+    {css media="screen" filename="tub.css"}
     <!--[if lt IE 8]><link rel="stylesheet" href="{$url}/interface/themes/blueprint/css/ie.css" type="text/css" media="screen, projection"><![endif]-->
 
 	{* Load jQuery framework and plugins *}
@@ -55,12 +55,14 @@
     {* Load common javascript functions *}
     {js filename="common.js"}
     {js filename="dbr.js"}
+    {js filename="sfxbuttons.js"}
 
 
     {js filename="jquery.cookie.js"}
 
     {if $bookBag}
       <script type="text/javascript">
+      var url = "{$url}";
       var vufindString = Array();
       vufindString.bulk_noitems_advice = "{translate text="bulk_noitems_advice"}";
       vufindString.confirmEmpty = "{translate text="bookbag_confirm_empty"}";
@@ -72,6 +74,9 @@
       vufindString.bookbagMax = "{$bookBag->getMaxSize()}";
       vufindString.bookbagFull = "{translate text="bookbag_full_msg"}";
       vufindString.bookbagStatusFull = "{translate text="bookbag_full"}";
+      vufindString.alsoPrinted = "{translate text="Also available printed"}";
+      vufindString.maybeAlsoPrinted = "{translate text="Maybe also available printed"}";
+      vufindString.ebookAlsoPrinted = "{translate text="This eBook is also available printed"}";
       </script>
 
       {js filename="cart.js"}
@@ -100,9 +105,6 @@
           {/if}
         {/if}
 	  </div>
-          <div style="float:right;width:auto;margin-right:20px;margin-top:-100px;">
-            {include file="pwmenu.tpl"}
-          </div>
           <div class="clear"></div>
 	  {/if}
 
@@ -121,6 +123,7 @@
         <div id="toptab">
           <ul>
             {if $showtabs}
+<!--
             <li{if $tab == "gbv" || $tab == ""} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=GBV Central&tab=gbv&localonly=1">{translate text="GBV Discovery"}</a></li>
             <li{if $tab == "localonly"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=localbiblio&tab=localonly">{translate text="Lokaler Index"}</a></li>
             <li{if $tab == "wwwtub"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=wwwtub&tab=wwwtub">{translate text="TUBHH Webseiten"}</a></li>
@@ -128,6 +131,9 @@
             <li{if $tab == "all"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=GBV Central&shard[]=TUBdok&shard[]=wwwtub&tab=all&localonly=1">{translate text="Alles mit GBV Discovery"}</a></li>
             <li{if $tab == "nogbvall"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=localbiblio&shard[]=TUBdok&shard[]=wwwtub&tab=nogbvall">{translate text="Alles ohne GBV Discovery"}</a></li>
             <li{if $tab == "tuhh"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=TUHH Test&tab=tuhh">{translate text="Test: TUHH Webseiten"}</a></li>
+-->
+            <li class="books {if $tab == "all"}active{/if}"><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=GBV Central&shard[]=TUBdok&shard[]=wwwtub&tab=all">{translate text="Books and more"}</a></li>
+            <li class="articles {if $tab == "primo"}active{/if}"><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}&type=AllFields&view=list&shard[]=Primo Central&tab=primo">{translate text="Articles and more"}</a></li>
             {/if}
             {if $useSolr}
             <li{if $module != "WorldCat" && $module != "Summon"} class="active"{/if}><a href="{$url}/Search/Results?lookfor={$lookfor|escape:"url"}">{translate text="University Library"}</a></li>
@@ -139,7 +145,8 @@
             <li{if $module == "Summon"} class="active"{/if}><a href="{$url}/Summon/Search?lookfor={$lookfor|escape:"url"}">{translate text="Journal Articles"}</a></li>
             {/if}
           </ul>
-        </div>        
+        </div>
+        <div class="clear" style="height:0px;">&nbsp;</div>
         {/if}
         {include file="$module/$pageTemplate"}
 	  </div>

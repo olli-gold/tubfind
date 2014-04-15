@@ -1,5 +1,5 @@
 <div class="sidegroup">
-  {if $recordCount > 0}<h4>{translate text='Narrow Search'}</h4>{/if}
+  {*Keine Überschrift anzeigen {if $recordCount > 0}<h4> </h4>{/if}*}
   {if isset($checkboxFilters) && count($checkboxFilters) > 0}
       {foreach from=$checkboxFilters item=current}
         {* Die Eingrenzung auf lokale Medien soll nur eingeblendet werden, wenn GBV Central genutzt wurde *}
@@ -19,7 +19,8 @@
       {*/if*}
       {/foreach}
   {/if}
-<!--  {if $filterList}
+<!--
+  {if $filterList}
     <strong>{translate text='Remove Filters'}</strong>
     <ul class="filters">
     {foreach from=$filterList item=filters key=field}
@@ -28,7 +29,8 @@
       {/foreach}
     {/foreach}
     </ul>
-  {/if} -->
+  {/if}
+-->
   {if $sideFacetSet && $recordCount > 0}
     {foreach from=$sideFacetSet item=cluster key=title}
     {if isset($dateFacets.$title)}
@@ -65,25 +67,34 @@
         </fieldset>
       </form>
     {else}
-      <dl class="narrowList navmenu">
-        <dt>{translate text=$cluster.label}</dt>
+      <dl class="narrowList navmenu collapsed">
+        <dt><img id="fplus" class="facetTitleImg hidden" src="{$path}/images/facet_shuffle_plus.png" alt=""><img id="fminus" class="facetTitleImg hidden" src="{$path}/images/facet_shuffle_minus.png" alt=""> {translate text=$cluster.label}</dt>
         {foreach from=$cluster.list item=thisFacet name="narrowLoop"}
-          {if $smarty.foreach.narrowLoop.iteration == 1}
-          <dd id="more{$title}" {if $cluster.hide == 1}class="offscreen"{/if}><a href="#" onclick="moreFacets('{$title}'); return false;">{translate text='expand'} ...</a></dd>
+{*
+          {if $smarty.foreach.narrowLoop.iteration == 6}
+          <dd id="more{$title}" {if $cluster.hide == 1}class="offscreen"{/if}><a href="#" onclick="moreFacets('{$title}'); return false;">{translate text='more'} ...</a></dd>
         </dl>
         <dl class="narrowList navmenu offscreen" id="narrowGroupHidden_{$title}">
           {/if}
+*}
+          <dd class="facetList"  id="facetList_material_access">
           {if $thisFacet.isApplied}
+            <dl class="facet applied facetHoverCSS">
             <dd {if $cluster.hide == 1}class="offscreen"{/if} ><!--<img src="{$path}/images/silk/tick.png" alt="selected"/>--><a href="{$thisFacet.url|escape}"><span class="sprite-checkbox checked"></span> {translate text=$thisFacet.value|escape}</a></dd>
           {else}
+            <dl class="facet facetHoverCSS">
             <dd {if $cluster.hide == 1}class="offscreen"{/if}><a href="{$thisFacet.url|escape}" 
             {if $thisFacet.value|cat:'_hint'|translate != $thisFacet.value|cat:'_hint'}
                 title="{$thisFacet.value|cat:'_hint'|translate}"
             {/if}
             ><span class="sprite-checkbox unchecked"></span> {$thisFacet.value|escape}</a> ({$thisFacet.count})</dd>
           {/if}
+          </dl>
         {/foreach}
-        {if $smarty.foreach.narrowLoop.total > 0}<dd {if $cluster.hide == 1}class="offscreen"{/if}><a href="#" onclick="lessFacets('{$title}'); return false;">{translate text='retract'} ...</a></dd>{/if}
+{*
+        {if $smarty.foreach.narrowLoop.total > 5}<dd {if $cluster.hide == 1}class="offscreen"{/if}><a href="#" onclick="lessFacets('{$title}'); return false;">{translate text='less'} ...</a></dd>{/if}
+*}
+        </dd>
       </dl>
     {/if}
     {/foreach}

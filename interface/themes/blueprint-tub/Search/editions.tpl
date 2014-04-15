@@ -25,6 +25,9 @@
                 {translate text="Title unknown"}
             {/if}
           {/if}
+          {if $edition.volume}
+              {$edition.volume}
+          {/if}
           </a>
         {else}
           <a href="{$url}/Record/{$edition.id|escape:"url"}">
@@ -32,6 +35,9 @@
             {$edition.title|escape}
           {else}
             {translate text="Title unknown"}
+          {/if}
+          {if $edition.volume}
+              {$edition.volume}
           {/if}
           </a>
         {/if}

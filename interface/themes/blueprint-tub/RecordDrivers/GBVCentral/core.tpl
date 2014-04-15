@@ -3,9 +3,11 @@
   <h1 class="recordtitle">
   {if !empty($coreFullTitle)}
     {if is_array($coreFullTitle)}
-        {$coreFullTitle.0|truncate:100:"..."|escape}
+        {$coreFullTitle.0|escape}
+        {*$coreFullTitle.0|truncate:100:"..."|escape*}
     {else}
-        {$coreFullTitle|truncate:100:"..."|escape}
+        {$coreFullTitle|escape}
+        {*$coreFullTitle|truncate:100:"..."|escape*}
     {/if}
   {else}
   {if is_array($coreShortTitle)}
@@ -116,6 +118,17 @@
             </tr>
         {/foreach}
         {/foreach}
+    {/if}
+
+    {if !empty($volumename)}
+    <tr valign="top">
+      <th>{translate text='Volume title'}: </th>
+      <td>
+        {foreach from=$volumename item=field name=loop}
+          {$field|escape}<br/>
+        {/foreach}
+      </td>
+    </tr>
     {/if}
 
     {if !empty($coreNextTitles)}
@@ -287,7 +300,7 @@
     <tr valign="top">
       <th>{translate text='Series'}: </th>
       <td>
-        {if $parentRecord && $showAssociated == 3}
+        {if $parentRecord}
             {foreach from=$parentRecord item=paRec name=pR}
             {if $paRec.id!=$id}
                 {if $paRec.record_url}
@@ -360,21 +373,24 @@
       </td>
     </tr>
     {/if}
-<!--
-    {if !empty($coreURLs) || $coreOpenURL}
+
+    {if !empty($coreURLs) && (in_array("Inhaltsverzeichnis", $coreURLs) || in_array("Inhaltstext", $coreURLs) || in_array("Kurzbeschreibung", $coreURLs)
+         || in_array("Ausführliche Beschreibung", $coreURLs) || in_array("Rezension", $coreURLs) 
+         || in_array("Beschreibung für den Leser", $coreURLs) || in_array("Autorenbiografie", $coreURLs))}
     <tr valign="top">
-      <th>{translate text='Online Access'}: </th>
+      <th>{translate text='More information'}: </th>
       <td>
         {foreach from=$coreURLs item=desc key=currentUrl name=loop}
-          <a href="{if $proxy}{$proxy}/login?url={$currentUrl|escape:"url"}{else}{$currentUrl|escape}{/if}">{$desc|escape}</a><br/>
+          {if $desc == "Inhaltsverzeichnis" || $desc == "Inhaltstext" || $desc == "Kurzbeschreibung" 
+              || $desc == "Ausführliche Beschreibung" || $desc == "Rezension" 
+              || $desc == "Beschreibung für den Leser" || $desc == "Autorenbiografie"}
+                  <a href="{if $proxy}{$proxy}/login?url={$currentUrl|escape:"url"}{else}{$currentUrl|escape}{/if}">{$desc|escape}</a><br/>
+          {/if}
         {/foreach}
-        {if $coreOpenURL}
-          {include file="Search/openurl.tpl" openUrl=$coreOpenURL}<br/>
-        {/if}
       </td>
     </tr>
     {/if}
--->
+{*
     <tr valign="top">
       <th>{translate text='Tags'}: </th>
       <td>
@@ -393,7 +409,7 @@
       </td>
     </tr>
 
-    <tr valign=”top”>
+    <tr valign="top">
       <th>{translate text='QR-Code'}: </th>
       <td>
         <span class="showqr">
@@ -405,6 +421,7 @@
         </div>
       </td>
     </tr>
+*}
     <tr valign="top">
     <th></th>
     <td><a href="https://katalog.b.tu-harburg.de/DB=1/CMD?ACT=SRCHA&IKT=1016&SRT=YOP&TRM=ppn+{$id}" target="_blank"><font color="#ffffff">{translate text='classic_catalog'}</font></a>

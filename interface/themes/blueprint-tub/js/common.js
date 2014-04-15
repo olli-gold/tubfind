@@ -82,6 +82,36 @@ $(document).ready(function(){
         window.print();
     }
 
+    // Toggle side facets finc like -- taken from HeBIS
+    
+    // Set icons to facet
+    $('.narrowList').each( function(e) {
+        if ($(this).contents('dd').eq(0).hasClass('offscreen') == true){
+            $(this).contents('dt').css('cursor','pointer');
+            $(this).contents('dt').find('#fplus').removeClass('hidden');
+            $(this).contents('dt').find('#fminus').addClass('hidden');
+        } else {
+            $(this).contents('dt').css('cursor','pointer');
+            $(this).contents('dt').find('#fplus').addClass('hidden');
+            $(this).contents('dt').find('#fminus').removeClass('hidden');
+        }
+    });
+
+    // Removed collapsed class when facet elements are applied -- taken from HeBIS
+    $('.collapsed > dd').each( function () { 
+        if ($(this).contents('dl').hasClass('applied') == true) {
+            $(this).parent().removeClass('collapsed');
+        }
+    });
+    
+    // Collapse side facets --taken from HeBIS
+    $('.collapsed > dt').each( function () { toggleFacet(this); });
+    
+    // Toggle side facets informations
+    $('.narrowList > dt').click( function () { toggleFacet(this); });
+
+    // end facet functions taken from HeBIS
+
     // legt sich unten auf jede Seite, nicht benoetigt. HW
     //ContextHelp
     // contextHelp.init();
@@ -634,5 +664,32 @@ var contextHelp = {
     }
 }
 
-/* finc specific added functions */
+// Toggle facet --HeBIS
+function toggleFacet(elemId) {
+    if ($(elemId).parents().contents('dd').eq(0).hasClass('offscreen') == true) {
+        $(elemId).parents().contents('dd').removeClass('offscreen');
+        $(elemId).css('cursor','pointer');
+        $(elemId).find('#fplus').addClass('hidden');
+        $(elemId).find('#fminus').removeClass('hidden');
+        $(elemId).parents().contents('dd').eq(0).slideDown(400);
+    } else {
+        $(elemId).css('cursor','pointer');
+        $(elemId).find('#fplus').removeClass('hidden');
+        $(elemId).find('#fminus').addClass('hidden');
+        $(elemId).parents().contents('dd').eq(0).slideUp(200, function () { $(this).parents().contents('dd').addClass('offscreen'); });
+        var facet_length = ($(elemId).parents().contents('dd').length -1) < 5 ? $(elemId).parents().contents('dd').length -1 : 5;
+        var facet = $(elemId).parents().contents('dd').eq(facet_length).attr('id').substring(4);
+        lessFacets(facet);
+   }
+}
+
+function moreFacets(name) {
+    $("#more"+name).hide();
+    $("#narrowGroupHidden_"+name).removeClass("offscreen").slideUp(0).slideDown('fast');
+}
+
+function lessFacets(name) {
+    $("#more"+name).show();
+    $("#narrowGroupHidden_"+name).slideUp('fast', function () { $("#narrowGroupHidden_"+name).addClass("offscreen"); });
+}
 

@@ -118,6 +118,13 @@ class Home extends Bulk
                 $action = array('module' => 'Cart', 'action' => 'Cart');
             }
         }
+        // Retrieve User Search History
+        $interface->assign(
+            'lastsearch',
+            isset($_SESSION['lastSearchURL']) ? $_SESSION['lastSearchURL'] : false
+        );
+
+
         $className = $action['action'];
         include_once "services/{$action['module']}/{$action['action']}.php";
         $service = new $className();

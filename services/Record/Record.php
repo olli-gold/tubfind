@@ -66,7 +66,9 @@ class Record extends Action
 
         $interface->caching = 0;
         $this->action = (isset($_GET['action'])) ? $_GET['action'] : null;
-        
+
+        $interface->assign('refer', $_REQUEST['refer']);
+
         // Define Default Tab
         $defaultTab = isset($configArray['Site']['defaultRecordTab']) ?
             $configArray['Site']['defaultRecordTab'] : 'Holdings';
@@ -209,7 +211,8 @@ class Record extends Action
         // Send down legal export formats (if any):
         $interface->assign('exportFormats', $this->recordDriver->getExportFormats());
 
-        $interface->assign('qr', $this->recordDriver->getQRString());
+        // we do not offer qr codes anymore
+        //$interface->assign('qr', $this->recordDriver->getQRString());
 
         // Set AddThis User
         $interface->assign(

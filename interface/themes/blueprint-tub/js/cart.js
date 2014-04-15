@@ -8,13 +8,16 @@ $(document).ready(function() {
     $('#viewCart, #updateCart, #updateCartBottom').removeClass('offscreen');
 
     // Record
-    $('#recordCart').removeClass('offscreen').click(function() {
+    $('.recordCart').removeClass('offscreen').click(function() {
+        var cartRecordId = $(this).attr('keepId');
         if(cartRecordId != undefined) {
             if ($(this).hasClass('bookbagAdd')) {
                 updateCartSummary(addItemToCartCookie(cartRecordId));
+                $('#inbookbag'+cartRecordId).removeClass('hide');
                 $(this).html(vufindString.removeBookBag).removeClass('bookbagAdd').addClass('bookbagDelete');
             } else {
                 updateCartSummary(removeItemFromCartCookie(cartRecordId));
+                $('#inbookbag'+cartRecordId).addClass('hide');
                 $(this).html(vufindString.addBookBag).removeClass('bookbagDelete').addClass('bookbagAdd');
             }
         }
@@ -117,22 +120,36 @@ function updateRecordState(items) {
     if (cartRecordId != undefined) {
         var index = $.inArray(cartRecordId, items);
         if(index != -1) {
-            $('#recordCart').html(vufindString.removeBookBag).removeClass('cartAdd').addClass('cartRemove');
+            $('.recordCart').html(vufindString.removeBookBag).removeClass('cartAdd').addClass('cartRemove');
         } else {
-            $('#recordCart').html(vufindString.addBookBag).removeClass('cartRemove').addClass('cartAdd');
+            $('.recordCart').html(vufindString.addBookBag).removeClass('cartRemove').addClass('cartAdd');
         }
     }
+    $('.recordCart').each(function() {
+        var cartRecordId = $(this).attr('keepId');
+        if (cartRecordId != undefined) {
+            var index = $.inArray(cartRecordId, items);
+            if(index != -1) {
+                //wenn Record in Merkliste
+                $(this).html(vufindString.removeBookBag).removeClass('bookbagAdd').addClass('bookbagDelete');
+                $('#inbookbag'+cartRecordId).removeClass('hide');
+            } else {
+                //wenn Record NICHT in Merkliste
+                $(this).html(vufindString.addBookBag).removeClass('bookbagDelete').addClass('bookbagAdd');
+            }
+        }
+    });
 }
 
 function updateCartSummary(items) {
-    $('#cartSize').empty().append(items.length);
+    $('#cartSize').empty().append("("+items.length+")");
     var cartStatus = (items.length >= vufindString.bookbagMax) ? " (" + vufindString.bookbagStatusFull + ")" : "&nbsp;";
     $('#cartStatus').html(cartStatus);
 }
 
 function removeRecordState() {
     $('#recordCart').html(vufindString.addBookBag).removeClass('cartRemove').addClass('cartAdd');
-    $('#cartSize').empty().append("0");
+    $('#cartSize').empty().append("(0)");
 }
 
 function removeCartCheckbox() {

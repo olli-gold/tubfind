@@ -16,12 +16,11 @@
 <div class="span-18">
   <div class="toolbar">
     <ul>
-      <li><a href="{$url}/Record/{$id|escape:"url"}/Cite" class="citeRecord cite" id="citeRecord{$id|escape}" title="{translate text="Cite this"}">{translate text="Cite this"}</a></li>
       <!--<li><a href="{$url}/Record/{$id|escape:"url"}/SMS" class="smsRecord sms" id="smsRecord{$id|escape}" title="{translate text="Text this"}">{translate text="Text this"}</a></li>-->
       <li><a href="{$url}/Record/{$id|escape:"url"}/Email" class="mailRecord mail" id="mailRecord{$id|escape}" title="{translate text="Email this"}">{translate text="Email this"}</a></li>
       {if is_array($exportFormats) && count($exportFormats) > 0}
       <li>
-        <a href="{$url}/Record/{$id|escape:"url"}/Export?style={$exportFormats.0|escape:"url"}" class="export exportMenu">{translate text="Export Record"}</a>
+        <a href="{$url}/Record/{$id|escape:"url"}/Export?style={$exportFormats.0|escape:"url"}" class="export exportMenu">{translate text="Reference Management"}</a>
         <ul class="menu offscreen" id="exportMenu">
         {foreach from=$exportFormats item=exportFormat}
           {assign var="exportFormatString" value="$exportFormat"}
@@ -33,7 +32,12 @@
         </ul>
       </li>
       {/if}
-      <li id="saveLink"><a href="{$url}/Record/{$id|escape:"url"}/Save" class="saveRecord fav" id="saveRecord{$id|escape}" title="{translate text="Add to favorites"}">{translate text="Add to favorites"}</a></li>
+      <!--<li id="saveLink"><a href="{$url}/Record/{$id|escape:"url"}/Save" class="saveRecord fav" id="saveRecord{$id|escape}" title="{translate text="Add to favorites"}">{translate text="Add to favorites"}</a></li>-->
+      {if $bookBag}
+      <li id="saveLink"><a id="keepRecord{$summId|escape}" href="#" class="recordCart bookbagAdd offscreen" title="{translate text='Add to Book Bag'}" keepId="{$summId|escape}">{translate text="Add to Book Bag"}</a></li>
+      {/if}
+      <!--<li><a href="{$url}/Record/{$id|escape:"url"}/Cite" class="citeRecord cite" id="citeRecord{$id|escape}" title="{translate text="Cite this"}">{translate text="Cite this"}</a></li>-->
+
       {if !empty($addThis)}
       <li id="addThis"><a class="addThis addthis_button"" href="https://www.addthis.com/bookmark.php?v=250&amp;pub={$addThis|escape:"url"}">{translate text='Bookmark'}</a></li>
       {/if}
@@ -84,9 +88,11 @@
         <a href="{$url}/Record/{$id|escape:"url"}/TOC#tabnav">{translate text='Table of Contents'}</a>
       </li>
       {/if}
+<!--
       <li{if $tab == 'UserComments'} class="active"{/if}>
         <a href="{$url}/Record/{$id|escape:"url"}/UserComments#tabnav">{translate text='Comments'}</a>
       </li>
+-->
       {if $hasReviews}
       <li{if $tab == 'Reviews'} class="active"{/if}>
         <a href="{$url}/Record/{$id|escape:"url"}/Reviews#tabnav">{translate text='Reviews'}</a>
@@ -116,12 +122,13 @@
 <div class="span-5 last">
     <div class="sidegroup" id="othereditions">
     </div>
+{if !$primoRecord}
     <div class="sidegroup" id="similarrecs">
         <h4>{translate text="Similar Items"}</h4>
         <span class="ajax_availability" id="similarWait">{translate text='Loading'}...</span>
     </div>
+{/if}
 </div>
-
 <!--<div class="span-5 last">
   {if is_array($similarRecords)}
     <div class="sidegroup">

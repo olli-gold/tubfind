@@ -1,4 +1,14 @@
-{js filename="check_item_statuses.js"}
+{if $smarty.post.mylang}
+{assign var="jsFileName" value="check_item_statuses_"|cat:$smarty.post.mylang|cat:".js"}
+{elseif $smarty.cookies.language}
+{assign var="jsFileName" value="check_item_statuses_"|cat:$smarty.cookies.language|cat:".js"}
+{else}
+{assign var="jsFileName" value="check_item_statuses_de.js"}
+{/if}
+{js filename=$jsFileName}
+{if $showPrinted}
+    {js filename="check_printed.js"}
+{/if}
 {js filename="check_save_statuses.js"}
 {if $showContext}
 {js filename="search_hierarchyTree.js}
@@ -8,6 +18,7 @@
 {js filename="preview.js"}
 {/if}
 
+{*
 {if $bookBag}
 <form method="post" name="bulkActionForm" action="{$url}/Cart/Home">
   <div class="bulkActionButtons">
@@ -21,6 +32,7 @@
     <div class="clear"></div>
   </div>
 {/if}
+*}
 
   <ul class="recordSet">
   {foreach from=$recordSet item=record name="recordLoop"}
@@ -32,6 +44,7 @@
   {/foreach}
   </ul>
   
+{*
 {if $bookBag}  
   <div class="bulkActionButtons">
     <input type="checkbox" class="selectAllCheckboxes floatleft" name="selectAll" id="addFormCheckboxSelectAllBottom"/> <label class="floatleft" for="addFormCheckboxSelectAllBottom">{translate text="select_page"}</label>
@@ -45,3 +58,4 @@
   </div>
 </form>
 {/if}
+*}

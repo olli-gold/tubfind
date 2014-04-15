@@ -58,6 +58,8 @@ class GBVCentralRecord extends MarcRecord
         $interface->assign('summFullTitle', $this->_normalize($this->getFullTitle()));
         $interface->assign('summAddTitle', $this->_normalize($this->getTitleAddition()));
 
+        $interface->assign('volumename', $this->getVolumeName($this->marcRecord));
+
         return 'RecordDrivers/GBVCentral/result.tpl';
     }
 
@@ -72,12 +74,13 @@ class GBVCentralRecord extends MarcRecord
         $interface->assign('coreArticleHRef', $artHref);
         $interface->assign('artFieldedRef', $this->getArticleFieldedReference());
         $artFieldedRef = $this->getArticleFieldedReference();
-        if ($artHref['hrefId']) {
-            $articleVol = $this->searchArticleVolume($artHref['hrefId'], $artFieldedRef);
+        if ($artHref[0]['hrefId']) {
+            $articleVol = $this->searchArticleVolume($artHref[0]['hrefId'], $artFieldedRef);
             $interface->assign('articleVol', $articleVol);
         }
         //$interface->assign('multipartParent', $this->getMultipartParent());
         $interface->assign('isMultipartChildren', $this->isMultipartChildren());
+        $interface->assign('frbritems', $this->searchFRBRitems());
         $interface->assign('hasArticles', $this->hasArticles());
         $this->getSeriesLink();
         $linkNames = $this->getLinkNames();
@@ -86,12 +89,28 @@ class GBVCentralRecord extends MarcRecord
         //$interface->assign('coreAddtitle', $this->getTitleAddition());
         $interface->assign('coreFullTitle', $this->_normalize($this->getFullTitle()));
 
+        $interface->assign('volumename', $this->getVolumeName($this->marcRecord));
+
         /*
         $interface->assign('articleChildren', $this->getArticleChildren());
         $interface->assign('coreSubseries', $this->getSubseries());
         */
 
         return 'RecordDrivers/GBVCentral/core.tpl';
+    }
+
+    protected function getVolumeName($record) {
+        $titleFields = $record->getFields('245');
+        $vol = array();
+        if ($titleFields) {
+            foreach($titleFields as $titleField) {
+                $volumeFields = $titleField->getSubfields('p');
+                if (count($volumeFields) > 0) {
+                    $vol[] = $volumeFields[0]->getData();
+                }
+            }
+        }
+        return $vol;
     }
 
     /**
@@ -214,7 +233,7 @@ class GBVCentralRecord extends MarcRecord
      * @access  protected
      * @return  string
      */
-    protected function checkInterlibraryLoan()
+    public function checkInterlibraryLoan()
     {
         // Return null if we have no table of contents:
         $fields = $this->marcRecord->getFields('912');
@@ -258,36 +277,40 @@ class GBVCentralRecord extends MarcRecord
      */
     protected function getArticleHReference()
     {
-        $vs = null;
-        $vs = $this->marcRecord->getFields('773');
-        if (count($vs) > 0) {
-            $refs = array();
-            foreach($vs as $v) {
-                $inRefField = $v->getSubfields('i');
-                if (count($inRefField) > 0) {
-                    $inRef = $inRefField[0]->getData();
+        if (in_array('Article', $this->getFormats()) === true) {
+            $vs = null;
+            $vs = $this->marcRecord->getFields('773');
+            if (count($vs) > 0) {
+                $refs = array();
+                foreach($vs as $v) {
+                    $journalRef = null;
+                    $articleRef = null;
+                    $inRefField = $v->getSubfields('i');
+                    if (count($inRefField) > 0) {
+                        $inRef = $inRefField[0]->getData();
+                    }
+                    else {
+                        $inRef = "in:";
+                    }
+                    $journalRefField = $v->getSubfields('t');
+                    if (count($journalRefField) > 0) {
+                        $journalRef = $journalRefField[0]->getData();
+                    }
+                    $articleRefField = $v->getSubfields('g');
+                    if (count($articleRefField) > 0) {
+                        $articleRef = $articleRefField[0]->getData();
+                    }
+                    $a_names = $v->getSubfields('w');
+                    if (count($a_names) > 0) {
+                        $idArr = explode(')', $a_names[0]->getData());
+                        $hrefId = $this->addNLZ($idArr[1]);
+                    }
+                    if ($journalRef || $articleRef) {
+                        $refs[] = array('inref' => $inRef, 'jref' => $journalRef, 'aref' => $articleRef, 'hrefId' => $hrefId);
+                    }
                 }
-                else {
-                    $inRef = "in:";
-                }
-                $journalRefField = $v->getSubfields('t');
-                if (count($journalRefField) > 0) {
-                    $journalRef = $journalRefField[0]->getData();
-                }
-                $articleRefField = $v->getSubfields('g');
-                if (count($articleRefField) > 0) {
-                    $articleRef = $articleRefField[0]->getData();
-                }
-                $a_names = $v->getSubfields('w');
-                if (count($a_names) > 0) {
-                    $idArr = explode(')', $a_names[0]->getData());
-                    $hrefId = $this->addNLZ($idArr[1]);
-                }
-                if ($journalRef || $articleRef) {
-                    $refs[] = array('inref' => $inRef, 'jref' => $journalRef, 'aref' => $articleRef, 'hrefId' => $hrefId);
-                }
+                return $refs;
             }
-            return $refs;
         }
         return null;
     }
@@ -432,6 +455,8 @@ class GBVCentralRecord extends MarcRecord
                 ) {
                     $params['sfx.ignore_date_threshold'] = 1;
                 }
+                $params['disable_directlink'] = "true";
+                $params['sfx.directlink'] = "off";
                 break;
             case 'Article':
                 $params['rft.issn'] = $this->getCleanISSN();
@@ -470,48 +495,48 @@ class GBVCentralRecord extends MarcRecord
                     $params['rft.language'] = $langs[0];
                 }
                 break;
-            }
-            /**.
-            http://sfx.gbv.de:9004/sfx_tuhh?.
-            ctx_enc=info%3Aofi%2Fenc%3AUTF-8&.
-            ctx_id=10_1&.
-            ctx_tim=2011-03-28T15%3A10%3A47CEST&.
-            ctx_ver=Z39.88-2004&.
-            rfr_id=info%3Asid%2Fsfxit.com%3Acitation&.
-            rft.atitle=When+Johnny+comes+marching+home&.
-            rft.epage=136&.
-            rft.genre=article&.
-            rft.issn=0028-0836&.
-            rft.issue=7200&.
-            rft.jtitle=Nature&.
-            rft.spage=136&.
-            rft.volume=454&.
-            rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Aarticle&.
-            sfx.title_search=exact&.
-            url_ctx_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Actx&.
-            url_ver=Z39.88-2004.
-
-            GBV Central:
-            953 <--><------><------>|d 332  |j 2011  |e 6035  |b 10  |c 6  |h 1256-1259  |g 3..
-            d = Volume
-            j = Jahr
-            e = issue
-            h = Seitenangabe Von Bis
-            */
-
-            // Assemble the URL:
-            $parts = array();
-            foreach ($params as $key => $value) {
-                if (is_array($value) === true) {
-                    $parts[] = $key . '=' . urlencode($value[0]);
-                }
-                else {
-                    $parts[] = $key . '=' . urlencode($value);
-                }
-            }
-
-            return implode('&', $parts);
         }
+        /**.
+        http://sfx.gbv.de:9004/sfx_tuhh?.
+        ctx_enc=info%3Aofi%2Fenc%3AUTF-8&.
+        ctx_id=10_1&.
+        ctx_tim=2011-03-28T15%3A10%3A47CEST&.
+        ctx_ver=Z39.88-2004&.
+        rfr_id=info%3Asid%2Fsfxit.com%3Acitation&.
+        rft.atitle=When+Johnny+comes+marching+home&.
+        rft.epage=136&.
+        rft.genre=article&.
+        rft.issn=0028-0836&.
+        rft.issue=7200&.
+        rft.jtitle=Nature&.
+        rft.spage=136&.
+        rft.volume=454&.
+        rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Aarticle&.
+        sfx.title_search=exact&.
+        url_ctx_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Actx&.
+        url_ver=Z39.88-2004.
+
+        GBV Central:
+        953 <--><------><------>|d 332  |j 2011  |e 6035  |b 10  |c 6  |h 1256-1259  |g 3..
+        d = Volume
+        j = Jahr
+        e = issue
+        h = Seitenangabe Von Bis
+        */
+
+        // Assemble the URL:
+        $parts = array();
+        foreach ($params as $key => $value) {
+            if (is_array($value) === true) {
+                $parts[] = $key . '=' . urlencode($value[0]);
+            }
+            else {
+                $parts[] = $key . '=' . urlencode($value);
+            }
+        }
+
+        return implode('&', $parts);
+    }
 
     /**
      * TUBHH Enhancement
@@ -808,7 +833,17 @@ class GBVCentralRecord extends MarcRecord
 
         $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
-        return ($result['response'] > 0) ? $result['response'] : false;
+        /*
+        $frbrResults = $this->searchFRBRitems();
+        $newResult = array_diff($result['response']['docs'], $frbrResults['docs']);
+        $resultArray = array();
+        $resultArray['response'] = array();
+        $resultArray['response']['docs'] = array();
+        $resultArray['response']['docs'] = $newResult;
+        $resultArray['response']['numFound'] = count($newResult);
+        //return (count($newResult) > 0) ? $resultArray['response'] : false;
+        */
+        return ($result['response']['numFound']) ? $result['response'] : false;
     }
 
     /**
@@ -943,7 +978,50 @@ class GBVCentralRecord extends MarcRecord
 
         $result = $index->search($query, null, $this->hiddenFilters, 0, 1, null, '', null, null, 'id',  HTTP_REQUEST_METHOD_POST , false, false, false);
 
-        return ($result['response']['numFound'] > 0) ? true : false;
+        // return false if this result has only frbr results
+        $frbrResults = $this->searchFRBRitems();
+        $diff = ($result['response']['numFound']-count($frbrResults['docs']));
+
+        return ($diff > 0) ? true : false;
+        //return ($result['response']['numFound'] > 0) ? true : false;
+    }
+
+    public function searchFRBRitems()
+    {
+        $rid=$this->fields['id'];
+        if(strlen($rid)<2) {
+            return array();
+        }
+        $rid=str_replace(":","\:",$rid);
+        $index = $this->getIndexEngine();
+
+        // Assemble the query parts and filter out current record:
+        $query = '(ppnlink:'.$this->stripNLZ($rid).' AND NOT (format:Article OR format:"electronic Article")';
+        if ($this->fields['remote_bool'] == '1') {
+            $query .= ' AND remote_bool:0';
+        }
+        else {
+            $query .= ' AND remote_bool:1';
+        }
+        //if ($this->isNLZ() === false) $query .= ' OR id:"NLZ*"';
+        $query .= ')';
+
+        // Perform the search and return either results or an error:
+        $this->setHiddenFilters();
+
+        $result = $index->search($query, null, $this->hiddenFilters, 0, 1000, null, '', null, null, '',  HTTP_REQUEST_METHOD_POST , false, false, false);
+
+        // Check if the PPNs are from the same origin (either both should have an NLZ-prefix or both should not have it)
+        $resultArray = array();
+        $resultArray['response'] = array();
+        $resultArray['response']['docs'] = array();
+        foreach ($result['response']['docs'] as $resp) {
+            if (($this->_isNLZ($resp['id']) && $this->_isNLZ($rid)) || (!$this->_isNLZ($resp['id']) && !$this->_isNLZ($rid))) {
+                $resultArray['response']['docs'][] = $resp;
+            }
+        }
+
+        return (count($resultArray['response']['docs']) > 0) ? $resultArray['response'] : false;
     }
 
     public function searchMultipartChildren()
@@ -1045,6 +1123,8 @@ class GBVCentralRecord extends MarcRecord
             }
             if (count($parentIds) === 0) {
                 $vs = $this->marcRecord->getFields('830');
+                $eighthundred = $this->marcRecord->getFields('800');
+                $eighthundredten = $this->marcRecord->getFields('810');
                 if ($vs) {
                     foreach($vs as $v) {
                         $a_names = $v->getSubfields('w');
@@ -1060,21 +1140,33 @@ class GBVCentralRecord extends MarcRecord
                         }
                     }
                 }
-                else {
-                    $vs = $this->marcRecord->getFields('800');
-                    if ($vs) {
-                        foreach($vs as $v) {
-                            $a_names = $v->getSubfields('w');
-                            if (count($a_names) > 0) {
-                                $idArr = explode(')', $a_names[0]->getData());
-                                if ($idArr[0] === '(DE-601') {
-                                    $parentIds[] = $idArr[1];
-                                }
+                else if ($eighthundred) {
+                    foreach($eighthundred as $v) {
+                        $a_names = $v->getSubfields('w');
+                        if (count($a_names) > 0) {
+                            $idArr = explode(')', $a_names[0]->getData());
+                            if ($idArr[0] === '(DE-601') {
+                                $parentIds[] = $idArr[1];
                             }
-                            $v_names = $v->getSubfields('v');
-                            if (count($v_names) > 0) {
-                                $volNumber[$idArr[1]] = $v_names[0]->getData();
+                        }
+                        $v_names = $v->getSubfields('v');
+                        if (count($v_names) > 0) {
+                            $volNumber[$idArr[1]] = $v_names[0]->getData();
+                        }
+                    }
+                }
+                else if ($eighthundredten) {
+                    foreach($eighthundredten as $v) {
+                        $a_names = $v->getSubfields('w');
+                        if (count($a_names) > 0) {
+                            $idArr = explode(')', $a_names[0]->getData());
+                            if ($idArr[0] === '(DE-601') {
+                                $parentIds[] = $idArr[1];
                             }
+                        }
+                        $v_names = $v->getSubfields('v');
+                        if (count($v_names) > 0) {
+                            $volNumber[$idArr[1]] = $v_names[0]->getData();
                         }
                     }
                 }
@@ -3070,6 +3162,13 @@ class GBVCentralRecord extends MarcRecord
                     $pos = strpos($yearField, 's');
                     $year = substr($yearField, $pos+1, 4);
                     $subrecord['publishDate'][] = $year;
+                    $titleFields = $marcRecord->getFields('245');
+                    $titleField = $titleFields[0];
+                    $volField = $titleField->getSubfields('p');
+                    if (count($volField) > 0) {
+                        $vol = $volField[0]->getData();
+                    }
+                    $subrecord['volume'] = $vol;
                 }
                 $resultRecords[] = $subrecord;
             }
@@ -3311,5 +3410,118 @@ class GBVCentralRecord extends MarcRecord
         return $return;
     }
     */
+
+    /**
+     * Assign necessary Smarty variables and return a template name to.
+     * load in order to export the record in the requested format.  For.
+     * legal values, see getExportFormats().  Returns null if format is.
+     * not supported.
+     *
+     * @param string $format Export format to display.
+     *
+     * @return string        Name of Smarty template file to display.
+     * @access public
+     */
+    public function getExport($format)
+    {
+        global $interface;
+
+        switch(strtolower($format)) {
+        case 'endnote':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: application/x-endnote-refer');
+            $interface->assign('marc', $this->marcRecord);
+            return 'RecordDrivers/GBVCentral/export-endnote.tpl';
+        case 'marc':
+            $interface->assign('rawMarc', $this->marcRecord->toRaw());
+            return 'RecordDrivers/Marc/export-marc.tpl';
+        case 'marcxml':
+            header("Content-type: application/rdf+xml");
+            $interface->assign('rawMarc', $this->marcRecord->toXml());
+            return 'RecordDrivers/Marc/export-marc.tpl';
+        case 'rdf':
+            header("Content-type: application/rdf+xml");
+            $interface->assign('rdf', $this->getRDFXML());
+            return 'RecordDrivers/Marc/export-rdf.tpl';
+        case 'refworks':
+            // To export to RefWorks, we actually have to redirect to
+            // another page.  We'll do that here when the user requests a
+            // RefWorks export, then we'll call back to this module from
+            // inside RefWorks using the "refworks_data" special export format
+            // to get the actual data.
+            $this->redirectToRefWorks();
+            break;
+        case 'refworks_data':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: text/plain; charset=utf-8');
+            $interface->assign('marc', $this->marcRecord);
+            return 'RecordDrivers/GBVCentral/export-refworks.tpl';
+            break;
+        case 'bibtex':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: text/plain; charset=utf-8');
+            $interface->assign('marc', $this->marcRecord);
+            return 'RecordDrivers/GBVCentral/export-bibtex.tpl';
+            break;
+        case 'ris':
+            // This makes use of core metadata fields in addition to the
+            // assignment below:
+            header('Content-type: text/plain; charset=utf-8');
+            $interface->assign('displayFormat', $this->getRISType());
+            $interface->assign('marc', $this->marcRecord);
+            return 'RecordDrivers/GBVCentral/export-ris.tpl';
+            break;
+        default:
+            return null;
+        }
+    }
+
+    public function getRISType() {
+    /* possible return values
+    ABST (abstract reference)
+    ADVS (audiovisual material)
+    ART (art work)
+    BILL (bill/resolution)
+    BOOK (whole book reference)
+    CASE (case)
+    CHAP (book chapter reference)
+    COMP (computer program)
+    CONF (conference proceeding)
+    CTLG (catalog)
+    DATA (data file)
+    ELEC (electronic citation)
+    GEN (generic)
+    HEAR (hearing)
+    ICOMM (internet communication)
+    INPR (in press reference)
+    JFULL (journal/periodical - full)
+    JOUR (journal/periodical reference)
+    MAP (map)
+    MGZN (magazine article)
+    MPCT (motion picture)
+    MUSIC (music score)
+    NEWS (newspaper)
+    PAMP (pamphlet)
+    PAT (patent)
+    PCOMM (personal communication)
+    RPRT (report)
+    SER (serial - book, monograph)
+    SLIDE (slide)
+    SOUND (sound recording)
+    STAT (statute)
+    THES (thesis/dissertation)
+    UNBILL (unenacted bill/resolution)
+    UNPB (unpublished work reference)
+    VIDEO (video recording)
+    */
+        if (in_array('Book', $this->getFormats()) || in_array('eBook', $this->getFormats())) return 'BOOK';
+        if (in_array('Article', $this->getFormats())) return 'MGZN';
+        if (in_array('Journal', $this->getFormats())) return 'JOUR';
+        if (in_array('dissertation', $this->getFormats())) return 'THES';
+        return 'GEN';
+    }
 }
 ?>

@@ -463,7 +463,7 @@ class IndexRecord implements RecordInterface
         // an ISSN.  We may eventually want to make this rule more flexible,
         // but for now the ISSN restriction is designed to be consistent with
         // the way we display items on the search results list.
-        $hasOpenURL = ($this->openURLActive('holdings') && $this->getCleanISSN());
+        $hasOpenURL = ($this->openURLActive('holdings'));
         if ($hasOpenURL) {
             $interface->assign('holdingsOpenURL', $this->getOpenURL());
         }
@@ -520,6 +520,7 @@ class IndexRecord implements RecordInterface
         $interface->assign('listTitle', $ti);
         $interface->assign('listAuthor', $this->getPrimaryAuthor());
         $interface->assign('listThumb', $this->getThumbnail());
+        $interface->assign('listCallNo', $this->getCallNumber());
 
         // Extract user metadata from the database:
         $notes = array();
@@ -539,6 +540,49 @@ class IndexRecord implements RecordInterface
         return 'RecordDrivers/Index/listentry.tpl';
     }
 
+    /**
+     * Assign necessary Smarty variables and return a template name to
+     * load in order to display a summary of the item suitable for use in
+     * user's favorites list. This is only called if an ID cannot be found!
+     *
+     * @param object $user      User object owning tag/note metadata.
+     * @param int    $listId    ID of list containing desired tags/notes (or null
+     * to show tags/notes from all user's lists).
+     * @param bool   $allowEdit Should we display edit controls?
+     *
+     * @return string           Name of Smarty template file to display.
+     * @access public
+     */
+    public static function getEmptyListEntry($id, $user, $listId = null, $allowEdit = true)
+    {
+        global $interface;
+
+        $ti = translate("Unknown Title");
+
+        $interface->assign('listId', $id);
+        $interface->assign('listTitle', $ti);
+        $interface->assign('listFormats', null);
+        $interface->assign('listAuthor', null);
+        $interface->assign('listThumb', null);
+        $interface->assign('listCallNo', null);
+
+        // Extract user metadata from the database:
+        $notes = array();
+        $data = $user->getSavedData($id, $listId);
+        foreach ($data as $current) {
+            if (!empty($current->notes)) {
+                $notes[] = $current->notes;
+            }
+        }
+        $interface->assign('listNotes', $notes);
+        $interface->assign('listTags', $user->getTags($id, $listId));
+
+        // Pass some parameters along to the template to influence edit controls:
+        $interface->assign('listSelected', $listId);
+        $interface->assign('listEditAllowed', $allowEdit);
+
+        return 'RecordDrivers/Index/listentry.tpl';
+    }
     /**
      * Get the OpenURL parameters to represent this record (useful for the
      * title attribute of a COinS span tag).
@@ -1772,7 +1816,7 @@ h = Seitenangabe Von Bis
      * @return array
      * @access protected
      */
-    protected function getURLs()
+    public function getURLs()
     {
         $urls = array();
         if (isset($this->fields['url']) && is_array($this->fields['url'])) {
@@ -1873,7 +1917,7 @@ h = Seitenangabe Von Bis
      * @return mixed
      * @access protected
      */
-    protected function getThumbnail($size = 'small')
+    public function getThumbnail($size = 'small')
     {
         global $configArray;
 
@@ -1962,6 +2006,11 @@ h = Seitenangabe Von Bis
     {
         return isset($this->fields['contents']) ?
         true : '';
+    }
+
+    protected function getScore()
+    {
+        return isset($this->fields['score']) ? $this->fields['score'] : '';
     }
 
 }

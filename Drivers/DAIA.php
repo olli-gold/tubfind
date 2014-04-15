@@ -216,7 +216,10 @@ class DAIA implements DriverInterface
                         $result['itemid'] = $itemlist->item($c)->attributes->getNamedItem('id')->nodeValue;
                     }
                     if ($itemlist->item($c)->attributes->getNamedItem('href') !== null) {
-                        $result['recallhref'] = $itemlist->item($c)->attributes->getNamedItem('href')->nodeValue;
+                        if ($this->language == 'en') $lang_code = 'EN';
+                        else $lang_code = 'DU';
+                        $recalllink = str_replace('LNG=EN', 'LNG='.$lang_code, $itemlist->item($c)->attributes->getNamedItem('href')->nodeValue);
+                        $result['recallhref'] = $recalllink;
                     }
                     $departmentElements = $itemlist->item($c)->getElementsByTagName('department');
                     if($departmentElements->length > 0) {
@@ -364,7 +367,7 @@ class DAIA implements DriverInterface
                                 if ($availableElements->item($n)->attributes->getNamedItem('delay') !== null) {
                                     $result['interloan.delay'] = $availableElements->item($n)->attributes->getNamedItem('delay')->nodeValue;
                                 }
-                                $result['availability'] = '1';
+                                //$result['availability'] = '1';
                             } elseif ($service === 'openaccess') {
                                 $result['openaccess.availability'] = '1';
                                 if ($availableElements->item($n)->attributes->getNamedItem('delay') !== null) {
@@ -445,18 +448,24 @@ class DAIA implements DriverInterface
             $labelElements = $itemlist->item($c)->getElementsByTagName('label');
             if ($labelElements->item(0) !== null) $label = $labelElements->item(0)->nodeValue;
             if ($availableElements->item(0) !== null) {
-                $availability = 1;
-                $status = 'Available';
-                if ($availableElements->item(0)->attributes->getNamedItem('href') !== null) {
-                    $earliest_href = $availableElements->item(0)->attributes->getNamedItem('href')->nodeValue;
-                }
-                for ($n = 0; $availableElements->item($n) !== null; $n++) {
-                    // If only one element from the available elements is available for loan, presenceOnly should not be set
-                    // it means: there are only available elements, which are not for loan
-                    if ($availableElements->item($n)->getAttribute('service') === 'loan') {
-                        $presenceOnly = '0';
+                // ignore interloan availability
+                if ($availableElements->item(0)->getAttribute('service') !== 'interloan') {
+                    $availability = 1;
+                    $status = 'Available';
+                    if ($availableElements->item(0)->attributes->getNamedItem('href') !== null) {
+                        if ($this->language == 'en') $lang_code = 'EN';
+                        else $lang_code = 'DU';
+                        $recalllink = str_replace('LNG=EN', 'LNG='.$lang_code, $availableElements->item(0)->attributes->getNamedItem('href')->nodeValue);
+                        $earliest_href = $recalllink;
                     }
-                    #    $status .= ' ' . $availableElements->item($n)->getAttribute('service');
+                    for ($n = 0; $availableElements->item($n) !== null; $n++) {
+                        // If only one element from the available elements is available for loan, presenceOnly should not be set
+                        // it means: there are only available elements, which are not for loan
+                        if ($availableElements->item($n)->getAttribute('service') === 'loan') {
+                            $presenceOnly = '0';
+                        }
+                        #    $status .= ' ' . $availableElements->item($n)->getAttribute('service');
+                    }
                 }
             }
             // if there are NO available items, do the else block
@@ -470,7 +479,10 @@ class DAIA implements DriverInterface
                             $presenceOnly = '0';
                         }
                         if ($unavailableElements->item($n)->attributes->getNamedItem('href') !== null) {
-                            $hrefs['item'.$n] = $unavailableElements->item($n)->attributes->getNamedItem('href')->nodeValue;
+                            if ($this->language == 'en') $lang_code = 'EN';
+                            else $lang_code = 'DU';
+                            $recalllink = str_replace('LNG=EN', 'LNG='.$lang_code, $unavailableElements->item($n)->attributes->getNamedItem('href')->nodeValue);
+                            $hrefs['item'.$n] = $recalllink;
                         }
                         if ($unavailableElements->item($n)->attributes->getNamedItem('expected') !== null) {
                             //$duedate = $unavailableElements->item($n)->attributes->getNamedItem('expected')->nodeValue;

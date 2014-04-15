@@ -51,8 +51,16 @@ class Editions extends Action
         global $interface;
         global $configArray;
 
+        $url = null;
+        $core = null;
+        if (substr($_REQUEST['id'], 0, 2) == 'PC') {
+            $url = isset($configArray['IndexShards']['Primo Central']) ? 'http://'.$configArray['IndexShards']['Primo Central'] : null;
+            $url = str_replace('/biblio', '', $url);
+            $core = 'biblio';
+        }
+
         // Setup Search Engine Connection
-        $db = ConnectionManager::connectToIndex();
+        $db = ConnectionManager::connectToIndex(null, $core, $url);
 
         // Retrieve the record from the index
         if (!($record = $db->getRecord($_REQUEST['id']))) {
