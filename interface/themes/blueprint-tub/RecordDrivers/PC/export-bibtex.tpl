@@ -115,5 +115,5 @@ number = {$bracket}{if is_array($pcfields.jissue)}{$pcfields.jissue.0}{else}{$pc
 {if $pcfields.jspage}
 pages = {$bracket}{if is_array($pcfields.jspage)}{$pcfields.jspage.0}{else}{$pcfields.jspage}{/if}{if $pcfields.jepage}-{if is_array($pcfields.jepage)}{$pcfields.jepage.0}{else}{$pcfields.jepage}{/if}{/if}},
 {/if}
-crossref = {$url}/Record/{$id|escape:"url"}
+{*crossref = {$url}/Record/{$id|escape:"url"}*}
 }

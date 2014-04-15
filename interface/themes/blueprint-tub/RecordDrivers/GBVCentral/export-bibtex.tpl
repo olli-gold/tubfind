@@ -109,5 +109,5 @@ year = {$bracket}{$marcField|getvalue:'j'}},
 pages = {$bracket}{$marcField|getvalue:'h'}},
 {/if}
 {/if}
-crossref = {$url}/Record/{$id|escape:"url"}
+{*crossref = {$url}/Record/{$id|escape:"url"}*}
 }
