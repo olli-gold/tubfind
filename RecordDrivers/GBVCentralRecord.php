@@ -50,6 +50,9 @@ class GBVCentralRecord extends MarcRecord
         if (in_array('Journal', $this->getFormats()) || in_array('eJournal', $this->getFormats())) {
             $interface->assign('summDateSpan', $this->getDateSpan());
         }
+        else {
+            $interface->assign('summDateSpan', null);
+        }
 
         $interface->assign('summInterlibraryLoan', $this->checkInterlibraryLoan());
         $interface->assign('summArticleHRef', $this->_normalize($this->getArticleHReference()));
