@@ -1,0 +1,175 @@
+/* 
+Changes 2014-02-28
+-----
+
+- Reiter beide: Schrift noch etwas größer und etwas breiter. Außerdem versucht etwas Vordergrund-/Hintergrundeffekt mit Schatten zu erzielen
+- Aktiver Reiter schließt ordentlich ab
+- .resultsetBooks + .resultsetArticles
+  > nur noch ganz dünner Rahmen
+- hellgrüne (#F8FBF3) mit dunkelgrünen (#EAF1EA) Bereichen invertiert ("freundlicher")
+- Hintergrund "gerade" Ergebnisse = weiß
+- Buttons Bestellen/Vormerken etwas breiter (wie Volltext@Tuhh)
+- Ergebnisnummer weiß/schwarz, nur unten abgerundet 
+
+Changes 2014-03-03
+-----
+- Volltextbutton etwas hochgezoge. Kann nicht von Bestell-Button verdeckt werden, beißt sich nicht mit sehr langen URLs darüber
+- Hintergrund-Farbe für span-4 ("Merken" in der Übersichtslist, u.a. Cover im Detail) wieder transparent
+
+Changes 2014-03-04
+-----
+- Schatten von Tabs erst mal weg
+- Blauen Rahmen (#1E3287) durch grau (#DDDDDD) ersetzt (wie an anderer Stelle auch bereits vorhanden, z.B. Breadcrumbs)
+- Treffernummer mal testweise a) nach unten b) ohne Rahmen c) weniger Transparenz
+- alles hellgrün (#F8FBF3) zu Kopfzeilen-"Grau" (#F8F4F3)
+- dunkelgrün (#EAF1EA) zu - fast - weiß (#FFFEFE); wegen Search & Replace
+
+Changes 2014-03-05
+-----
+- Detailansicht: runde Ecke rechts oben weg
+- Detailansicht: Covergröße entspricht Größe in der Übersicht (Vergrößerung gibt es seit jeder per Klick); es ist rechtsseitig ausgerichtet
+- Detailansicht: Abstand Titel & Cover zu oberen Rand angeglichen
+- Kopfzeilen-"Grau" (#F8F4F3) nun klassischer-Katalog-grau (#EEEEEE)
+- Buttonrahmen Bestellen/Vormerken von black auf #DDDDDD
+- Bestellen-Button: Schrift: weiß, hintergrund #009900 statt #02FF02 
+
+Changes 2014-03-07
+-----
+- Hintergrundfarbe des Suchformulars wie auf der Startseite (Marketing > Wiedererkennung) 
+- Gelber-Button-Style von "Siehe Bände" im Exemplar-Tab entfernt (versehentlich gesetzt gewesen)  
+
+Changes 2014-03-10
+-----
+- erweiterte Suche: Problem Umbruch, Hintergrundfarbe
+- .search {font-size:100%; width: 670px; 
+- Tuerkis entfernt aus .search background-color:#6BC1BB;
+- .span-4 {width:120px;padding: 6px; float:left;
+- .span-10 {width:300px;padding:6px;}
+- .available font normal
+- .checkedout + a {background-color:#A8DDF0; opacity:1;}
+- .available + a, .checkedout + a {-moz-border-radius: 3px; border-radius: 3px;}
+
+Changes 2014-03-13
+-----
+- .span-4 wieder width 130px
+- toolbar-Buttons bei Favoriten nicht mehr über dem Blau der Statusmeldung
+- Neuer Abschnitt / Favoriten /
+  > Hintergrundfarbe von .result nochmal explizit auf #F9F9F9 gesetzt (Favoriten, alternierende Zeilen) und
+  > Dinge etwas zurechtgerückt (es wird langsam sehr böse mit dem !important)
+
+Changes 2014-03-14
+-----
+- grundsätzlich keine List-bullets in den sidegroups (Facetten etc.)
+- Favoriten: Breiten etwas angepasst, so dass es mit den checkboxes links passt; Bearbeiten/Löschen nach oben rechts geschoben
+- Checkboxes bei Merklisten und Favoritenlisten nicht mehr so merkwürdig runtergezogen
+- Merkliste-list hat kein .alt - mit css3 getrickst, ansonsten eben (wie schon vorher) alles gleich 
+
+Changes 2014-03-24
+-----
+- "Kaputte" (abgeschnittene) Diskette in Chrome bei der Merkliste gefixt (bulkActionButtons)
+- "Kaputte" Druckansicht (lag am media="sreen" im Template; ABER die Druckausgabe ist richtig, aber es GIBT eben eine Bildschirmdarstellung, die abweicht. Sinnvoll eigentlich nur zu lösen durch Einbindung von css á la "if print=false then load_screen.css else load_print.css"...
+
+Changes 2014-03-25
+-----
+- TUBodk-Cover haben nicht die class .summcover, sondern "img.alignleft"
+
+Changes 2014-03-26
+-----
+- span-14 von 580px auf 415px breite gesetzet, so wie span-9
+- Float bei .available-Text (verfügbar) entfernt
+- Buttons (Vormerken, bestellen, Volltext) liegt einfach rechts von span-9 (kein margin-right mehr)
+- Den Volltext-Button etwas "tiefer" gelegt (.span-14 img)
+
+Changes 2014-03-27
+-----
+Testweise inaktiven Tab auf grau gesetzt, aktiven tab + Ergebnisse auf #EFF3DC
+
+Changes 2014-04-02
+-----
+- .span-14 img angepasst, .span-14 > br:nth-child(8) ergänzt - Sonst fliegt der Volltextbutton über den Vormerk-/Bestellbutton, sofern beides vorhanden
+
+*/
+
+body {font-size:75%;}
+a {color: #576CA0}
+.span-2 {width:105px;}
+.span-4 {width:140px; background: #FFFEFE; padding: 6px; float:left; z-index: 2;}
+.span-4 {background: none;}
+/* .span-4 last {width:150px;} */
+.span-5 {width:255px; min-height:0;}
+/*.span-5 {width:245px; border: thin solid black; padding: 5px; -moz-border-radius: 15px; border-radius: 15px;}*/
+.span-9 {width:415px; min-height: 150px;} 
+.span-9 .resultItemLine1 { min-height: 45px; }
+.span-9 .resultItemLine2 { font-size: 1.1em; }
+.span-10 {width:300px;padding:6px;}
+.resultsetBooks { width:705px; border: 1px solid #DDDDDD; float:left; margin-right:10px; background-color: #EFF3DC;}
+.resultsetArticles { width:705px; border: 1px solid #DDDDDD; float:left; margin-right:10px; background-color: #EFF3DC;}
+.span-18 {width:710px; border: 1px solid #DDDDDD;}
+.span-5 h4 { font-weight: bold; background-color: #DDDDDD; color: #000000; padding: 5px 2px 5px 15px; margin:0; }
+.span-5 h4:empty {display: none;}
+.span-5 .sidegroup { border: thin solid #DDDDDD; padding-top: 0px; margin-bottom: 10px; }
+.span-5 .sidegroup > div, .span-5 .sidegroup > ul {padding: 5px; }
+.span-5 .sidegroup > ul li {list-style: none;}
+.span-14 {width:415px; padding: 0 !important; position: relative !important; bottom: 0; margin-top: 10px;}
+.span-14.last { position: absolute: bottom: 0;}
+/*.span-14 img { position: absolute; bottom: 50px; right: 0; margin-right: 7px; }*/
+.span-14 img {float:right; padding-bottom: 12px; padding-right: 7px;}
+.span-14 > br:nth-child(8) {clear: both;}
+.yearbox + br {display: none;}
+#publishDate {margin-top: 0px; margin-bottom: 5px;}
+
+/* Note: min-/max-xxx scales better*/
+.result {position: relative; padding: 10px 5px 10px 5px !important; margin: 0; background-color: #EFF3DC;}
+.result.alt {background: #ffffff !important; }
+.result.alt .result {background: #ffffff !important; }
+/* Durch diese Anweisung werden Checkboxen im persoenlichen Bereich funktionslos! Bitte nicht mehr reinnehmen OG .result div {position: relative; } */
+.recordSet .recordNumber {position: absolute; top: 137px; left: 6px; font-weight: normal; padding: 3px; background-color: #ffffff; color: #000000; z-index: 1; -moz-border-top-right-radius: 10px; border-top-right-radius: 10px; opacity:0.95; min-width: 17px; text-align: center;} /* 21px/11px trifft genau bildecke */
+.summcover, .span-2 img.alignleft {width: 100px; min-width: 100px; min-height: 150px; max-height: 150px; padding: 0; margin:0; border: thin solid lightgrey}
+.iconlabel {line-height: 16px !important; font-size: 9pt; font-weight: bold;}
+.available { background-image:none; background-repeat:no-repeat; color:#009900; padding-left:10px; font-weight: normal; width: 60px; padding-right: 10px; }
+.searchtools {border-top: #eee solid 1px; border-bottom: #eee solid 1px; padding: 1em; font-size: 90%; text-align: center; background-color: #FFFEFE;}
+#toptab {font-size: 1.65em; }
+#toptab ul li {  float: left; margin: 0 10px 0 0; padding-left: 10px; border-width: 1px 1px 1px 1px; border-style: solid; border-color: #DDDDDD; background-color:#F9F9F9; border-top-right-radius: 35px; position:relative; top: 1px; width: 250px;}
+/*background: #F9F9F9;*/
+#toptab ul li.active { background-color:#EFF3DC; position:relative; top: 2px; border-width: 1px 1px 0px 1px !important; border-style: solid; border-color: #DDDDDD; border-top-right-radius: 35px;}
+#searchForm.search {background-color:#ffffff;} 
+.search {font-size:100%;  padding: 20px; } /* background-color:#6BC1BB;} */
+.search input, .search select {padding: 3px; margin-left: 0; padding-left: 0;}
+.search .small {font-size:100%; padding-left: 3xp; }
+.pagination, .resultscroller {font-size:120%; padding:1em 0 1em 0; margin: 0; text-align:center; background-color:#F9F9F9; border-top: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD;}
+.pagination a {padding: .2em .3em; margin-right:.5em;border: 1px solid #F9F9F9;}
+.searchform div {background-color:#FFFEFE;}
+div.breadcrumbs {font-size:120%; overflow:hidden; padding:0; height:30px; line-height:30px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; background-color:#F9F9F9; padding-right: 0;}
+.breadcrumbinner div {margin-right: 5px !important;}
+.available + a, .checkedout + a {padding: 2px; float: right; -moz-border-radius: 3px; border-radius: 3px; color: #000; border: thin solid #AAAAAA; margin-right: 5px; margin-left:5px; margin-bottom: 0px; font-weight: normal; width: 115px; text-align: center;}
+.available + a {color: #000000; background-color:#A8DDF0; opacity:1;}
+span .checkedout + a {background-color:#A8DDF0; opacity:1; margin-right: 0px;}
+.checkedout + a {background-color:#A8DDF0; opacity:1; margin-right: 0px;}
+ul.recordSet input.checkbox, ul.cartContent input.checkbox {float: left; margin-top: 0em; margin-left: -1em; margin-right: .4em;}
+
+/* Searchbox Redesign */
+.searchbox { height: 150px; margin-bottom: 20px; }
+
+/*Nulltreffer*/
+.searchtipps {padding: 10px 15px 70px 15px;}
+
+/* Merkliste */
+ul.cartContent > li:nth-child(even) { background-color: #ffffff; }
+
+/* Favoriten */
+.bulleted {list-style: none;}
+.toolbar.floatright {line-height: 10px; padding: 5px 5px;}
+.listentry div.floatright {float: none; position: absolute; top: 10px; right:5px;}
+.bulkActionButtons {padding: 5px; background-color: #FFFEFE;}
+div.bulkActionButtons input.button {background-color:transparent; background-position: 2px center; text-decoration: underline; border:0 none; cursor:pointer; padding:1px 0 0 23px; vertical-align: top;color: #06C;}
+form .result {position: relative; padding: 10px 5px 10px 22px !important; margin: 0px; background-color: #EFF3DC;}
+form .recordNumber {position: absolute; top: 137px; left: 28px !important; font-weight: normal; padding: 3px; background-color: #ffffff; color: #000000; z-index: 1; -moz-border-top-right-radius: 10px; border-top-right-radius: 10px; opacity:0.95; min-width: 17px; text-align: center;}
+form .span-13 {float: left; width:520px;  padding: 0 !important; position: relative !important; bottom: 0; margin-top: 10px;}
+
+/* Detail-Seite */
+.toolbar {padding: 10px 5px 5px 5px; margin: 0; background-color: #FFFEFE; -moz-border-top-right-radius: 15px; border-top-right-radius: 15px;}
+.resultscroller {padding: 5px 0; background-color: #F9F9F9; margin: 0}
+.recordId {margin: 0; padding: 0 !important}
+.span-13 {padding: 0 10px 10px 10px;}
+.recordtitle {margin-top: 8px; }
+.recordcover {width: 100px; min-width: 100px; min-height: 150px; max-height: 150px; margin-top: 5px; padding:0; border: thin solid lightgrey; float: right;}
