@@ -72,9 +72,11 @@ class Results extends Action
         $_REQUEST['shard'][] = 'GBV Central';
         $_REQUEST['shard'][] = 'TUBdok';
         $_REQUEST['shard'][] = 'wwwtub';
+        $_REQUEST['shard'][] = 'localbiblio';
         $_SESSION['shards'][] = 'GBV Central';
         $_SESSION['shards'][] = 'TUBdok';
         $_SESSION['shards'][] = 'wwwtub';
+        $_SESSION['shards'][] = 'localbiblio';
 
         // Initialise from the current search globals
         $spellingObject = SearchObjectFactory::initSearchObject();

@@ -206,10 +206,12 @@ else if (in_array('GBV Central', $_REQUEST['shard']) === true || in_array('TUBdo
     $_REQUEST['shard'][] = 'GBV Central';
     $_REQUEST['shard'][] = 'TUBdok';
     $_REQUEST['shard'][] = 'wwwtub';
+    $_REQUEST['shard'][] = 'localbiblio';
     $_REQUEST['tab'] = 'all';
     $_SESSION['shards'][] = 'GBV Central';
     $_SESSION['shards'][] = 'TUBdok';
     $_SESSION['shards'][] = 'wwwtub';
+    $_SESSION['shards'][] = 'localbiblio';
 }
 
 if (in_array('Primo Central', $_SESSION['shards']) === true || in_array('GBV Primo Bridged', $_SESSION['shards']) === true) {

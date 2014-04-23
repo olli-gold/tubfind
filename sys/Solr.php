@@ -404,6 +404,7 @@ class Solr implements IndexEngine
             $_SESSION['shards'][] = 'GBV Central';
             $_SESSION['shards'][] = 'TUBdok';
             $_SESSION['shards'][] = 'wwwtub';
+            $_SESSION['shards'][] = 'localbiblio';
             $idxaddr = isset($configArray['Index']['url']) ?
                 $configArray['Index']['url'] : null;
 

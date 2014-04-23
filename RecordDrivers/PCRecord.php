@@ -320,6 +320,7 @@ class PCRecord extends IndexRecord
                         $_SESSION['shards'][] = 'GBV Central';
                         $_SESSION['shards'][] = 'TUBdok';
                         $_SESSION['shards'][] = 'wwwtub';
+                        $_SESSION['shards'][] = 'localbiblio';
 
                         $index = $this->getIndexEngine();
 
@@ -365,6 +366,7 @@ class PCRecord extends IndexRecord
             $_SESSION['shards'][] = 'GBV Central';
             $_SESSION['shards'][] = 'TUBdok';
             $_SESSION['shards'][] = 'wwwtub';
+            $_SESSION['shards'][] = 'localbiblio';
 
             $f1info = false;
             $f2info = false;
@@ -447,6 +449,7 @@ class PCRecord extends IndexRecord
             $_SESSION['shards'][] = 'GBV Central';
             $_SESSION['shards'][] = 'TUBdok';
             $_SESSION['shards'][] = 'wwwtub';
+            $_SESSION['shards'][] = 'localbiblio';
 
             $index = $this->getIndexEngine();
 
@@ -500,6 +503,7 @@ class PCRecord extends IndexRecord
         $_SESSION['shards'][] = 'GBV Central';
         $_SESSION['shards'][] = 'TUBdok';
         $_SESSION['shards'][] = 'wwwtub';
+        $_SESSION['shards'][] = 'localbiblio';
 
         $index = $this->getIndexEngine();
 
