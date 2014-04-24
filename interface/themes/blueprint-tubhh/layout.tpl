@@ -74,9 +74,9 @@
       vufindString.bookbagMax = "{$bookBag->getMaxSize()}";
       vufindString.bookbagFull = "{translate text="bookbag_full_msg"}";
       vufindString.bookbagStatusFull = "{translate text="bookbag_full"}";
-      vufindString.alsoPrinted = "{translate text="Also available printed"}";
-      vufindString.maybeAlsoPrinted = "{translate text="Maybe also available printed"}";
-      vufindString.ebookAlsoPrinted = "{translate text="This eBook is also available printed"}";
+      vufindString.alsoPrinted = "{translate text="Available printed"}";
+      vufindString.maybeAlsoPrinted = "{translate text="Maybe available printed"}";
+      vufindString.ebookAlsoPrinted = "{translate text="This eBook is available printed"}";
       </script>
 
       {js filename="cart.js"}
