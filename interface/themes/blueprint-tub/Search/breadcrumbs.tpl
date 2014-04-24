@@ -7,6 +7,9 @@
 {elseif $pageTemplate!=""}
 <em>{translate text=$pageTemplate|replace:'.tpl':''|capitalize|translate}</em>
 {/if}
+{if $recordCount > 0}
+<span>></span><em>{$recordCount} {translate text="Showing"}</em>
+{/if}
 
 {* geht nicht mit Sortoptions
 <p style="text-align:center;">
