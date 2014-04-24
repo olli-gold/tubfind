@@ -16,6 +16,7 @@
       {/foreach}
       </select>
       <input type="submit" name="submit" value="{translate text="Find"}"/><br/>
+      <input style="margin: 12px 6px 12px 12px;" type="radio" checked="checked" name="shard[]" value="GBV Central" /> Bücher <input type="radio" name="shard[]" value="Primo Central" /> Artikel | 
       {if $tab != "primo"}
         <a href="{$path}/Search/Advanced" class="small">{translate text="Advanced"}</a> | 
       {/if}
