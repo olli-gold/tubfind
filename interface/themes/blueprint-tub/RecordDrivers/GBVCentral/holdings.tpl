@@ -45,7 +45,8 @@
     {/foreach}
     </p>
 {else}
-
+{*
+*}
 {assign var="thisIsAnURL" value="false"}
 
 {foreach from=$gbvholdings item=holding key=location}
@@ -136,7 +137,7 @@
             </tr>
         {/if}
         {if $row.barcode != "-1"}
-        {if $row.barcode == "1" && count($volumes) == 0}
+        {if $row.barcode == "1" && $volumes|@count == 0}
             <tr>
                 <th>{translate text="Copy"} {$row.number}</th>
         {elseif $row.availability != -1}
@@ -173,6 +174,10 @@
                     {/if}
                 </th>
         {/if}
+        {if $showAvail == 0 && $gbvholdings|@count == 1 && $row.availability == -1}
+            {translate text="Sorry, we have no license to allow you access to this media."}
+        {/if}
+
         {*<tr>*}
                 <td>
         {if $row.reserve == "Y"}
@@ -327,6 +332,9 @@
 
 {if $holdingsOpenURL}
     {include file="Search/openurl.tpl" openUrl=$holdingsOpenURL}
+{/if}
+{if $sfxbutton && empty($holdingURLs) && $thisIsAnURL == "false" && $holdingsOpenURL}
+  <br/><span class="hidden" id="sfxmenu{$id|escape}"><a href="{$openUrlBase|escape}?{$holdingsOpenURL|escape}" target="_blank"><img src="{$sfxbutton}" alt="SFX" /></a></span><br/>
 {/if}
 
 {* Loop for subholdings (important in journal context) *}

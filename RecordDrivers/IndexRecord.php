@@ -2013,6 +2013,14 @@ h = Seitenangabe Von Bis
         return isset($this->fields['score']) ? $this->fields['score'] : '';
     }
 
+    public function getSfxMenuButton() {
+        global $configArray;
+        $openUrlButton = isset($configArray['OpenURL']['graphic']) ?
+            $configArray['OpenURL']['graphic'] :
+            null;
+        return $openUrlButton;
+    }
+
 }
 
 function _callback_normalize(&$item, $key) {

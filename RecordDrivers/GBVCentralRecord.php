@@ -202,6 +202,8 @@ class GBVCentralRecord extends MarcRecord
         global $interface;
         global $configArray;
 
+        $interface->assign('sfxbutton', $this->getSfxMenuButton());
+
         $configPica = parse_ini_file('conf/PICA.ini', true);
         $record_url = $configPica['Catalog']['ppnUrl'];
 
