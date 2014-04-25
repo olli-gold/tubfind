@@ -8,7 +8,6 @@
 <em>{translate text=$pageTemplate|replace:'.tpl':''|capitalize|translate}</em>
 {/if}
 
-
 {* geht nicht mit Sortoptions
 <p style="text-align:center;">
 {$recordCount}

@@ -16,55 +16,12 @@
   </div>
   <div class="span-9">
     <div class="resultItemLine1">
-      <a href="{$url}/Record/{$summId|escape:"url"}" class="title" title="{if !empty($summFullTitle)}
-{if is_array($summFullTitle)}
-{$summFullTitle.0|escape}
-{else}
-{$summFullTitle|escape}
-{/if}
-{else}
-{if $summTitleSeries}
-{if is_array($summTitleSeries)}
-{$summTitleSeries.0.name|escape} {$summTitleSeries.0.number|escape}
-{else}
-{$summTitleSeries.name|escape} {$summTitleSeries.number|escape}
-{/if}
-{elseif is_array($summShortTitle)}
-{$summShortTitle.0|escape}
-{else}
-{$summShortTitle|escape}
-{/if}
-{/if}
-">
+      <a href="{$url}/Record/{$summId|escape:"url"}" class="title">
       <b class="listtitle">
-      {if !empty($summFullTitle)}
-          {if is_array($summFullTitle)}
-              {$summFullTitle.0|truncate:100:"..."|escape}
-          {else}
-              {$summFullTitle|truncate:100:"..."|escape}
-          {/if}
+      {if !empty($summTitle)}
+          {$summTitle|escape}
       {else}
-      {if !empty($summHighlightedTitle)}
-          {if is_array($summHighlightedTitle)}
-              {$summHighlightedTitle.0|addEllipsis:$summShortTitle|highlight}
-          {else}
-              {$summHighlightedTitle|addEllipsis:$summShortTitle|highlight}
-          {/if}
-      {elseif $summTitleSeries}
-          {if is_array($summTitleSeries)}
-              {$summTitleSeries.0.name|truncate:90:"..."|escape} {$summTitleSeries.0.number|truncate:90:"..."|escape}
-          {else}
-              {$summTitleSeries.name|truncate:90:"..."|escape} {$summTitleSeries.number|truncate:90:"..."|escape}
-          {/if}
-      {*
-      {elseif !$summShortTitle}
-          {translate text='Title not available'}
-      *}
-      {elseif is_array($summShortTitle)}
-          {$summShortTitle.0|truncate:90:"..."|escape}
-      {else}
-          {$summShortTitle|truncate:90:"..."|escape}
-      {/if}
+          {translate text="No title"}
       {/if}
       </b>
       {if !empty($summAddTitle)}

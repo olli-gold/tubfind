@@ -58,8 +58,9 @@ class GBVCentralRecord extends MarcRecord
         $interface->assign('summArticleHRef', $this->_normalize($this->getArticleHReference()));
 
         $interface->assign('summSeries', $this->_normalize($this->getSeriesShort()));
-        $interface->assign('summFullTitle', $this->_normalize($this->getFullTitle()));
-        $interface->assign('summAddTitle', $this->_normalize($this->getTitleAddition()));
+        $interface->assign('summTitle', $this->_normalize($this->getTitleAdvanced()));
+//        $interface->assign('summFullTitle', $this->_normalize($this->getFullTitle()));
+//        $interface->assign('summAddTitle', $this->_normalize($this->getTitleAddition()));
 
         $interface->assign('volumename', $this->getVolumeName());
 
@@ -105,6 +106,34 @@ class GBVCentralRecord extends MarcRecord
     protected function getVolumeName($record = null) {
         if ($this->_getFirstFieldValue('245', array('p'))) return array($this->_getFirstFieldValue('245', array('p')));
         return null;
+
+        $record = $this->marcRecord;
+        $titleFields = $record->getFields('245');
+        $vol = array();
+        if ($titleFields) {
+            foreach($titleFields as $titleField) {
+                $volumeFields = $titleField->getSubfields('p');
+                if (count($volumeFields) > 0) {
+                    $vol[] = $volumeFields[0]->getData();
+                }
+            }
+        }
+        return $vol;
+    }
+
+    protected function getTitleFromMarc() {
+        $record = $this->marcRecord;
+        $titleFields = $record->getFields('245');
+        $vol = array();
+        if ($titleFields) {
+            foreach($titleFields as $titleField) {
+                $volumeFields = $titleField->getSubfields('p');
+                if (count($volumeFields) > 0) {
+                    $vol[] = $volumeFields[0]->getData();
+                }
+            }
+        }
+        return $vol;
     }
 
     /**
@@ -3263,6 +3292,25 @@ class GBVCentralRecord extends MarcRecord
         $return = '';
         if ($this->_getFirstFieldValue('245', array('a'))) $return = $this->_getFirstFieldValue('245', array('a'));
         if ($this->_getFirstFieldValue('245', array('b'))) $return .= " ".$this->_getFirstFieldValue('245', array('b'));
+        return $return;
+    }
+
+    /**
+     * Get the title of the item
+     *
+     * @access  protected
+     * @return  array
+     */
+    protected function getTitleAdvanced() {
+        $return = '';
+        if ($this->_getFirstFieldValue('245', array('a'))) $return = $this->_getFirstFieldValue('245', array('a'));
+        if ($this->_getFirstFieldValue('245', array('a')) && $this->_getFirstFieldValue('245', array('b')) && substr(trim($this->_getFirstFieldValue('245', array('a'))), -1) !== ':' && substr(trim($this->_getFirstFieldValue('245', array('b'))), 0, 1) !== ':') $return .= " :";
+        if ($this->_getFirstFieldValue('245', array('b'))) $return .= " ".$this->_getFirstFieldValue('245', array('b'));
+        if ($this->_getFirstFieldValue('245', array('n')) || $this->_getFirstFieldValue('245', array('p'))) $return .= " (";
+        if ($this->_getFirstFieldValue('245', array('n'))) $return .= $this->_getFirstFieldValue('245', array('n'));
+        if ($this->_getFirstFieldValue('245', array('n')) && $this->_getFirstFieldValue('245', array('p'))) $return .= ";";
+        if ($this->_getFirstFieldValue('245', array('p'))) $return .= " ".$this->_getFirstFieldValue('245', array('p'));
+        if ($this->_getFirstFieldValue('245', array('n')) || $this->_getFirstFieldValue('245', array('p'))) $return .= ")";
         return $return;
     }
 
