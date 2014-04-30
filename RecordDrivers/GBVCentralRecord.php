@@ -103,9 +103,8 @@ class GBVCentralRecord extends MarcRecord
     }
 
     protected function getVolumeName($record = null) {
-        $vol = null;
-        if ($this->_getFirstFieldValue('245', array('p'))) $vol = $this->_getFirstFieldValue('245', array('p'));
-        return array($vol);
+        if ($this->_getFirstFieldValue('245', array('p'))) return array($this->_getFirstFieldValue('245', array('p')));
+        return null;
     }
 
     /**
