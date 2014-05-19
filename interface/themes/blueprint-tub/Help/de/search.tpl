@@ -100,9 +100,8 @@
     <dl>
       <dt><a name="OR"></a>OR</dt>
       <dd>
-        <p>Die Oder-Verknüpfung (<strong>OR</strong>) ist der Standardoperator. Das
-            bedeutet, dass wenn zwischen zwei Wörten kein Operator gesetzt wird,
-            die Oder-Verknüpfung verwendet wird. Steht eine Oder-Verknüpfung zwischen
+        <p>Wenn Sie zwei Wörter mit <strong>OR</strong> verbinden, benutzen Sie eine ODER-Verknüpfung
+            Steht eine Oder-Verknüpfung zwischen
             zwei Wörtern, so erhalten sie Treffer in welchem eines oder beide
             Wörter gefunden wurde.
         </p>
@@ -124,7 +123,7 @@
       </dd>
       <dt><a name="+"></a>+</dt>
       <dd>
-        <p>Indem sie den "+"-Operator hinter einem Wort setzen, erhalten sie
+        <p>Indem sie den "+"-Operator vor einem Wort setzen, erhalten sie
            Treffer in welchem dieses Wort vorhanden ist.
         </p>
         <p>Beispiel: Sie suchen nach Titel, die das Wort "economics" enthalten
@@ -133,18 +132,18 @@
       </dd>
       <dt><a name="NOT"></a>NOT</dt>
       <dd>
-        <p>Indem sie NOT hinter ein Wort setzen, schliessen sie Treffer aus,
+        <p>Indem sie NOT vor ein Wort setzen, schliessen sie Treffer aus,
            welche dieses Wort enthalten</p>
         <p>Beispiel: Sie wollen nach Titel suchen, welche das Wort "econmics"
            enthalten aber nicht das Wort "Keynes":</p>
         <pre class="code">"economics" NOT "Keynes"</pre>
-        <p>Hinweis: NOT muss mit mindestens zwei Wörtern verwenndet werden.
+        <p>Hinweis: NOT muss mit mindestens zwei Wörtern verwendet werden.
            Beispielsweise liefert folgende Suche keine Treffer:</p>
         <pre class="code">NOT "economics"</pre>
       </dd>
       <dt><a name="-"></a>-</dt>
       <dd>
-        <p>Wird der Operator <strong>-</strong> hinter ein Wort gesetzt, so
+        <p>Wird der Operator <strong>-</strong> vor ein Wort gesetzt, so
            werden alle Treffer ausgefiltert, die dieses Wort enthalten.</p>
         <p>Beispiel: Sie wollen nach Titel suchen, welche das Wort "economics"
            aber nicht das Wort "Keynes" enthalten:</p>

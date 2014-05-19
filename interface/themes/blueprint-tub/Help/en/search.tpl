@@ -85,7 +85,7 @@
     <dl>
       <dt><a name="OR"></a>OR</dt>
       <dd>
-        <p>The <strong>OR</strong> operator is the default conjunction operator. This means that if there is no Boolean operator between two terms, the OR operator is used. The OR operator links two terms and finds a matching record if either of the terms exist in a record.</p>
+        <p>The <strong>OR</strong> operator links two terms and finds a matching record if either of the terms exist in a record.</p>
         <p>To search for documents that contain either "economics Keynes" or just "Keynes" use the query:</p>
         <pre class="code">"economics Keynes" Keynes</pre>
         <p>or</p>
