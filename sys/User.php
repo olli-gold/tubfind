@@ -53,7 +53,7 @@ class UserAccount
     public static function isLoggedIn()
     {
         if (isset($_SESSION['userinfo'])) {
-            return unserialize($_SESSION['userinfo']);
+            return unserialize(base64_decode($_SESSION['userinfo']));
         }
         return false;
     }
@@ -68,7 +68,7 @@ class UserAccount
      */
     public static function updateSession($user)
     {
-        $_SESSION['userinfo'] = serialize($user);
+        $_SESSION['userinfo'] = base64_encode(serialize($user));
     }
 
     /**
