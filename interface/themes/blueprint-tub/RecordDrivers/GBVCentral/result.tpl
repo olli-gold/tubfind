@@ -16,10 +16,10 @@
   </div>
   <div class="span-9">
     <div class="resultItemLine1">
-      <a href="{$url}/Record/{$summId|escape:"url"}" class="title">
+      <a href="{$url}/Record/{$summId|escape:"url"}" class="title" title="{if !empty($summTitle)}{$summTitle|escape}{/if}">
       <b class="listtitle">
       {if !empty($summTitle)}
-          {$summTitle|escape}
+          {$summTitle|truncate:100:"..."|escape}
       {else}
           {translate text="No title"}
       {/if}
