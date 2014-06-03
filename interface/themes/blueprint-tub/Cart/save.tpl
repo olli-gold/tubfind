@@ -15,7 +15,7 @@
   <br />
   {/foreach}
 
-  {if $lists}
+  {*if $lists*}
   <label class="displayBlock" for="save_list">{translate text='Choose a List'}</label>
   <select id="save_list" name="list">
   {foreach from=$lists item=listDetails}
@@ -24,15 +24,15 @@
     <option value="">{translate text='My Favorites'}</option>
   {/foreach}
   </select>
-  {/if}
+  {*/if*}
 
   <a href="{$url}/MyResearch/ListEdit?{$idURL|escape}" class="listEdit" id="listEdit" title="{translate text='Create new list'}">{translate text="or create a new list"}</a>
 
-  {if $lists}
+  {*if $lists*}
   <label class="displayBlock" for="add_mytags">{translate text='Add Tags'}</label>
   <input class="mainFocus" id="add_mytags" type="text" name="mytags" value="" size="50"/>
   <br/>
   <input name="submit" class="submit" type="submit" value="{translate text='Save'}">
-  {/if}
+  {*/if*}
 
 </form>
