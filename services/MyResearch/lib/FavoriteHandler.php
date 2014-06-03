@@ -128,9 +128,9 @@ class FavoriteHandler
         if (array_key_exists('VuFind', $this->_ids)
             && count($this->_ids['VuFind']) > 0
         ) {
-            $counter = $startRecord;
+            $counter = $startRecord-1;
 #            foreach ($this->_ids['VuFind'] as $idx => $cid) {
-                while ($counter <= $summary['endRecord']) {
+                while ($counter < $summary['endRecord']) {
                     if ($record = $db->getRecord($this->_ids['VuFind'][$counter])) {
                         $rec = RecordDriverFactory::initRecordDriver($record);
                         $html[] = $interface->fetch(
