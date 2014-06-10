@@ -3313,6 +3313,8 @@ class GBVCentralRecord extends MarcRecord
         if ($this->_getFirstFieldValue('245', array('n')) && $this->_getFirstFieldValue('245', array('p'))) $return .= ";";
         if ($this->_getFirstFieldValue('245', array('p'))) $return .= " ".$this->_getFirstFieldValue('245', array('p'));
         if ($this->_getFirstFieldValue('245', array('n')) || $this->_getFirstFieldValue('245', array('p'))) $return .= ")";
+        if ($return !== '') return $return;
+        if ($this->_getFirstFieldValue('773', array('t'))) $return = $this->_getFirstFieldValue('773', array('t'));
         return $return;
     }
 
